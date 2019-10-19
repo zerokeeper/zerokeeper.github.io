@@ -11,7 +11,7 @@
 <meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;search&#x2F;index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-10-19T06:06:55.491Z">
+<meta property="og:updated_time" content="2019-10-19T07:21:43.871Z">
 <meta name="twitter:card" content="summary">
     
     
@@ -85,8 +85,15 @@
 
   <div class="content" itemprop="articleBody">
       
-          
-        
+        <section id="search">
+  <form>
+    <input type="text" class="search-input" id="search-input" placeholder="Search...">
+  </form>
+  <div id="search-result"></div>
+  <p class="search-no-result">No results found.</p>
+</section>
+
+      
   </div>
 </article>
 
@@ -127,23 +134,46 @@
 <script src="/js/main.js"></script>
 <!-- search -->
 
+  <script src="/js/search.js"></script>
+  <script type="text/javascript">
+  $(function() {
+
+    var $inputArea = $("input#search-input");
+    var $resultArea = document.querySelector("div#search-result");
+
+    $inputArea.focus(function() {
+      var search_path = "search.xml";
+      if (search_path.length == 0) {
+        search_path = "search.xml";
+      }
+      var path = "/" + search_path;
+      searchFunc(path, 'search-input', 'search-result');
+    });
+
+    $inputArea.keydown(function(e) {
+      if (e.which == 13) {
+        e.preventDefault();
+      }
+    });
+
+    var observer = new MutationObserver(function(mutationsList, observer) {
+      if (mutationsList[0].addedNodes) {
+        $(".search-no-result").show(200);
+      } else {
+        $(".search-no-result").hide();
+      }
+    });
+
+    observer.observe($resultArea, { childList: true });
+
+  });
+  </script>
+
 <!-- Google Analytics -->
 
 <!-- Baidu Analytics -->
 
 <!-- Disqus Comments -->
-
-    <script type="text/javascript">
-        var disqus_shortname = 'zerokeeper';
-
-        (function(){
-            var dsq = document.createElement('script');
-            dsq.type = 'text/javascript';
-            dsq.async = true;
-            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        }());
-    </script>
 
 
 </body>
