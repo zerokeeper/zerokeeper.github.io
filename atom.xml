@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-10-19T04:48:39.852Z</updated>
+  <updated>2019-10-19T06:10:13.974Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>test</title>
+    <link href="http://yoursite.com/2019/10/19/test/"/>
+    <id>http://yoursite.com/2019/10/19/test/</id>
+    <published>2019-10-19T06:10:00.000Z</published>
+    <updated>2019-10-19T06:10:13.974Z</updated>
+    
+    <content type="html"><![CDATA[<p>dskjasdfnjasdna</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;dskjasdfnjasdna&lt;/p&gt;
+
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
   
   <entry>
     <title>hackme.inndy上pwn的wp，题目难度不大</title>
