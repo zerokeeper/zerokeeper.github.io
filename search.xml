@@ -4,25 +4,6 @@
   
     
     <entry>
-      <title>test</title>
-      <link href="/web-security/test.html"/>
-      <url>/web-security/test.html</url>
-      
-        <content type="html"><![CDATA[<p>dsjaknfd</p><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/10/20/15715731634307.jpg" alt=""></p><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/10/20/15715732131686.jpg" alt=""></p>]]></content>
-      
-      
-      <categories>
-          
-          <category> web-security </category>
-          
-      </categories>
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>pwnable.tw hacknote wp</title>
       <link href="/pwn/pwnabletw-hacknote-wp.html"/>
       <url>/pwn/pwnabletw-hacknote-wp.html</url>

