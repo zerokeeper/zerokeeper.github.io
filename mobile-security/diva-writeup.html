@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="diva是一个移动安全测试app，专门给开发者和安全人员演示用的app，里面包含很多的安全问题。地址：https:&#x2F;&#x2F;github.com&#x2F;payatu&#x2F;diva-android通过它能比较好的测试一些常见的andrid安全案例。下面是记录的测试过程。 不安全的日志输出1.adb logcat2.输入用户凭证，观察日志输出。3.源码中：Log.e()  查看源码中代码 硬编码硬编码是开发人员将一些">
+<meta name="keywords" content="网络安全,代码审计,安全开发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="diva write-up">
+<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;mobile-security&#x2F;diva-writeup.html">
+<meta property="og:site_name" content="ZeroKeeper">
+<meta property="og:description" content="diva是一个移动安全测试app，专门给开发者和安全人员演示用的app，里面包含很多的安全问题。地址：https:&#x2F;&#x2F;github.com&#x2F;payatu&#x2F;diva-android通过它能比较好的测试一些常见的andrid安全案例。下面是记录的测试过程。 不安全的日志输出1.adb logcat2.输入用户凭证，观察日志输出。3.源码中：Log.e()  查看源码中代码 硬编码硬编码是开发人员将一些">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;C6C30B66-6507-42FB-99A0-F1956E8AB124.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;9CD7BC64-3886-4A41-8A59-008797810824.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;FDD45D31-08AD-4CAD-8615-5AECD78275AA.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;092F2920-A5B9-46A0-A60C-EA0B3A9C0257.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;3D95DF1E-F85E-4BAD-AF2C-8E19EEECC060.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;66265BFC-7321-43B4-BFEF-463170B8045C.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;60DD3640-5641-4909-80C5-DBC589FEAE50.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;A8ECE47D-F927-452D-8C73-0DD7CB89F7DC.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;0A79CABE-F40F-4007-B427-F19BBB4FFDC4.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;BCDC507D-CF33-47AF-94E1-AC04FEC06184.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;BEBCB15E-852D-4518-8D3D-ABB3C781C49D.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;CDA6AD44-0BEC-451D-82AA-05D9762C636F.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;181A494C-6452-4A71-B23F-29EBF62A97EB.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;1D5958A5-2D0E-46C2-9FBF-F919275B6CC0.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;33BDFA9F-7D8D-404C-AF45-AB912EA8418C.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;9716BA5C-2002-46B4-BCB9-BB1E9C09F83D.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;ADDEEB3E-C323-4C0F-87E0-BE46BBFAE577.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;A9A5CBFA-F20A-4C7D-98B5-0E67B0874872.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;FF2BBE17-3DE3-4DF7-A11C-AB3312A8F19A.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;247B1D1C-C673-4BD1-A18E-2D996FB8F53D.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;755D57F6-4CCC-498C-B6E2-C20A7423BB19.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;3D71A7C4-BFDE-492A-B438-029B37FFD30C.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;C64F68B2-3C90-4D05-A97A-7BCF8A7EAF3C.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;03797199-3CEA-457A-8D31-2F1338293F99.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;52032F75-F1A1-4B77-BC36-0B398B1B1BFD.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;16D90B4C-2F8C-43B1-A977-372F92A0787A.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;B6431D4D-521D-4FE1-BA5E-C6D0A9FB78A6.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;A8A43289-1855-4043-95BC-19EADB4F7F04.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;89459067-61B0-49C3-A09D-40B228793879.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;EF0E3906-D9B2-4BD6-BC0F-414D71DA3D10.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;36C8BF5A-6474-44C8-B9AA-AE9A482DC123.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;144FE9A1-AACE-4A59-9C1A-0F4DB246E6BB.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;BF617522-2C2F-48F9-B65A-2B4675665085.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;44DDB38B-926E-4337-834B-EC1F12EC7641.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;21E2A8E6-1750-48BA-9864-B5DD6323669D.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;A60735F3-14DE-40EF-90C9-404C1F2815F6.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;034C7DF3-A8B0-42EA-9731-615F81CFA023.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;2E668F5C-8C6E-4848-816D-18B16D738EF5.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;39C0EDD2-7CBA-491F-B1B5-AC72F161A8C1.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;CB50C2C4-E553-40FC-987A-7545C15457C6.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;89038230-757E-4D9B-89F0-C52D82AF97CE.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;15619874950258.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;15619875978311.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;931DE608-B973-4912-960F-D1F577128F9B.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;CDE5464E-7752-44B4-8B46-72C6BF1D9E79.png">
+<meta property="og:updated_time" content="2019-10-20T07:31:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;C6C30B66-6507-42FB-99A0-F1956E8AB124.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>diva write-up</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/pwn/hackmeinndy-pwn-writeup.html"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/experience/url-scheme-attack.html"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/mobile-security/diva-writeup.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&text=diva write-up" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&is_video=false&description=diva write-up" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=diva write-up&body=Check out this article: http://zerokeeper.github.io/mobile-security/diva-writeup.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&name=diva write-up&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#不安全的日志输出"><span class="toc-number">1.</span> <span class="toc-text">不安全的日志输出</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#硬编码"><span class="toc-number">2.</span> <span class="toc-text">硬编码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不安全的存储1（shared-prefs-xxx-xml）"><span class="toc-number">3.</span> <span class="toc-text">不安全的存储1（shared_prefs/xxx.xml）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不安全的存储2（databases-xxx-db）"><span class="toc-number">4.</span> <span class="toc-text">不安全的存储2（databases/xxx.db）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不安全的存储3（临时文件）"><span class="toc-number">5.</span> <span class="toc-text">不安全的存储3（临时文件）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不安全的存储4（SD卡）"><span class="toc-number">6.</span> <span class="toc-text">不安全的存储4（SD卡）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不安全的输入1（sqli）"><span class="toc-number">7.</span> <span class="toc-text">不安全的输入1（sqli）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不安全的输入2（读取本地文件）"><span class="toc-number">8.</span> <span class="toc-text">不安全的输入2（读取本地文件）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#访问控制1（Activity-1）"><span class="toc-number">9.</span> <span class="toc-text">访问控制1（Activity 1）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#访问控制2（Activity-2）"><span class="toc-number">10.</span> <span class="toc-text">访问控制2（Activity 2）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#访问控制3（Content-Providers）"><span class="toc-number">11.</span> <span class="toc-text">访问控制3（Content Providers）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#硬编码-1"><span class="toc-number">12.</span> <span class="toc-text">硬编码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#输入验证问题"><span class="toc-number">13.</span> <span class="toc-text">输入验证问题</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        diva write-up
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">ZeroKeeper</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-05-08T05:32:00.000Z" itemprop="datePublished">2019-05-08</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/mobile-security/">mobile-security</a>
+    </div>
+
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>diva是一个移动安全测试app，专门给开发者和安全人员演示用的app，里面包含很多的安全问题。<br>地址：<a href="https://github.com/payatu/diva-android" target="_blank" rel="noopener">https://github.com/payatu/diva-android</a><br>通过它能比较好的测试一些常见的andrid安全案例。下面是记录的测试过程。</p>
+<h2 id="不安全的日志输出"><a href="#不安全的日志输出" class="headerlink" title="不安全的日志输出"></a>不安全的日志输出</h2><p>1.adb logcat<br>2.输入用户凭证，观察日志输出。<br>3.源码中：Log.e()</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/C6C30B66-6507-42FB-99A0-F1956E8AB124.png" alt="C6C30B66-6507-42FB-99A0-F1956E8AB124"><br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/9CD7BC64-3886-4A41-8A59-008797810824.png" alt="9CD7BC64-3886-4A41-8A59-008797810824"></p>
+<p>查看源码中代码<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/FDD45D31-08AD-4CAD-8615-5AECD78275AA.png" alt="FDD45D31-08AD-4CAD-8615-5AECD78275AA"></p>
+<h2 id="硬编码"><a href="#硬编码" class="headerlink" title="硬编码"></a>硬编码</h2><p>硬编码是开发人员将一些密钥等重要信息保存到了代码中。</p>
+<p>用jd查看HardcodeActivity.class<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/092F2920-A5B9-46A0-A60C-EA0B3A9C0257.png" alt="092F2920-A5B9-46A0-A60C-EA0B3A9C0257"><br>攻击者只需要在app中输入秘钥vendorsecretkey就可以访问成功。</p>
+<h2 id="不安全的存储1（shared-prefs-xxx-xml）"><a href="#不安全的存储1（shared-prefs-xxx-xml）" class="headerlink" title="不安全的存储1（shared_prefs/xxx.xml）"></a>不安全的存储1（shared_prefs/xxx.xml）</h2><p>不安全的数据存储也是App常见的安全问题之一，主要有三种方式：</p>
+<p>1将敏感数据保存到配置文件中；<br>2将敏感数据保存在本地的sqlite3数据库中；<br>3将敏感数据保存在临时文件或者sd卡中。</p>
+<p>SharedPreferences类存储的数据会以.xml的形式存储在：<br>/data/data/jakhar.aseem.diva/shared_prefs<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/3D95DF1E-F85E-4BAD-AF2C-8E19EEECC060.png" alt="3D95DF1E-F85E-4BAD-AF2C-8E19EEECC060"></p>
+<p>源代码<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/66265BFC-7321-43B4-BFEF-463170B8045C.png" alt="66265BFC-7321-43B4-BFEF-463170B8045"></p>
+<h2 id="不安全的存储2（databases-xxx-db）"><a href="#不安全的存储2（databases-xxx-db）" class="headerlink" title="不安全的存储2（databases/xxx.db）"></a>不安全的存储2（databases/xxx.db）</h2><p>用户的敏感信息存储到本地的数据库中，一般app对应的数据库目录:/data/data/apppackagename/databases<br>本例中是：/data/data/jakhar.aseem.diva/databases</p>
+<p>如图：<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/60DD3640-5641-4909-80C5-DBC589FEAE50.png" alt="60DD3640-5641-4909-80C5-DBC589FEAE50"></p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/A8ECE47D-F927-452D-8C73-0DD7CB89F7DC.png" alt="A8ECE47D-F927-452D-8C73-0DD7CB89F7D"></p>
+<p>源代码<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/0A79CABE-F40F-4007-B427-F19BBB4FFDC4.png" alt="0A79CABE-F40F-4007-B427-F19BBB4FFD"></p>
+<h2 id="不安全的存储3（临时文件）"><a href="#不安全的存储3（临时文件）" class="headerlink" title="不安全的存储3（临时文件）"></a>不安全的存储3（临时文件）</h2><p>文件在 /data/data/jakhar.aseem.diva/<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/BCDC507D-CF33-47AF-94E1-AC04FEC06184.png" alt="BCDC507D-CF33-47AF-94E1-AC04FEC06184"></p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/BEBCB15E-852D-4518-8D3D-ABB3C781C49D.png" alt="BEBCB15E-852D-4518-8D3D-ABB3C781C49D"></p>
+<p>源代码<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/CDA6AD44-0BEC-451D-82AA-05D9762C636F.png" alt="CDA6AD44-0BEC-451D-82AA-05D9762C636F"></p>
+<h2 id="不安全的存储4（SD卡）"><a href="#不安全的存储4（SD卡）" class="headerlink" title="不安全的存储4（SD卡）"></a>不安全的存储4（SD卡）</h2><p>存储在sd卡中，漏洞代码片段：<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/181A494C-6452-4A71-B23F-29EBF62A97EB.png" alt="181A494C-6452-4A71-B23F-29EBF62A97EB"></p>
+<h2 id="不安全的输入1（sqli）"><a href="#不安全的输入1（sqli）" class="headerlink" title="不安全的输入1（sqli）"></a>不安全的输入1（sqli）</h2><p>打开日志：adb logcat<br>输入一个单引号，在日志中可以看到报错信息，存在sql注入。<br>输入’ or ‘1’=’1，可返回所有用户密码。<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/1D5958A5-2D0E-46C2-9FBF-F919275B6CC0.png" alt="1D5958A5-2D0E-46C2-9FBF-F919275B6CC0"></p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/33BDFA9F-7D8D-404C-AF45-AB912EA8418C.png" alt="33BDFA9F-7D8D-404C-AF45-AB912EA8418"></p>
+<p>没有验证输入，直接带入sql语句查询</p>
+<h2 id="不安全的输入2（读取本地文件）"><a href="#不安全的输入2（读取本地文件）" class="headerlink" title="不安全的输入2（读取本地文件）"></a>不安全的输入2（读取本地文件）</h2><p>这个activity的功能是显示用户输入的网页。如图，当你输入<a href="http://www.baidu.com它会使用一个webview去加载这个页面。" target="_blank" rel="noopener">www.baidu.com它会使用一个webview去加载这个页面。</a></p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/9716BA5C-2002-46B4-BCB9-BB1E9C09F83D.png" alt="9716BA5C-2002-46B4-BCB9-BB1E9C09F83D"></p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/ADDEEB3E-C323-4C0F-87E0-BE46BBFAE577.png" alt="ADDEEB3E-C323-4C0F-87E0-BE46BBFAE577"></p>
+<p>目标是使用此功能访问设备上的敏感信息。先来看看它的源代码，在InputValidation2URISchemeActivity.java中</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/A9A5CBFA-F20A-4C7D-98B5-0E67B0874872.png" alt="A9A5CBFA-F20A-4C7D-98B5-0E67B0874872"></p>
+<p>用loadUrl方法加载用户输入的URL，这个方法也可以加载本地文件。<br>读取本地文件：file:///data/data/jakhar.aseem.diva/shared_prefs/jakhar.aseem.diva_preferences.xml</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/FF2BBE17-3DE3-4DF7-A11C-AB3312A8F19A.png" alt="FF2BBE17-3DE3-4DF7-A11C-AB3312A8F19A"></p>
+<h2 id="访问控制1（Activity-1）"><a href="#访问控制1（Activity-1）" class="headerlink" title="访问控制1（Activity 1）"></a>访问控制1（Activity 1）</h2><p>目的是在不点击此按钮的情况下访问这些信息。看看AndroidManifest.XML文件中与Vendor API Credentials activity相关的信息。<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/247B1D1C-C673-4BD1-A18E-2D996FB8F53D.png" alt="247B1D1C-C673-4BD1-A18E-2D996FB8F53D"></p>
+<p>activity是通过intent filter“保护”的。intent filter不应该被作为一种保护机制。当intent filter和像activity这样的组件一起使用时，组件是被暴露在外的。这里的activity可以被其它应用从外部加载，这是非常不安全的。我们可以通过终端中下面的命令来验证。<br>利用am(Activity Manager tool)启动暴露的组件，来绕过权限控制：<br><code>adb shell am start jakhar.aseem.diva/.APICredsActivity</code><br>或者<br> <code>adb shell am start -n jakhar.aseem.diva/.APICredsActivity -a jakhar.aseem.diva.action.VIEW_CREDS</code></p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/755D57F6-4CCC-498C-B6E2-C20A7423BB19.png" alt="755D57F6-4CCC-498C-B6E2-C20A7423BB19"></p>
+<p>使用drozer绕过权限<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/3D71A7C4-BFDE-492A-B438-029B37FFD30C.png" alt="3D71A7C4-BFDE-492A-B438-029B37FFD30"></p>
+<h2 id="访问控制2（Activity-2）"><a href="#访问控制2（Activity-2）" class="headerlink" title="访问控制2（Activity 2）"></a>访问控制2（Activity 2）</h2><p>如果你是注册用户，你就能访问tweeter API的凭据。我们的目标是在不注册的情况下访问它。再次看看AndroidManifest.XML文件。</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/C64F68B2-3C90-4D05-A97A-7BCF8A7EAF3C.png" alt="C64F68B2-3C90-4D05-A97A-7BCF8A7EAF3"></p>
+<p> 尝试相同的命令发现并不能绕过，出现了pin码，看看源代码文件APICreds2Activity.java<br> <img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/03797199-3CEA-457A-8D31-2F1338293F99.png" alt="03797199-3CEA-457A-8D31-2F1338293F99"></p>
+<p>可以看出，当我们用ADB命令启动intent时需要一个额外的布尔类型参数。下面这一行解析字符串chk_pin。</p>
+<p><code>boolean bcheck=i.getBooleanExtra(getString(R.string.chk_pin),true);</code><br>我们可以在strings.xml中查找它实际对应的值。<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/52032F75-F1A1-4B77-BC36-0B398B1B1BFD.png" alt="52032F75-F1A1-4B77-BC36-0B398B1B1BFD"></p>
+<p>这个条件是用来验证用户是否已经注册的，可以从AccessControl2Activity.java的以下代码中看出。<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/16D90B4C-2F8C-43B1-A977-372F92A0787A.png" alt="16D90B4C-2F8C-43B1-A977-372F92A0787A"></p>
+<p>如果 chk_pin = true 说明需要现在注册，跳转到注册页面；如果 chk_pin = false 说明不需要注册，或者说已经完成注册，就会跳到认证后的界面<br>据此我们需要设置 chk_pin = false 来控制页面跳转完成破解<br>使用adb下面命令绕过<br> <code>adb shell am start -a jakhar.aseem.diva.action.VIEW_CREDS2 -n jakhar.aseem.diva/.APICreds2Activity  --ez check_pin false</code><br>或者drozer命令<br><code>run app.activity.start --component jakhar.aseem.diva jakhar.aseem.diva.APICreds2Activity --extra boolean check_pin false</code><br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/B6431D4D-521D-4FE1-BA5E-C6D0A9FB78A6.png" alt="B6431D4D-521D-4FE1-BA5E-C6D0A9FB78A6"></p>
+<h2 id="访问控制3（Content-Providers）"><a href="#访问控制3（Content-Providers）" class="headerlink" title="访问控制3（Content Providers）"></a>访问控制3（Content Providers）</h2><p>笔记pin码保护，发现注册笔记生成一个pin码，必须通过pin码才能绕过，查看AndroidManifest.xml中关于此案例的描述<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/A8A43289-1855-4043-95BC-19EADB4F7F04.png" alt="A8A43289-1855-4043-95BC-19EADB4F7F04"></p>
+<p>发现有个 exported = true 的 provider 注册。content providers 使用URI，通常开头是 content://<br>使用搜索功能查找关键字：content://<br>找到 NotesProvider.smali 中重要信息<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/89459067-61B0-49C3-A09D-40B228793879.png" alt="89459067-61B0-49C3-A09D-40B228793879"></p>
+<p>根据以上smail代码，找到路径<br><code>content://jakhar.aseem.diva.provider.notesprovider/notes</code><br>根据xml中属性信息，这个content 是exported = true 的，也就意味着可以直接外部访问<br>输入命令<br><code>adb shell content query  --uri content://jakhar.aseem.diva.provider.notesprovider/notes</code><br>就可以查询到认证后的私有笔记信息<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/EF0E3906-D9B2-4BD6-BC0F-414D71DA3D10.png" alt="EF0E3906-D9B2-4BD6-BC0F-414D71DA3D10"></p>
+<p>使用drozer<br><code>run scanner.provider.finduris -a jakhar.aseem.diva
+run app.provider.query content://jakhar.aseem.diva.provider.notesprovider/notes/</code><br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/36C8BF5A-6474-44C8-B9AA-AE9A482DC123.png" alt="36C8BF5A-6474-44C8-B9AA-AE9A482D"></p>
+<h2 id="硬编码-1"><a href="#硬编码-1" class="headerlink" title="硬编码"></a>硬编码</h2><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/144FE9A1-AACE-4A59-9C1A-0F4DB246E6BB.png" alt="144FE9A1-AACE-4A59-9C1A-0F4DB246E6BB"></p>
+<p>在Hardcode2Activity. class中<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/BF617522-2C2F-48F9-B65A-2B4675665085.png" alt="BF617522-2C2F-48F9-B65A-2B4675665085"></p>
+<p>activity在加载时创建了DivaJni class的一个对象。查看其它文件发现有一个叫做DivaJni.class的文件</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/44DDB38B-926E-4337-834B-EC1F12EC7641.png" alt="44DDB38B-926E-4337-834B-EC1F12E"></p>
+<p>程序加载了一个名为divajni的库，解压apk进入lib目录。对于每种架构，都有一个libdivajni.so的实例。随便找一个运行strings命令<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/21E2A8E6-1750-48BA-9864-B5DD6323669D.png" alt="21E2A8E6-1750-48BA-9864-B5DD6323669D"></p>
+<p>olsdfgad;lh找到了这个key。这个写法是 java调用c/cpp程序常用的jni接口。可以ida反编译so文件<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/A60735F3-14DE-40EF-90C9-404C1F2815F6.png" alt="A60735F3-14DE-40EF-90C9-404C1F2815F6"></p>
+<p>发现是在比较olsdfgad;lh这个字符串<br>或者有源代码，查看源码发现确实存在jni文件夹以及 divajni.c程序<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/034C7DF3-A8B0-42EA-9731-615F81CFA023.png" alt="034C7DF3-A8B0-42EA-9731-615F81CFA023"></p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/2E668F5C-8C6E-4848-816D-18B16D738EF5.png" alt="2E668F5C-8C6E-4848-816D-18B16D738EF5"></p>
+<p>很显然，将字符串硬编码在so文件中也同样是不安全的<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/39C0EDD2-7CBA-491F-B1B5-AC72F161A8C1.png" alt="39C0EDD2-7CBA-491F-B1B5-AC72F161A8"></p>
+<h2 id="输入验证问题"><a href="#输入验证问题" class="headerlink" title="输入验证问题"></a>输入验证问题</h2><p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/CB50C2C4-E553-40FC-987A-7545C15457C6.png" alt="CB50C2C4-E553-40FC-987A-7545C15457"><br>翻译一下是：<br>目标：这是一个导弹发射程序，我们应当传播爱与和平而不是战争0.0。让此程序失效，你的任务不是找到代码发射导弹，而是让应用崩溃（并找到崩溃原因）。<br>提示：不正确或不存在的输入验证会导致应用漏洞。外部的输入必须得进行验证。这是一个经典的缓冲区溢出漏洞。如果你可以实现代码执行，那就太nb了。</p>
+<p>然提示是缓冲区溢出类漏洞，那主要工作就是要确定缓冲区的长度。<br>查看反编译代码 InputValidation3Activity.class 发现验证需要 djni.initiateLaunchSequence() 来确定<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/89038230-757E-4D9B-89F0-C52D82AF97CE.png" alt="89038230-757E-4D9B-89F0-C52D82AF97CE"></p>
+<p>分析代码，仍然需要System.loadLibrary(“divajni”)中jni接口调用的 divajni.c程序，查看 divajni.c 源码，找到 initiateLaunchSequence()的定义</p>
+<p>查看 divajni.c 源码，找到 initiateLaunchSequence()的定义</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/15619874950258.jpg" alt=""></p>
+<p>分析代码，问题出在strcpy(code,pcode),没有对pcode的长度做判断就直接给了code，而code的长度之前定义的为20，所以这里就会出现很明显的缓冲区溢出。<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/15619875978311.jpg" alt=""></p>
+<p>也可以通过ida查看so文件<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/931DE608-B973-4912-960F-D1F577128F9B.png" alt="931DE608-B973-4912-960F-D1F577128F9B"></p>
+<p>测试时发现，当输入字符 大于32 时，才可以引发程序崩溃。可以使用 adb logcat查看崩溃时堆栈数据<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/07/01/CDE5464E-7752-44B4-8B46-72C6BF1D9E79.png" alt="CDE5464E-7752-44B4-8B46-72C6BF1D9E79"></p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#不安全的日志输出"><span class="toc-number">1.</span> <span class="toc-text">不安全的日志输出</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#硬编码"><span class="toc-number">2.</span> <span class="toc-text">硬编码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不安全的存储1（shared-prefs-xxx-xml）"><span class="toc-number">3.</span> <span class="toc-text">不安全的存储1（shared_prefs/xxx.xml）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不安全的存储2（databases-xxx-db）"><span class="toc-number">4.</span> <span class="toc-text">不安全的存储2（databases/xxx.db）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不安全的存储3（临时文件）"><span class="toc-number">5.</span> <span class="toc-text">不安全的存储3（临时文件）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不安全的存储4（SD卡）"><span class="toc-number">6.</span> <span class="toc-text">不安全的存储4（SD卡）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不安全的输入1（sqli）"><span class="toc-number">7.</span> <span class="toc-text">不安全的输入1（sqli）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不安全的输入2（读取本地文件）"><span class="toc-number">8.</span> <span class="toc-text">不安全的输入2（读取本地文件）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#访问控制1（Activity-1）"><span class="toc-number">9.</span> <span class="toc-text">访问控制1（Activity 1）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#访问控制2（Activity-2）"><span class="toc-number">10.</span> <span class="toc-text">访问控制2（Activity 2）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#访问控制3（Content-Providers）"><span class="toc-number">11.</span> <span class="toc-text">访问控制3（Content Providers）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#硬编码-1"><span class="toc-number">12.</span> <span class="toc-text">硬编码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#输入验证问题"><span class="toc-number">13.</span> <span class="toc-text">输入验证问题</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/mobile-security/diva-writeup.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&text=diva write-up" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&is_video=false&description=diva write-up" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=diva write-up&body=Check out this article: http://zerokeeper.github.io/mobile-security/diva-writeup.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&name=diva write-up&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 zerokeeper
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'zerokeeper';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

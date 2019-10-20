@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="前言ThinkPHP是一个免费开源的，快速、简单的面向对象的轻量级PHP开发框架，是为了敏捷WEB应用开发和简化企 业应用开发而诞生的。ThinkPHP从诞生的12年间一直秉承简洁实用的设计原则，在保持出色的性能和至简的代码 的同时，也注重易用性。目前ThinkPHP框架是国内使用量最大的框架之一，国内用户量众多。3月26号ThinkPHP更新到5.0.16。5.0.16之前的版本存在一个sql注">
+<meta name="keywords" content="sqli,thinkphp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ThinkPHP框架5.0.x SQL注入分析">
+<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;vul-analysis&#x2F;thinkphp-framework-50x-sql-injection-analysis.html">
+<meta property="og:site_name" content="ZeroKeeper">
+<meta property="og:description" content="前言ThinkPHP是一个免费开源的，快速、简单的面向对象的轻量级PHP开发框架，是为了敏捷WEB应用开发和简化企 业应用开发而诞生的。ThinkPHP从诞生的12年间一直秉承简洁实用的设计原则，在保持出色的性能和至简的代码 的同时，也注重易用性。目前ThinkPHP框架是国内使用量最大的框架之一，国内用户量众多。3月26号ThinkPHP更新到5.0.16。5.0.16之前的版本存在一个sql注">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;05&#x2F;2664713311.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;05&#x2F;3835111304.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;05&#x2F;2720014132.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;05&#x2F;2250740095.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;05&#x2F;198436911.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;05&#x2F;2044932373.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;05&#x2F;1868409096.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;05&#x2F;3342367495.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;05&#x2F;3462864402.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;05&#x2F;870503333.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;05&#x2F;2979525599.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;05&#x2F;1631637188.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;05&#x2F;2194723222.png">
+<meta property="og:updated_time" content="2019-10-20T07:31:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;05&#x2F;2664713311.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>ThinkPHP框架5.0.x SQL注入分析</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/experience/url-scheme-attack.html"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/vul-analysis/weblogic-anti-serialization-vulnerability-analysis-cve20182628.html"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html&text=ThinkPHP框架5.0.x SQL注入分析" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html&title=ThinkPHP框架5.0.x SQL注入分析" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html&is_video=false&description=ThinkPHP框架5.0.x SQL注入分析" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ThinkPHP框架5.0.x SQL注入分析&body=Check out this article: http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html&title=ThinkPHP框架5.0.x SQL注入分析" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html&title=ThinkPHP框架5.0.x SQL注入分析" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html&title=ThinkPHP框架5.0.x SQL注入分析" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html&title=ThinkPHP框架5.0.x SQL注入分析" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html&name=ThinkPHP框架5.0.x SQL注入分析&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#环境搭建"><span class="toc-number">2.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞分析"><span class="toc-number">3.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复"><span class="toc-number">4.</span> <span class="toc-text">修复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        ThinkPHP框架5.0.x SQL注入分析
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">ZeroKeeper</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-05-02T20:43:00.000Z" itemprop="datePublished">2018-05-03</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/vul-analysis/">vul-analysis</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/sqli/" rel="tag">sqli</a>, <a class="tag-link" href="/tags/thinkphp/" rel="tag">thinkphp</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>ThinkPHP是一个免费开源的，快速、简单的面向对象的轻量级PHP开发框架，是为了敏捷WEB应用开发和简化企 业应用开发而诞生的。ThinkPHP从诞生的12年间一直秉承简洁实用的设计原则，在保持出色的性能和至简的代码 的同时，也注重易用性。目前ThinkPHP框架是国内使用量最大的框架之一，国内用户量众多。<br>3月26号ThinkPHP更新到5.0.16。5.0.16之前的版本存在一个sql注入漏洞，在 insert 和 update 方法中，传入的参数可控，且无严格过滤，最终导致本次SQL注入漏洞发生。<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/05/2664713311.png" alt="ThinkPHP-5.0.16-1.png"></p>
+<h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h3><p>thinkphp官网下载5.0.14版本下载：<a href="http://www.thinkphp.cn/down/1107.html" target="_blank" rel="noopener">http://www.thinkphp.cn/down/1107.html</a><br>创建数据库：</p>
+<pre><code>create database thinkphp;
+create table user(id int auto_increment primary key,username varchar(50),password varchar(50));
+insert into user(id,username,password) values(1,&quot;test&quot;,&quot;thinkphp&quot;);</code></pre><p>配置连接数据库文件：\thinkphp\application\database.php<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/05/3835111304.png" alt="ThinkPHP-5.0.16-2.png"></p>
+<p>打开thinkphp的调试和trace模式：\thinkphp\application\config.php<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/05/2720014132.png" alt="ThinkPHP-5.0.16-3.png"></p>
+<p>写一个update功能的demo，内容如下：\thinkphp\application\index\controller\Index.php<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/05/2250740095.png" alt="ThinkPHP-5.0.16-4.png"></p>
+<p>变量获取</p>
+<pre><code>$name = input(&quot;get.name/a&quot;);
+input()为TP框架的助手函数，get.name/a 表示获取get传入的name变量，并将其强制转换为数组类型</code></pre><p>数据库查询</p>
+<pre><code>Db::table(&quot;users&quot;)-&gt;where([&quot;id&quot;=&gt;1])-&gt;insert([&quot;username&quot;=&gt;$name]);
+TP框架采用的是PDO方式对数据库进行查询</code></pre><p>访问payload触发漏洞：</p>
+<pre><code>http://172.16.110.166/thinkphp_5.0.14_full/public/index.php?password[0]=inc&amp;password[1]=updatexml(2,concat(0x7e,user()),0)&amp;password[2]=1
+![ThinkPHP-5.0.16-5.png][6]</code></pre><h3 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h3><p>在index.php处下断点，进行动态调试跟踪。<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/05/198436911.png" alt="ThinkPHP-5.0.16-6.png"></p>
+<p>F7跟进后来到helper.php,这里是数据库连接操作，这里的调用非常深，不用进入，F8直接跳过<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/05/2044932373.png" alt="ThinkPHP-5.0.16-7.png"></p>
+<p>来到query.php,这里是分析的关键<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/05/1868409096.png" alt="ThinkPHP-5.0.16-8.png"></p>
+<p>接着往下看，来到Builder.php，这里是生成UPDATE的SQL语句，F7跟进去看<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/05/3342367495.png" alt="ThinkPHP-5.0.16-9.png"></p>
+<p>这里有两个操作，parseTable和parseData。F7跟进后发现在parseData进行了sql语句拼接。<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/05/3462864402.png" alt="ThinkPHP-5.0.16-10.png"></p>
+<p>跟进后发现，当$val是数组，根据$val[0]值执行switch操作。paylaod传入的$val[0]值为inc<br>跟入此处的parseKey，来到Mysql.php<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/05/870503333.png" alt="ThinkPHP-5.0.16-12.png"></p>
+<p>发现parseKey并没有对$key做任何过滤处理，返回任然是updatexml(2,concat(0x7e,user()),0)<br>floatval($val[2])返回1，即是传入的password[2]=1<br>最后回到parseData进行下一步操作，返回sql语句<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/05/2979525599.png" alt="ThinkPHP-5.0.16-13.png"></p>
+<p>接着往下走语句被执行，造成SQL注入<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/05/1631637188.png" alt="ThinkPHP-5.0.16-14.png"></p>
+<h3 id="修复"><a href="#修复" class="headerlink" title="修复"></a>修复</h3><p>官方修复<a href="https://github.com/top-think/framework/commit/363fd4d90312f2cfa427535b7ea01a097ca8db1b" target="_blank" rel="noopener">https://github.com/top-think/framework/commit/363fd4d90312f2cfa427535b7ea01a097ca8db1b</a></p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2018/05/2194723222.png" alt="ThinkPHP-5.0.16-15.png"></p>
+<p>在dec和inc操作之前对$val[1]的值做了检查</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>1.<a href="https://xz.aliyun.com/t/2257" target="_blank" rel="noopener">ThinkPHP框架 5.0.x sql注入漏洞分析</a><br>2.<a href="https://bbs.ichunqiu.com/thread-38284-1-1.html" target="_blank" rel="noopener">ThinkPHP框架 &lt; 5.0.16 sql注入漏洞分析</a><br>3.<a href="https://mochazz.github.io/2018/04/14/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%20%7C%20ThinkPHP%205.0.x%E6%A1%86%E6%9E%B6SQL%E6%B3%A8%E2%BC%8A/" target="_blank" rel="noopener">ThinkPHP5.0.x框架SQL注⼊</a></p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#环境搭建"><span class="toc-number">2.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞分析"><span class="toc-number">3.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修复"><span class="toc-number">4.</span> <span class="toc-text">修复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html&text=ThinkPHP框架5.0.x SQL注入分析" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html&title=ThinkPHP框架5.0.x SQL注入分析" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html&is_video=false&description=ThinkPHP框架5.0.x SQL注入分析" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ThinkPHP框架5.0.x SQL注入分析&body=Check out this article: http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html&title=ThinkPHP框架5.0.x SQL注入分析" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html&title=ThinkPHP框架5.0.x SQL注入分析" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html&title=ThinkPHP框架5.0.x SQL注入分析" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html&title=ThinkPHP框架5.0.x SQL注入分析" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/vul-analysis/thinkphp-framework-50x-sql-injection-analysis.html&name=ThinkPHP框架5.0.x SQL注入分析&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 zerokeeper
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'zerokeeper';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

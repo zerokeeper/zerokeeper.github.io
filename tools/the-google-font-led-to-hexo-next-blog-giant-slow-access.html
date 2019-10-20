@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="这个问题折磨了好几天，访问慢也只是偶尔，开始也以为是github在国外所以访问慢，所以也没怎么理会。但是后来发现每当我跟新博客的时候这个问题就来了。而且只是本地主机访问忙，我用其他设备访问又没有问题。郁闷！后来我想本地访问localhost总是可以吧。居然也是访问慢。意识到这是有问题的。 开启浏览器调试后发现原来google的字体，fonts.googleapis.com的一个css文件加载不出来">
+<meta name="keywords" content="blog,hexo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="google字库导致hexo next博客访问巨慢">
+<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;tools&#x2F;the-google-font-led-to-hexo-next-blog-giant-slow-access.html">
+<meta property="og:site_name" content="ZeroKeeper">
+<meta property="og:description" content="这个问题折磨了好几天，访问慢也只是偶尔，开始也以为是github在国外所以访问慢，所以也没怎么理会。但是后来发现每当我跟新博客的时候这个问题就来了。而且只是本地主机访问忙，我用其他设备访问又没有问题。郁闷！后来我想本地访问localhost总是可以吧。居然也是访问慢。意识到这是有问题的。 开启浏览器调试后发现原来google的字体，fonts.googleapis.com的一个css文件加载不出来">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;http_fonts.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;google_fonts.png">
+<meta property="og:updated_time" content="2019-10-20T07:31:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;http_fonts.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>google字库导致hexo next博客访问巨慢</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/experience/hexo-blog-markdown-writing-grammar.html"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/tools/use-vps-to-install-kali-and-mextasploit-in-docker.html"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html&text=google字库导致hexo next博客访问巨慢" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html&title=google字库导致hexo next博客访问巨慢" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html&is_video=false&description=google字库导致hexo next博客访问巨慢" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=google字库导致hexo next博客访问巨慢&body=Check out this article: http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html&title=google字库导致hexo next博客访问巨慢" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html&title=google字库导致hexo next博客访问巨慢" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html&title=google字库导致hexo next博客访问巨慢" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html&title=google字库导致hexo next博客访问巨慢" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html&name=google字库导致hexo next博客访问巨慢&description=&lt;p&gt;这个问题折磨了好几天，访问慢也只是偶尔，开始也以为是github在国外所以访问慢，所以也没怎么理会。但是后来发现每当我跟新博客的时候这个问题就来了。而且只是本地主机访问忙，我用其他设备访问又没有问题。郁闷！后来我想本地访问localhost总是可以吧。居然也是访问慢。意识到这是有问题的。&lt;/p&gt;
+&lt;p&gt;开启浏览器调试后发现原来google的字体，fonts.googleapis.com的一个css文件加载不出来。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://static-1257872780.cos.ap-shanghai.myqcloud.com/http_fonts.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        google字库导致hexo next博客访问巨慢
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">ZeroKeeper</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-03-04T23:15:00.000Z" itemprop="datePublished">2017-03-05</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/tools/">tools</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/blog/" rel="tag">blog</a>, <a class="tag-link" href="/tags/hexo/" rel="tag">hexo</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>这个问题折磨了好几天，访问慢也只是偶尔，开始也以为是github在国外所以访问慢，所以也没怎么理会。但是后来发现每当我跟新博客的时候这个问题就来了。而且只是本地主机访问忙，我用其他设备访问又没有问题。郁闷！后来我想本地访问localhost总是可以吧。居然也是访问慢。意识到这是有问题的。</p>
+<p>开启浏览器调试后发现原来google的字体，fonts.googleapis.com的一个css文件加载不出来。</p>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/http_fonts.png" alt=""></p>
+<a id="more"></a>
+
+<blockquote>
+<p>在网上搜索了一下。是将themes/next/layout/_partials/head.swig文件里的fonts.googleapis.com替换为fonts.useso.com。但是我这个5.0.1版本里没有该字段。于是看了下主题配置文件找到了。这里有个字体设置。默认是fonts.googleapis.com,于是我就把它设置成fonts.useso.com。</p>
+</blockquote>
+<p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/google_fonts.png" alt=""></p>
+<p>Ok!，博客又可以流畅访问了</p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html&text=google字库导致hexo next博客访问巨慢" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html&title=google字库导致hexo next博客访问巨慢" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html&is_video=false&description=google字库导致hexo next博客访问巨慢" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=google字库导致hexo next博客访问巨慢&body=Check out this article: http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html&title=google字库导致hexo next博客访问巨慢" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html&title=google字库导致hexo next博客访问巨慢" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html&title=google字库导致hexo next博客访问巨慢" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html&title=google字库导致hexo next博客访问巨慢" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/tools/the-google-font-led-to-hexo-next-blog-giant-slow-access.html&name=google字库导致hexo next博客访问巨慢&description=&lt;p&gt;这个问题折磨了好几天，访问慢也只是偶尔，开始也以为是github在国外所以访问慢，所以也没怎么理会。但是后来发现每当我跟新博客的时候这个问题就来了。而且只是本地主机访问忙，我用其他设备访问又没有问题。郁闷！后来我想本地访问localhost总是可以吧。居然也是访问慢。意识到这是有问题的。&lt;/p&gt;
+&lt;p&gt;开启浏览器调试后发现原来google的字体，fonts.googleapis.com的一个css文件加载不出来。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://static-1257872780.cos.ap-shanghai.myqcloud.com/http_fonts.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 zerokeeper
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Articles</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/links/">Links</a></li>
+         
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight .code pre").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      target: function(trigger) {
+        return trigger.nextElementSibling;
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'zerokeeper';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>
