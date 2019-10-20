@@ -7,10 +7,10 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="pwnable.tw上hacknote的wp 程序分析保护 12345Arch:     i386-32-littleRELRO:    Partial RELROStack:    Canary foundNX:       NX enabledPIE:      No PIE (0x8048000) 程序有三个基本操作，add、delete、print笔记，其中delete中free后没有把指">
-<meta name="keywords" content="网络安全,代码审计,安全开发">
+<meta name="keywords" content="ctf,pwn,pwnable">
 <meta property="og:type" content="article">
 <meta property="og:title" content="pwnable.tw hacknote wp">
-<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;pwn&#x2F;pwnabletw-hacknote-wp.html">
+<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;writeup&#x2F;pwnabletw-hacknote-wp.html">
 <meta property="og:site_name" content="ZeroKeeper">
 <meta property="og:description" content="pwnable.tw上hacknote的wp 程序分析保护 12345Arch:     i386-32-littleRELRO:    Partial RELROStack:    Canary foundNX:       NX enabledPIE:      No PIE (0x8048000) 程序有三个基本操作，add、delete、print笔记，其中delete中free后没有把指">
 <meta property="og:locale" content="en">
@@ -21,7 +21,7 @@
 <meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;06&#x2F;15&#x2F;15606108479682.jpg">
 <meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;06&#x2F;15&#x2F;15606109974949.jpg">
 <meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;06&#x2F;15&#x2F;15606110247777.jpg">
-<meta property="og:updated_time" content="2019-10-20T08:49:18.408Z">
+<meta property="og:updated_time" content="2019-10-20T15:34:59.860Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;06&#x2F;15&#x2F;15606068324547.jpg">
     
@@ -86,7 +86,7 @@
       <ul>
         
         
-        <li><a class="icon" href="/pwn/hackmeinndy-raas-wp.html"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        <li><a class="icon" href="/writeup/hackmeinndy-raas-wp.html"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -99,16 +99,16 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html&text=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html&is_video=false&description=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=pwnable.tw hacknote wp&body=Check out this article: http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html&name=pwnable.tw hacknote wp&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html&text=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html&is_video=false&description=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=pwnable.tw hacknote wp&body=Check out this article: http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html&name=pwnable.tw hacknote wp&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -146,11 +146,16 @@
       
     <div class="article-category">
         <i class="fas fa-archive"></i>
-        <a class="category-link" href="/categories/pwn/">pwn</a>
+        <a class="category-link" href="/categories/writeup/">writeup</a>
     </div>
 
 
       
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/ctf/" rel="tag">ctf</a>, <a class="tag-link" href="/tags/pwn/" rel="tag">pwn</a>, <a class="tag-link" href="/tags/pwnable/" rel="tag">pwnable</a>
+    </div>
+
 
     </div>
   </header>
@@ -169,7 +174,7 @@
 <p>基本的思路是先add 两次，但是内容的大小不能是8字节，不然会分配4个 16字节的fast bin；然后再delete两次，此时 fast bin链表如图：</p>
 <p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/06/15/15606085424463.jpg" alt=""><br>因为prev_size 和 size 在 32 位下占 8 bytes ，所以结构体的实际堆块大小为 16 bytes。在申请 content 内容时要大于 16 bytes。</p>
 <p>这里需要了解malloc内存对齐的知识：<br>在32位下malloc的最小分配单位为16字节，64位下最小分配单位为32字节，其中request2size就是malloc的内存对齐操作。<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/06/15/15606089332140.jpg" alt=""></p>
-<p>从request2size还可以知道，如果是64位系统，申请内存为1 ~ 24字节时，系统内存消耗32字节，当申请内存为25字节时，系统内存消耗48字节。 如果是32位系统，申请内存为1 ~ 12字节时，系统内存消耗16字节，当申请内存为13字节时，系统内存消耗24字节。（类似计算MINSIZE）</p>
+<p>从request2size还可以知道，如果是64位系统，申请内存为1<del>24字节时，系统内存消耗32字节，当申请内存为25字节时，系统内存消耗48字节。 如果是32位系统，申请内存为1</del>12字节时，系统内存消耗16字节，当申请内存为13字节时，系统内存消耗24字节。（类似计算MINSIZE）</p>
 <h3 id="利用思路："><a href="#利用思路：" class="headerlink" title="利用思路："></a>利用思路：</h3><ul>
 <li>add_note首先malloc出8字节来存放note结构体，接着用户输入content的size：16，这样操作两次，分配的内存大小为16-&gt;24-&gt;16-&gt;24</li>
 <li>delete_note来释放内存，delete_note（0），delete_note（1）<br>接着add_note，增加一个content size=8，内容为’ccccdddd’</li>
@@ -226,16 +231,16 @@
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html&text=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html&is_video=false&description=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=pwnable.tw hacknote wp&body=Check out this article: http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/pwn/pwnabletw-hacknote-wp.html&name=pwnable.tw hacknote wp&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html&text=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html&is_video=false&description=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=pwnable.tw hacknote wp&body=Check out this article: http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html&title=pwnable.tw hacknote wp" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/writeup/pwnabletw-hacknote-wp.html&name=pwnable.tw hacknote wp&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

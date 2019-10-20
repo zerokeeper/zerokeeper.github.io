@@ -7,10 +7,10 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="diva是一个移动安全测试app，专门给开发者和安全人员演示用的app，里面包含很多的安全问题。地址：https:&#x2F;&#x2F;github.com&#x2F;payatu&#x2F;diva-android通过它能比较好的测试一些常见的andrid安全案例。下面是记录的测试过程。 不安全的日志输出1.adb logcat2.输入用户凭证，观察日志输出。3.源码中：Log.e()  查看源码中代码 硬编码硬编码是开发人员将一些">
-<meta name="keywords" content="网络安全,代码审计,安全开发">
+<meta name="keywords" content="android,diva,ctf">
 <meta property="og:type" content="article">
 <meta property="og:title" content="diva write-up">
-<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;mobile-security&#x2F;diva-writeup.html">
+<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;writeup&#x2F;diva-writeup.html">
 <meta property="og:site_name" content="ZeroKeeper">
 <meta property="og:description" content="diva是一个移动安全测试app，专门给开发者和安全人员演示用的app，里面包含很多的安全问题。地址：https:&#x2F;&#x2F;github.com&#x2F;payatu&#x2F;diva-android通过它能比较好的测试一些常见的andrid安全案例。下面是记录的测试过程。 不安全的日志输出1.adb logcat2.输入用户凭证，观察日志输出。3.源码中：Log.e()  查看源码中代码 硬编码硬编码是开发人员将一些">
 <meta property="og:locale" content="en">
@@ -59,7 +59,7 @@
 <meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;15619875978311.jpg">
 <meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;931DE608-B973-4912-960F-D1F577128F9B.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;CDE5464E-7752-44B4-8B46-72C6BF1D9E79.png">
-<meta property="og:updated_time" content="2019-10-20T07:31:45.000Z">
+<meta property="og:updated_time" content="2019-10-20T15:34:56.163Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;07&#x2F;01&#x2F;C6C30B66-6507-42FB-99A0-F1956E8AB124.png">
     
@@ -123,7 +123,7 @@
     <span id="actions">
       <ul>
         
-        <li><a class="icon" href="/pwn/hackmeinndy-pwn-writeup.html"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        <li><a class="icon" href="/writeup/hackmeinndy-pwn-writeup.html"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
         <li><a class="icon" href="/experience/url-scheme-attack.html"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
@@ -139,16 +139,16 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/mobile-security/diva-writeup.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&text=diva write-up" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&is_video=false&description=diva write-up" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=diva write-up&body=Check out this article: http://zerokeeper.github.io/mobile-security/diva-writeup.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&name=diva write-up&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/writeup/diva-writeup.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/writeup/diva-writeup.html&text=diva write-up" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/writeup/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/writeup/diva-writeup.html&is_video=false&description=diva write-up" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=diva write-up&body=Check out this article: http://zerokeeper.github.io/writeup/diva-writeup.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/writeup/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/writeup/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/writeup/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/writeup/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/writeup/diva-writeup.html&name=diva write-up&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -186,11 +186,16 @@
       
     <div class="article-category">
         <i class="fas fa-archive"></i>
-        <a class="category-link" href="/categories/mobile-security/">mobile-security</a>
+        <a class="category-link" href="/categories/writeup/">writeup</a>
     </div>
 
 
       
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/android/" rel="tag">android</a>, <a class="tag-link" href="/tags/ctf/" rel="tag">ctf</a>, <a class="tag-link" href="/tags/diva/" rel="tag">diva</a>
+    </div>
+
 
     </div>
   </header>
@@ -300,16 +305,16 @@ run app.provider.query content://jakhar.aseem.diva.provider.notesprovider/notes/
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/mobile-security/diva-writeup.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&text=diva write-up" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&is_video=false&description=diva write-up" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=diva write-up&body=Check out this article: http://zerokeeper.github.io/mobile-security/diva-writeup.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/mobile-security/diva-writeup.html&name=diva write-up&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/writeup/diva-writeup.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/writeup/diva-writeup.html&text=diva write-up" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/writeup/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/writeup/diva-writeup.html&is_video=false&description=diva write-up" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=diva write-up&body=Check out this article: http://zerokeeper.github.io/writeup/diva-writeup.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/writeup/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/writeup/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/writeup/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/writeup/diva-writeup.html&title=diva write-up" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/writeup/diva-writeup.html&name=diva write-up&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

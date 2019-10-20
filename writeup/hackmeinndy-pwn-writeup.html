@@ -7,10 +7,10 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="hackme.inndy上pwn的wp，题目难度不大 catfalg签到题，直接nc连接，cat flag homework根据题目提示是数组越界漏洞，给了源码https:&#x2F;&#x2F;hackme.inndy.tw&#x2F;static&#x2F;pwn-easy.c 可以看到对数组下表并没有做检查，导致越界。 ida分析，可以通过越界arr来覆盖run_program的返回地址到call_me_maybe函数的地址即可">
-<meta name="keywords" content="网络安全,代码审计,安全开发">
+<meta name="keywords" content="ctf,hackme,pwn">
 <meta property="og:type" content="article">
 <meta property="og:title" content="hackme.inndy pwn write-up">
-<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;pwn&#x2F;hackmeinndy-pwn-writeup.html">
+<meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;writeup&#x2F;hackmeinndy-pwn-writeup.html">
 <meta property="og:site_name" content="ZeroKeeper">
 <meta property="og:description" content="hackme.inndy上pwn的wp，题目难度不大 catfalg签到题，直接nc连接，cat flag homework根据题目提示是数组越界漏洞，给了源码https:&#x2F;&#x2F;hackme.inndy.tw&#x2F;static&#x2F;pwn-easy.c 可以看到对数组下表并没有做检查，导致越界。 ida分析，可以通过越界arr来覆盖run_program的返回地址到call_me_maybe函数的地址即可">
 <meta property="og:locale" content="en">
@@ -26,7 +26,7 @@
 <meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;06&#x2F;10&#x2F;15601734777024.jpg">
 <meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;06&#x2F;10&#x2F;15601736570426.jpg">
 <meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;06&#x2F;10&#x2F;15601737681747.jpg">
-<meta property="og:updated_time" content="2019-10-20T07:31:45.000Z">
+<meta property="og:updated_time" content="2019-10-20T15:35:12.822Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;06&#x2F;09&#x2F;1560051924.png">
     
@@ -90,10 +90,10 @@
     <span id="actions">
       <ul>
         
-        <li><a class="icon" href="/pwn/hackmeinndy-raas-wp.html"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        <li><a class="icon" href="/writeup/hackmeinndy-raas-wp.html"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
-        <li><a class="icon" href="/mobile-security/diva-writeup.html"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        <li><a class="icon" href="/writeup/diva-writeup.html"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -106,16 +106,16 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html&text=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html&is_video=false&description=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=hackme.inndy pwn write-up&body=Check out this article: http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html&name=hackme.inndy pwn write-up&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html&text=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html&is_video=false&description=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=hackme.inndy pwn write-up&body=Check out this article: http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html" target="_blank" rel="noopener"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html&name=hackme.inndy pwn write-up&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -153,11 +153,16 @@
       
     <div class="article-category">
         <i class="fas fa-archive"></i>
-        <a class="category-link" href="/categories/pwn/">pwn</a>
+        <a class="category-link" href="/categories/writeup/">writeup</a>
     </div>
 
 
       
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/ctf/" rel="tag">ctf</a>, <a class="tag-link" href="/tags/hackme/" rel="tag">hackme</a>, <a class="tag-link" href="/tags/pwn/" rel="tag">pwn</a>
+    </div>
+
 
     </div>
   </header>
@@ -280,16 +285,16 @@
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html&text=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html&is_video=false&description=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=hackme.inndy pwn write-up&body=Check out this article: http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/pwn/hackmeinndy-pwn-writeup.html&name=hackme.inndy pwn write-up&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html&text=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html&is_video=false&description=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=hackme.inndy pwn write-up&body=Check out this article: http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html" target="_blank" rel="noopener"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html&title=hackme.inndy pwn write-up" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zerokeeper.github.io/writeup/hackmeinndy-pwn-writeup.html&name=hackme.inndy pwn write-up&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
