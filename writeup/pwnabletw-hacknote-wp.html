@@ -21,7 +21,7 @@
 <meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;06&#x2F;15&#x2F;15606108479682.jpg">
 <meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;06&#x2F;15&#x2F;15606109974949.jpg">
 <meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;06&#x2F;15&#x2F;15606110247777.jpg">
-<meta property="og:updated_time" content="2019-10-20T15:34:59.860Z">
+<meta property="og:updated_time" content="2019-10-21T14:41:26.728Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2019&#x2F;06&#x2F;15&#x2F;15606068324547.jpg">
     
@@ -172,7 +172,7 @@
 <p>基本的思路是先add 两次，但是内容的大小不能是8字节，不然会分配4个 16字节的fast bin；然后再delete两次，此时 fast bin链表如图：</p>
 <p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/06/15/15606085424463.jpg" alt=""><br>因为prev_size 和 size 在 32 位下占 8 bytes ，所以结构体的实际堆块大小为 16 bytes。在申请 content 内容时要大于 16 bytes。</p>
 <p>这里需要了解malloc内存对齐的知识：<br>在32位下malloc的最小分配单位为16字节，64位下最小分配单位为32字节，其中request2size就是malloc的内存对齐操作。<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/2019/06/15/15606089332140.jpg" alt=""></p>
-<p>从request2size还可以知道，如果是64位系统，申请内存为1<del>24字节时，系统内存消耗32字节，当申请内存为25字节时，系统内存消耗48字节。 如果是32位系统，申请内存为1</del>12字节时，系统内存消耗16字节，当申请内存为13字节时，系统内存消耗24字节。（类似计算MINSIZE）</p>
+<p>从request2size还可以知道，如果是64位系统，申请内存为1 ~ 24字节时，系统内存消耗32字节，当申请内存为25字节时，系统内存消耗48字节。 如果是32位系统，申请内存为1 ~ 12字节时，系统内存消耗16字节，当申请内存为13字节时，系统内存消耗24字节。（类似计算MINSIZE）</p>
 <h3 id="利用思路："><a href="#利用思路：" class="headerlink" title="利用思路："></a>利用思路：</h3><ul>
 <li>add_note首先malloc出8字节来存放note结构体，接着用户输入content的size：16，这样操作两次，分配的内存大小为16-&gt;24-&gt;16-&gt;24</li>
 <li>delete_note来释放内存，delete_note（0），delete_note（1）<br>接着add_note，增加一个content size=8，内容为’ccccdddd’</li>
