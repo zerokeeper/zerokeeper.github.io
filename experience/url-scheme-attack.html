@@ -20,7 +20,7 @@
 <meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;11&#x2F;10&#x2F;1541838893.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;11&#x2F;10&#x2F;1541842168.jpg">
 <meta property="og:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;11&#x2F;10&#x2F;1541848929.gif">
-<meta property="og:updated_time" content="2019-10-20T15:15:05.000Z">
+<meta property="og:updated_time" content="2019-10-21T13:12:12.819Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;static-1257872780.cos.ap-shanghai.myqcloud.com&#x2F;2018&#x2F;11&#x2F;09&#x2F;1541762829.png">
     
@@ -225,6 +225,9 @@ window.location.href=&apos;alipays://platformapi/startapp?saId=10000007&amp;clie
 </article>
 
     <div class="blog-post-comments">
+        <div style="text-align:center;">
+            <button class="disbtn" id="load-disqus" onclick="disqus.load();">显示评论</button>
+        </div>
         <div id="disqus_thread">
             <noscript>Please enable JavaScript to view the comments.</noscript>
         </div>
@@ -371,14 +374,18 @@ window.location.href=&apos;alipays://platformapi/startapp?saId=10000007&amp;clie
 
     <script type="text/javascript">
         var disqus_shortname = 'zerokeeper';
-
-        (function(){
+        var disqus = {
+        load : function disqus(){
+        (function (){
             var dsq = document.createElement('script');
             dsq.type = 'text/javascript';
             dsq.async = true;
             dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
         }());
+        $('#load-disqus').remove(); ///加载后移除按钮
+        }
+        }
     </script>
 
 

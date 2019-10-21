@@ -322,6 +322,9 @@ Meterpreter     : x86/windows</code></pre><h3 id="0x06-参考"><a href="#0x06-�
 </article>
 
     <div class="blog-post-comments">
+        <div style="text-align:center;">
+            <button class="disbtn" id="load-disqus" onclick="disqus.load();">显示评论</button>
+        </div>
         <div id="disqus_thread">
             <noscript>Please enable JavaScript to view the comments.</noscript>
         </div>
@@ -468,14 +471,18 @@ Meterpreter     : x86/windows</code></pre><h3 id="0x06-参考"><a href="#0x06-�
 
     <script type="text/javascript">
         var disqus_shortname = 'zerokeeper';
-
-        (function(){
+        var disqus = {
+        load : function disqus(){
+        (function (){
             var dsq = document.createElement('script');
             dsq.type = 'text/javascript';
             dsq.async = true;
             dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
         }());
+        $('#load-disqus').remove(); ///加载后移除按钮
+        }
+        }
     </script>
 
 
