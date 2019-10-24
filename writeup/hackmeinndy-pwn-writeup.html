@@ -7,7 +7,7 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="hackme.inndy上pwn的wp，题目难度不大 catfalg签到题，直接nc连接，cat flag homework根据题目提示是数组越界漏洞，给了源码https:&#x2F;&#x2F;hackme.inndy.tw&#x2F;static&#x2F;pwn-easy.c 可以看到对数组下表并没有做检查，导致越界。 ida分析，可以通过越界arr来覆盖run_program的返回地址到call_me_maybe函数的地址即可">
-<meta name="keywords" content="ctf,pwn,hackme">
+<meta name="keywords" content="ctf,hackme,pwn">
 <meta property="og:type" content="article">
 <meta property="og:title" content="hackme.inndy pwn write-up">
 <meta property="og:url" content="http:&#x2F;&#x2F;zerokeeper.github.io&#x2F;writeup&#x2F;hackmeinndy-pwn-writeup.html">
